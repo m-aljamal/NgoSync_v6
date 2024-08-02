@@ -1,14 +1,14 @@
-import { ThemeProvider } from "@/components/providers"
-import { TailwindIndicator } from "@/components/tailwind-indicator"
 import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
+import { Direction, ThemeProvider } from "@/components/providers"
+import { TailwindIndicator } from "@/components/tailwind-indicator"
 
 import "@/styles/globals.css"
 
 import type { Metadata, Viewport } from "next"
 
-import { Toaster } from "@/components/ui/toaster"
 import { fontMono, fontSans } from "@/lib/fonts"
+import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -64,7 +64,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="ar" suppressHydrationWarning>
       <head />
       <body
         className={cn(
@@ -72,19 +72,21 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
           fontSans.variable,
           fontMono.variable
         )}
+        dir="rtl"
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="relative flex min-h-screen flex-col">
-           
-            <main className="flex-1">{children}</main>
-          </div>
-          <TailwindIndicator />
-        </ThemeProvider>
+        <Direction>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="relative flex min-h-screen flex-col">
+              <main className="flex-1">{children}</main>
+            </div>
+            <TailwindIndicator />
+          </ThemeProvider>
+        </Direction>
         <Toaster />
       </body>
     </html>

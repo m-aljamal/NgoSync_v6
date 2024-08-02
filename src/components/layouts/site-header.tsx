@@ -1,19 +1,18 @@
+import Image from "next/image"
 import Link from "next/link"
-import { GitHubLogoIcon, VercelLogoIcon } from "@radix-ui/react-icons"
+import { GitHubLogoIcon } from "@radix-ui/react-icons"
 
 import { siteConfig } from "@/config/site"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/layouts/mode-toggle"
+import Navigation from "./navigation"
 
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
         <Link href="/" className="mr-2 flex items-center md:mr-6 md:space-x-2">
-          <VercelLogoIcon className="size-4" aria-hidden="true" />
-          <span className="hidden font-bold md:inline-block">
-            {siteConfig.name}
-          </span>
+          <Image src="/images/logo.ico" alt="logo" width={100} height={80} />
         </Link>
         <nav className="flex w-full items-center gap-6 text-sm">
           <Link
@@ -25,6 +24,7 @@ export function SiteHeader() {
             Docs
           </Link>
         </nav>
+        <Navigation/>
         <nav className="flex flex-1 items-center md:justify-end">
           <Button variant="ghost" size="icon" className="size-8" asChild>
             <Link
