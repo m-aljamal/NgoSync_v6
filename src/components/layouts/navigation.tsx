@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useMedia } from "react-use"
 
 import { cn } from "@/lib/utils"
 import {
@@ -14,10 +15,11 @@ import {
 } from "@/components/ui/navigation-menu"
 
 import { icons } from "./icons"
+import MobileNavigation from "./mobile-navigation"
 import { routes } from "./routes"
 
-export default function Links() {
-  const pathname = usePathname()
+export default function Navigation() {
+  const isMobile = useMedia("(max-width: 1024px)", false)
 
   const isActive = (route: (typeof routes)[0]) => {
     if (route.href && pathname === route.href) {
@@ -28,9 +30,13 @@ export default function Links() {
     }
     return false
   }
+  const pathname = usePathname()
+  if (isMobile) {
+    return <MobileNavigation />
+  }
 
   return (
-    <NavigationMenu className="hidden md:flex">
+    <NavigationMenu className="hidden lg:flex">
       <NavigationMenuList>
         {routes?.map((route) => {
           const active = isActive(route)
@@ -66,7 +72,7 @@ export default function Links() {
               href={route.href ?? ""}
               key={route.title}
               className={cn(
-                "block select-none space-y-1 rounded-md p-3 text-sm font-medium leading-none text-foreground/70 no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                "m-1 block select-none space-y-1 rounded-md p-3 text-sm font-medium leading-none text-foreground/70 no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
                 active && "bg-accent text-accent-foreground"
               )}
             >
