@@ -37,7 +37,11 @@ export default function Links() {
           return route.children?.length ? (
             <NavigationMenuItem key={route.title}>
               <NavigationMenuTrigger
-                className={active ? "bg-accent text-accent-foreground" : ""}
+                className={
+                  active
+                    ? "bg-accent text-foreground"
+                    : "text-foreground/70 transition-colors hover:text-foreground"
+                }
               >
                 {route.title}
               </NavigationMenuTrigger>
@@ -62,7 +66,7 @@ export default function Links() {
               href={route.href ?? ""}
               key={route.title}
               className={cn(
-                "block select-none space-y-1 rounded-md p-3 text-sm font-medium leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+                "block select-none space-y-1 rounded-md p-3 text-sm font-medium leading-none text-foreground/70 no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
                 active && "bg-accent text-accent-foreground"
               )}
             >

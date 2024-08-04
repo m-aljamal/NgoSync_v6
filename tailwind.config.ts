@@ -56,7 +56,6 @@ export default {
       fontFamily: {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
         mono: ["var(--font-geist-mono)", ...fontFamily.mono],
-        tajawal: ["var(--font-tajawal)", ...fontFamily.sans],
       },
       keyframes: {
         "accordion-down": {
