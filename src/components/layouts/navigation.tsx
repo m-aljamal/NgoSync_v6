@@ -30,7 +30,7 @@ export default function Links() {
   }
 
   return (
-    <NavigationMenu>
+    <NavigationMenu className="hidden md:flex">
       <NavigationMenuList>
         {routes?.map((route) => {
           const active = isActive(route)
@@ -46,7 +46,7 @@ export default function Links() {
                 {route.title}
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <ul className="grid w-[200px] gap-3 p-4 md:w-[300px] md:grid-cols-2 lg:w-[650px]">
+                <ul className="grid w-[200px] gap-3 p-4 md:w-[650px] md:grid-cols-2 lg:w-[700px]">
                   {route.children.map((child) => (
                     <ListItem
                       key={child.title}
