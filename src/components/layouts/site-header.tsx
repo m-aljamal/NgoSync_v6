@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/layouts/mode-toggle"
 
 import Navigation from "./navigation"
+import { UserNav } from "./UserNav"
 
 export function SiteHeader() {
   return (
@@ -17,8 +18,8 @@ export function SiteHeader() {
           </Link>
 
           <Navigation />
-
-          <nav className="flex flex-1 items-center justify-start gap-1 lg:justify-end">
+          <UserNav image="" name="MO" />
+          {/* <nav className="flex flex-1 items-center justify-start gap-1 lg:justify-end">
             <Button variant="ghost" size="icon" className="size-8" asChild>
               <Link
                 aria-label="GitHub repo"
@@ -30,7 +31,7 @@ export function SiteHeader() {
               </Link>
             </Button>
             <ModeToggle />
-          </nav>
+          </nav> */}
         </div>
       </div>
     </header>
