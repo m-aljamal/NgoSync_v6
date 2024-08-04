@@ -2,7 +2,7 @@ import { siteConfig } from "@/config/site"
 import { cn } from "@/lib/utils"
 import { Direction, ThemeProvider } from "@/components/providers"
 import { TailwindIndicator } from "@/components/tailwind-indicator"
-
+import { Tajawal } from "next/font/google";
 import "@/styles/globals.css"
 
 import type { Metadata, Viewport } from "next"
@@ -54,6 +54,14 @@ export const metadata: Metadata = {
   manifest: `${siteConfig.url}/site.webmanifest`,
 }
 
+const font = Tajawal({
+  subsets: ["arabic"],
+  display: "block",
+  weight: ["200", "300", "400", "500", "700", "800", "900"],
+  variable: "--font-tajawal",
+});
+
+
 export const viewport: Viewport = {
   colorScheme: "dark light",
   themeColor: [
@@ -69,8 +77,9 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
-          fontMono.variable
+          // fontSans.variable,
+          // fontMono.variable,
+          font.variable
         )}
         dir="rtl"
       >
