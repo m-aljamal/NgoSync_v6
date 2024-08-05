@@ -1,10 +1,5 @@
 import Link from "next/link"
-import { GitHubLogoIcon } from "@radix-ui/react-icons"
-
-import { siteConfig } from "@/config/site"
-import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/layouts/mode-toggle"
-
 import Navigation from "./navigation"
 import { UserNav } from "./UserNav"
 
@@ -18,20 +13,10 @@ export function SiteHeader() {
           </Link>
 
           <Navigation />
-          <UserNav image="" name="MO" />
-          {/* <nav className="flex flex-1 items-center justify-start gap-1 lg:justify-end">
-            <Button variant="ghost" size="icon" className="size-8" asChild>
-              <Link
-                aria-label="GitHub repo"
-                href={siteConfig.links.github}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <GitHubLogoIcon className="size-4" aria-hidden="true" />
-              </Link>
-            </Button>
+          <div className="flex flex-1 gap-3">
+            <UserNav image="" name="MO" />
             <ModeToggle />
-          </nav> */}
+          </div>
         </div>
       </div>
     </header>
