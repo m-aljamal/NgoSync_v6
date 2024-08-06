@@ -45,7 +45,7 @@ export function TasksTable({ tasksPromise }: TasksTableProps) {
     {
       label: "Title",
       value: "title",
-      placeholder: "Filter titles...",
+      placeholder: "بحث عن عنوان",
     },
     {
       label: "Status",

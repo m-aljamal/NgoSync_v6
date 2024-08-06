@@ -32,7 +32,7 @@ export function DataTableColumnHeader<TData, TValue>({
   }
 
   return (
-    <div className={cn("flex items-center space-x-2", className)}>
+    <div className={cn("flex items-center gap-2", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -45,15 +45,15 @@ export function DataTableColumnHeader<TData, TValue>({
             }
             variant="ghost"
             size="sm"
-            className="-ml-3 h-8 data-[state=open]:bg-accent"
+            className="-mr-3 h-8 data-[state=open]:bg-accent"
           >
             <span>{title}</span>
             {column.getCanSort() && column.getIsSorted() === "desc" ? (
-              <ArrowDownIcon className="ml-2 size-4" aria-hidden="true" />
+              <ArrowDownIcon className="mr-2 size-4" aria-hidden="true" />
             ) : column.getIsSorted() === "asc" ? (
-              <ArrowUpIcon className="ml-2 size-4" aria-hidden="true" />
+              <ArrowUpIcon className="mr-2 size-4" aria-hidden="true" />
             ) : (
-              <CaretSortIcon className="ml-2 size-4" aria-hidden="true" />
+              <CaretSortIcon className="mr-2 size-4" aria-hidden="true" />
             )}
           </Button>
         </DropdownMenuTrigger>
@@ -65,7 +65,7 @@ export function DataTableColumnHeader<TData, TValue>({
                 onClick={() => column.toggleSorting(false)}
               >
                 <ArrowUpIcon
-                  className="mr-2 size-3.5 text-muted-foreground/70"
+                  className="ml-2 size-3.5 text-muted-foreground/70"
                   aria-hidden="true"
                 />
                 Asc
@@ -75,7 +75,7 @@ export function DataTableColumnHeader<TData, TValue>({
                 onClick={() => column.toggleSorting(true)}
               >
                 <ArrowDownIcon
-                  className="mr-2 size-3.5 text-muted-foreground/70"
+                  className="ml-2 size-3.5 text-muted-foreground/70"
                   aria-hidden="true"
                 />
                 Desc
@@ -91,7 +91,7 @@ export function DataTableColumnHeader<TData, TValue>({
               onClick={() => column.toggleVisibility(false)}
             >
               <EyeNoneIcon
-                className="mr-2 size-3.5 text-muted-foreground/70"
+                className="ml-2 size-3.5 text-muted-foreground/70"
                 aria-hidden="true"
               />
               Hide

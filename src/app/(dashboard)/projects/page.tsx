@@ -12,6 +12,7 @@ import { Shell } from "@/components/shell"
 import { TasksTable } from "../../_components/tasks-table"
 import { getTasks } from "../../_lib/queries"
 import { searchParamsSchema } from "../../_lib/validations"
+import { TasksTableProvider } from "@/app/_components/tasks-table-provider"
 
 export interface IndexPageProps {
   searchParams: SearchParams
@@ -29,6 +30,8 @@ export default function page({ searchParams }: IndexPageProps) {
       />
 
       <Shell className="gap-2">
+        <TasksTableProvider>
+
         <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
           <DateRangePicker
             triggerSize="sm"
@@ -53,6 +56,7 @@ export default function page({ searchParams }: IndexPageProps) {
            */}
           <TasksTable tasksPromise={tasksPromise} />
         </React.Suspense>
+            </TasksTableProvider>
       </Shell>
     </div>
   )

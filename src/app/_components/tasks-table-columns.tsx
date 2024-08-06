@@ -77,7 +77,7 @@ export function getColumns(): ColumnDef<Task>[] {
         )
 
         return (
-          <div className="flex space-x-2">
+          <div className="flex gap-2">
             {label && <Badge variant="outline">{label}</Badge>}
             <span className="max-w-[31.25rem] truncate font-medium">
               {row.getValue("title")}
@@ -103,7 +103,7 @@ export function getColumns(): ColumnDef<Task>[] {
         return (
           <div className="flex w-[6.25rem] items-center">
             <Icon
-              className="mr-2 size-4 text-muted-foreground"
+              className="ml-2 size-4 text-muted-foreground"
               aria-hidden="true"
             />
             <span className="capitalize">{status}</span>
@@ -131,7 +131,7 @@ export function getColumns(): ColumnDef<Task>[] {
         return (
           <div className="flex items-center">
             <Icon
-              className="mr-2 size-4 text-muted-foreground"
+              className="ml-2 size-4 text-muted-foreground"
               aria-hidden="true"
             />
             <span className="capitalize">{priority}</span>
