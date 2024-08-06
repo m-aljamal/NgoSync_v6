@@ -9,7 +9,7 @@ import {
   BreadcrumbSeparator,
 } from "./ui/breadcrumb"
 
-interface BreadcrumListProps {
+export interface BreadcrumListProps {
   links: { href: string; name: string }[]
 }
 

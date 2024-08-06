@@ -1,22 +1,23 @@
-import BreadcrumList from "./BreadcrumList"
+import BreadcrumList, { type BreadcrumListProps } from "./BreadcrumList"
 import { icons } from "./layouts/icons"
 
 interface HeadingProps {
   title: string
   description: string
   icon: keyof typeof icons
+  breadcrumList?: BreadcrumListProps["links"]
 }
 
-export default function Heading({ description, title, icon }: HeadingProps) {
+export default function Heading({
+  description,
+  title,
+  icon,
+  breadcrumList,
+}: HeadingProps) {
   const Component = icons[icon || "Users"]
   return (
     <div className="mb-12 space-y-3">
-      <BreadcrumList
-        links={[
-          { href: "/projects", name: "المشاريع" },
-          { href: "/w", name: "واجدو الطريق" },
-        ]}
-      />
+      {breadcrumList && <BreadcrumList links={breadcrumList} />}
       <div className="grid grid-cols-2">
         <div className="flex items-center justify-start gap-5">
           <Component className="hidden size-6 sm:flex" />

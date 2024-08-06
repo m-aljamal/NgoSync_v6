@@ -11,7 +11,15 @@ import {
   AccordionTrigger,
 } from "../ui/accordion"
 import { Button } from "../ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "../ui/sheet"
+import Logo from "./Logo"
 import { routes } from "./routes"
 
 export default function MobileNavigation() {
@@ -45,6 +53,9 @@ export default function MobileNavigation() {
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="pt-10">
+        <SheetHeader className="mb-2 items-start">
+          <SheetTitle>NgoSync</SheetTitle>
+        </SheetHeader>
         {routes.map((route) => {
           const active = isActive(route)
           return route.children?.length ? (
