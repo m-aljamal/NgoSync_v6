@@ -65,7 +65,7 @@ interface DateRangePickerProps
 export function DateRangePicker({
   dateRange,
   dayCount,
-  placeholder = "Pick a date",
+  placeholder = "أختر تاريخ",
   triggerVariant = "outline",
   triggerSize = "default",
   triggerClassName,
@@ -132,7 +132,7 @@ export function DateRangePicker({
               triggerClassName
             )}
           >
-            <CalendarIcon className="mr-2 size-4" />
+            <CalendarIcon className="ml-2 size-4" />
             {date?.from ? (
               date.to ? (
                 <>

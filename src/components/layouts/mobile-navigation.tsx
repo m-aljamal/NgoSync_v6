@@ -14,12 +14,10 @@ import { Button } from "../ui/button"
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet"
-import Logo from "./Logo"
 import { routes } from "./routes"
 
 export default function MobileNavigation() {

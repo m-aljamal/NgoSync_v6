@@ -87,8 +87,8 @@ export function DataTableSkeleton(props: DataTableSkeletonProps) {
       className={cn("w-full space-y-2.5 overflow-auto", className)}
       {...skeletonProps}
     >
-      <div className="flex w-full items-center justify-between space-x-2 overflow-auto p-1">
-        <div className="flex flex-1 items-center space-x-2">
+      <div className="flex w-full items-center justify-between gap-2 overflow-auto p-1">
+        <div className="flex flex-1 items-center gap-2">
           {searchableColumnCount > 0
             ? Array.from({ length: searchableColumnCount }).map((_, i) => (
                 <Skeleton key={i} className="h-7 w-40 lg:w-60" />

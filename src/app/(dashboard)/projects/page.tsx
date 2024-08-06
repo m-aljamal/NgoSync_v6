@@ -1,23 +1,59 @@
-import React from "react"
+"use memo"
 
+import * as React from "react"
+import type { SearchParams } from "@/types"
+
+import { Skeleton } from "@/components/ui/skeleton"
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
+import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
+import { Shell } from "@/components/shell"
 
-export default function page() {
+import { TasksTable } from "../../_components/tasks-table"
+import { getTasks } from "../../_lib/queries"
+import { searchParamsSchema } from "../../_lib/validations"
+
+export interface IndexPageProps {
+  searchParams: SearchParams
+}
+export default function page({ searchParams }: IndexPageProps) {
+  const search = searchParamsSchema.parse(searchParams)
+
+  const tasksPromise = getTasks(search)
   return (
     <div>
       <Heading
         title="المشاريع"
         description="المشاريع الخاصة بالمنظمة"
         icon="Presentation"
-        breadcrumList={[
-          { href: "/dashboard", name: "الرئيسية" },
-          { href: "/dashboard", name: "الرئيسية" },
-        ]}
       />
-      In this updated version, the Icon type is defined as
-      ForwardRefExoticComponent & RefAttributes which matches the type of the
-      components from lucide-react. This should resolve the TypeScript and
-      ESLint errors
+
+      <Shell className="gap-2">
+        <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
+          <DateRangePicker
+            triggerSize="sm"
+            triggerClassName="ml-auto w-56 sm:w-60"
+            align="end"
+          />
+        </React.Suspense>
+        <React.Suspense
+          fallback={
+            <DataTableSkeleton
+              columnCount={5}
+              searchableColumnCount={1}
+              filterableColumnCount={2}
+              cellWidths={["10rem", "40rem", "12rem", "12rem", "8rem"]}
+              shrinkZero
+            />
+          }
+        >
+          {/**
+           * Passing promises and consuming them using React.use for triggering the suspense fallback.
+           * @see https://react.dev/reference/react/use
+           */}
+          <TasksTable tasksPromise={tasksPromise} />
+        </React.Suspense>
+      </Shell>
     </div>
   )
 }

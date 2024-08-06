@@ -16,7 +16,7 @@ export default function Heading({
 }: HeadingProps) {
   const Component = icons[icon || "Users"]
   return (
-    <div className="mb-12 space-y-3">
+    <div className="  space-y-3">
       {breadcrumList && <BreadcrumList links={breadcrumList} />}
       <div className="grid grid-cols-2">
         <div className="flex items-center justify-start gap-5">
