@@ -9,6 +9,7 @@ import type { Metadata, Viewport } from "next"
 
 import { fontMono, fontSans } from "@/lib/fonts"
 import { Toaster } from "@/components/ui/toaster"
+import { Tajawal } from "next/font/google";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -61,16 +62,23 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
 }
+const font = Tajawal({
+  subsets: ["arabic"],
+  display: "block",
+  variable: "--font-tajawal",
+  weight: ["200", "300", "400", "500", "700", "800", "900"],
+});
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
-    <html lang="ar" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <head />
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
           fontSans.variable,
-          fontMono.variable
+          fontMono.variable,
+          font.variable
         )}
         dir="rtl"
       >
