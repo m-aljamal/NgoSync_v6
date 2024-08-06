@@ -6,7 +6,9 @@ export default function layout({ children }: React.PropsWithChildren) {
   return (
     <div>
       <SiteHeader />
-      {children}
+      <main className="mx-auto mt-4 max-w-screen-2xl">
+        <div className="container">{children}</div>
+      </main>
     </div>
   )
 }
