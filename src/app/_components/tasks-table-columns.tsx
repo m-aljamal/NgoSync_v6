@@ -181,9 +181,9 @@ export function getColumns(): ColumnDef<Task>[] {
                   <DotsHorizontalIcon className="size-4" aria-hidden="true" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuContent align="start" className="w-40">
                 <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
-                  Edit
+                  تعديل
                 </DropdownMenuItem>
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
@@ -223,7 +223,7 @@ export function getColumns(): ColumnDef<Task>[] {
                 <DropdownMenuItem
                   onSelect={() => setShowDeleteTaskDialog(true)}
                 >
-                  Delete
+                  حذف
                   <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
                 </DropdownMenuItem>
               </DropdownMenuContent>
