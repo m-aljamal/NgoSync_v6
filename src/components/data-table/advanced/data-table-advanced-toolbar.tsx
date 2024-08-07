@@ -87,10 +87,10 @@ export function DataTableAdvancedToolbar<TData>({
             onClick={() => setOpenFilterBuilder(!openFilterBuilder)}
           >
             <CaretSortIcon
-              className="mr-2 size-4 shrink-0"
+              className="ml-2 size-4 shrink-0"
               aria-hidden="true"
             />
-            Filter
+           تصفية
           </Button>
         ) : (
           <DataTableFilterCombobox
@@ -148,7 +148,7 @@ export function DataTableAdvancedToolbar<TData>({
               className="h-7 rounded-full"
               onClick={() => setOpenCombobox(true)}
             >
-              <PlusIcon className="mr-2 size-4 opacity-50" aria-hidden="true" />
+              <PlusIcon className="ml-2 size-4 opacity-50" aria-hidden="true" />
               Add filter
             </Button>
           </DataTableFilterCombobox>

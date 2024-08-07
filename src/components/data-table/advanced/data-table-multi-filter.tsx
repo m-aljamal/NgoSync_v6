@@ -65,7 +65,7 @@ export function DataTableMultiFilter<TData>({
           size="sm"
           className="h-7 truncate rounded-full"
         >
-          <TextAlignCenterIcon className="mr-2 size-3" aria-hidden="true" />
+          <TextAlignCenterIcon className="ml-2 size-3" aria-hidden="true" />
           {options.length} rule
         </Button>
       </PopoverTrigger>
@@ -216,7 +216,7 @@ export function MultiFilterRow<TData>({
   }, [operator?.value])
 
   return (
-    <div className="flex items-center space-x-2">
+    <div className="flex items-center gap-2">
       {i === 0 ? (
         <div>Where</div>
       ) : i === 1 ? (
@@ -333,7 +333,7 @@ export function MultiFilterRow<TData>({
               )
             }}
           >
-            <TrashIcon className="mr-2 size-4" aria-hidden="true" />
+            <TrashIcon className="ml-2 size-4" aria-hidden="true" />
             Remove
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -352,7 +352,7 @@ export function MultiFilterRow<TData>({
               ])
             }}
           >
-            <CopyIcon className="mr-2 size-4" aria-hidden="true" />
+            <CopyIcon className="ml-2 size-4" aria-hidden="true" />
             Duplicate
           </DropdownMenuItem>
         </DropdownMenuContent>

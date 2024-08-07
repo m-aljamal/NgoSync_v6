@@ -59,18 +59,18 @@ export function DataTableFilterCombobox<TData>({
             className="capitalize"
           >
             <CaretSortIcon
-              className="mr-2 size-4 shrink-0"
+              className="ml-2 size-4 shrink-0"
               aria-hidden="true"
             />
-            Filter
+            تصفية
           </Button>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-[12.5rem] p-0" align="end">
+      <PopoverContent className="w-[12.5rem] p-0" align="start">
         <Command>
-          <CommandInput placeholder="Filter by..." />
+          <CommandInput placeholder="تصفية عبر.." />
           <CommandList>
-            <CommandEmpty>No item found.</CommandEmpty>
+            <CommandEmpty>لا يوجد داتا.</CommandEmpty>
             <CommandGroup>
               {options
                 .filter(
@@ -96,11 +96,11 @@ export function DataTableFilterCombobox<TData>({
                   >
                     {option.options.length > 0 ? (
                       <ChevronDownIcon
-                        className="mr-2 size-4"
+                        className="ml-2 size-4"
                         aria-hidden="true"
                       />
                     ) : (
-                      <TextIcon className="mr-2 size-4" aria-hidden="true" />
+                      <TextIcon className="ml-2 size-4" aria-hidden="true" />
                     )}
                     {option.label}
                   </CommandItem>
@@ -124,8 +124,8 @@ export function DataTableFilterCombobox<TData>({
                   onSelect()
                 }}
               >
-                <PlusIcon className="mr-2 size-4" aria-hidden="true" />
-                Advanced filter
+                <PlusIcon className="ml-2 size-4" aria-hidden="true" />
+                بحث متقدم
               </CommandItem>
             </CommandGroup>
           </CommandList>
