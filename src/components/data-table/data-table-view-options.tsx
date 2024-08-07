@@ -29,8 +29,8 @@ export function DataTableViewOptions<TData>({
           size="sm"
           className="ml-auto hidden h-8 lg:flex"
         >
-          <MixerHorizontalIcon className="mr-2 size-4" />
-          View
+          <MixerHorizontalIcon className="ml-2 size-4" />
+          الأعمدة
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-40">

@@ -62,8 +62,8 @@ export function CreateTaskDialog() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm">
-            <PlusIcon className="mr-2 size-4" aria-hidden="true" />
-            New task
+            <PlusIcon className="ml-2 size-4" aria-hidden="true" />
+            إضافة
           </Button>
         </DialogTrigger>
         <DialogContent>
@@ -74,7 +74,7 @@ export function CreateTaskDialog() {
             </DialogDescription>
           </DialogHeader>
           <CreateTaskForm form={form} onSubmit={onSubmit}>
-            <DialogFooter className="gap-2 pt-2 sm:space-x-0">
+            <DialogFooter className="gap-2 pt-2 sm:gap-0">
               <DialogClose asChild>
                 <Button type="button" variant="outline">
                   Cancel
@@ -83,7 +83,7 @@ export function CreateTaskDialog() {
               <Button disabled={isCreatePending}>
                 {isCreatePending && (
                   <ReloadIcon
-                    className="mr-2 size-4 animate-spin"
+                    className="ml-2 size-4 animate-spin"
                     aria-hidden="true"
                   />
                 )}
@@ -99,8 +99,8 @@ export function CreateTaskDialog() {
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button variant="outline" size="sm">
-          <PlusIcon className="mr-2 size-4" aria-hidden="true" />
-          New task
+          <PlusIcon className="ml-2 size-4" aria-hidden="true" />
+         اضافة
         </Button>
       </DrawerTrigger>
 

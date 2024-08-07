@@ -38,8 +38,8 @@ export function TasksTableToolbarActions({
           })
         }
       >
-        <DownloadIcon className="mr-2 size-4" aria-hidden="true" />
-        Export
+        <DownloadIcon className="ml-2 size-4" aria-hidden="true" />
+       تصدير
       </Button>
       {/**
        * Other actions can be added here.
