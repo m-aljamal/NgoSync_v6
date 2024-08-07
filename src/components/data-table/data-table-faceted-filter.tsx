@@ -38,7 +38,7 @@ export function DataTableFacetedFilter<TData, TValue>({
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-8 border-dashed">
-          <PlusCircledIcon className="mr-2 size-4" />
+          <PlusCircledIcon className="ml-2 size-4" />
           {title}
           {selectedValues?.size > 0 && (
             <>
@@ -49,7 +49,7 @@ export function DataTableFacetedFilter<TData, TValue>({
               >
                 {selectedValues.size}
               </Badge>
-              <div className="hidden space-x-1 lg:flex">
+              <div className="hidden gap-1 lg:flex">
                 {selectedValues.size > 2 ? (
                   <Badge
                     variant="secondary"
@@ -101,7 +101,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                   >
                     <div
                       className={cn(
-                        "mr-2 flex size-4 items-center justify-center rounded-sm border border-primary",
+                        "ml-2 flex size-4 items-center justify-center rounded-sm border border-primary",
                         isSelected
                           ? "bg-primary text-primary-foreground"
                           : "opacity-50 [&_svg]:invisible"
@@ -111,14 +111,14 @@ export function DataTableFacetedFilter<TData, TValue>({
                     </div>
                     {option.icon && (
                       <option.icon
-                        className="mr-2 size-4 text-muted-foreground"
+                        className="ml-2 size-4 text-muted-foreground"
                         aria-hidden="true"
                       />
                     )}
                     <span>{option.label}</span>
                     {option.withCount &&
                       column?.getFacetedUniqueValues()?.get(option.value) && (
-                        <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">
+                        <span className="mr-auto flex size-4 items-center justify-center font-mono text-xs">
                           {column?.getFacetedUniqueValues().get(option.value)}
                         </span>
                       )}
