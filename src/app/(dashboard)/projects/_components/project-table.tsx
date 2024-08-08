@@ -1,19 +1,16 @@
 "use client"
 "use memo"
 
-import * as React from "react"
 import { projects, type Project } from "@/db/schema"
 import { type DataTableFilterField } from "@/types"
+import * as React from "react"
 
-import { useDataTable } from "@/hooks/use-data-table"
-import { DataTableAdvancedToolbar } from "@/components/data-table/advanced/data-table-advanced-toolbar"
+import { useTasksTable } from "@/app/_components/tasks-table-provider"
+import { type getProjects } from "@/app/_lib/queries/projects"
+import { getStatusIcon } from "@/app/_lib/utils"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { TasksTableFloatingBar } from "@/app/_components/tasks-table-floating-bar"
-import { useTasksTable } from "@/app/_components/tasks-table-provider"
- import { type getProjects } from "@/app/_lib/queries/projects"
-import { getPriorityIcon, getStatusIcon } from "@/app/_lib/utils"
-
+import { useDataTable } from "@/hooks/use-data-table"
 import { getColumns } from "./project-table-columns"
 import { TasksTableToolbarActions } from "./tasks-table-toolbar-actions"
 
@@ -23,7 +20,7 @@ interface TasksTableProps {
 
 export function ProjectsTable({ promise }: TasksTableProps) {
   // Feature flags for showcasing some additional features. Feel free to remove them.
-  const { featureFlags } = useTasksTable()
+  // const { featureFlags } = useTasksTable()
 
   const { data, pageCount } = React.use(promise)
 
@@ -37,7 +34,7 @@ export function ProjectsTable({ promise }: TasksTableProps) {
       placeholder: "بحث عن عنوان",
     },
     {
-      label: "Status",
+      label: "الحالة",
       value: "status",
       options: projects.status.enumValues.map((status) => ({
         label: status[0]?.toUpperCase() + status.slice(1),
@@ -54,7 +51,7 @@ export function ProjectsTable({ promise }: TasksTableProps) {
     pageCount,
     /* optional props */
     filterFields,
-    enableAdvancedFilter: featureFlags.includes("advancedFilter"),
+    // enableAdvancedFilter: featureFlags.includes("advancedFilter"),
     state: {
       sorting: [{ id: "createdAt", desc: true }],
       pagination: { pageIndex: 0, pageSize: 10 },

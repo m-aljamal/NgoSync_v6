@@ -4,6 +4,7 @@ import {
   inArray,
   isNotNull,
   isNull,
+  like,
   not,
   notLike,
   type Column,
@@ -65,6 +66,6 @@ export function filterColumn({
     case "isNotNull":
       return isNotNull(column)
     default:
-      return ilike(column, `%${filterValue}%`)
+      return like(column, `%${filterValue}%`)
   }
 }

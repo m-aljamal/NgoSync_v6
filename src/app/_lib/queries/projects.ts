@@ -2,17 +2,17 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { projects, tasks, type Task } from "@/db/schema"
+import { Project, projects, tasks, type Task } from "@/db/schema"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, gte, lte, or, sql, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
-import { type GetSearchSchema  } from "../validations"
+import { type GetSearchSchema } from "../validations"
 
 export async function getProjects(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, title, status, priority, operator, from, to } =
+  const { page, per_page, sort, name, status, priority, operator, from, to } =
     input
 
   try {
@@ -31,10 +31,10 @@ export async function getProjects(input: GetSearchSchema) {
     const toDay = to ? sql`to_date(${to}, 'yyy-mm-dd')` : undefined
 
     const expressions: (SQL<unknown> | undefined)[] = [
-      title
+      name
         ? filterColumn({
-            column: tasks.title,
-            value: title,
+            column: projects.name,
+            value: name,
           })
         : undefined,
       // Filter tasks by status
@@ -58,7 +58,8 @@ export async function getProjects(input: GetSearchSchema) {
         ? and(gte(tasks.createdAt, fromDay), lte(tasks.createdAt, toDay))
         : undefined,
     ]
-    const where: DrizzleWhere<Task> =
+
+    const where: DrizzleWhere<Project> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
 
     // Transaction is used to ensure both queries are executed in a single transaction
@@ -66,16 +67,16 @@ export async function getProjects(input: GetSearchSchema) {
       const data = await tx
         .select()
         .from(projects)
-        // .limit(per_page)
-        // .offset(offset)
-        // .where(where)
-        // .orderBy(
-        //   column && column in tasks
-        //     ? order === "asc"
-        //       ? asc(tasks[column])
-        //       : desc(tasks[column])
-        //     : desc(tasks.id)
-        // )
+        .limit(per_page)
+        .offset(offset)
+        .where(where)
+      // .orderBy(
+      //   column && column in tasks
+      //     ? order === "asc"
+      //       ? asc(tasks[column])
+      //       : desc(tasks[column])
+      //     : desc(tasks.id)
+      // )
 
       const total = await tx
         .select({
