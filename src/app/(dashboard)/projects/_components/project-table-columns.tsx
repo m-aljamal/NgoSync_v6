@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { getErrorMessage } from "@/lib/handle-error"
 import { getStatusIcon } from "@/app/_lib/utils"
+import { formatDate } from "date-fns"
 
  
 
@@ -139,13 +140,13 @@ export function getColumns(): ColumnDef<Project>[] {
     //     return Array.isArray(value) && value.includes(row.getValue(id))
     //   },
     // },
-    // {
-    //   accessorKey: "createdAt",
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader column={column} title="Created At" />
-    //   ),
-    //   // cell: ({ cell }) => formatDate(cell.getValue() as Date),
-    // },
+    {
+      accessorKey: "createdAt",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Created At" />
+      ),
+      cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
+    },
     // {
     //   id: "actions",
     //   cell: function Cell({ row }) {

@@ -11,7 +11,12 @@ import { type CreateProjectSchema } from "../validations"
 export async function createProject(input: CreateProjectSchema) {
   noStore()
   try {
-    await db.insert(projects).values(input)
+    await db
+      .insert(projects)
+      .values({ ...input
+
+        
+       })
     revalidatePath("/projects")
     return {
       error: null,
