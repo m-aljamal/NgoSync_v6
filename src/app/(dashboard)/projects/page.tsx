@@ -1,18 +1,19 @@
 "use memo"
 
-import * as React from "react"
 import type { SearchParams } from "@/types"
+import * as React from "react"
 
-import { Skeleton } from "@/components/ui/skeleton"
+import { TasksTableProvider } from "@/app/_components/tasks-table-provider"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { TasksTableProvider } from "@/app/_components/tasks-table-provider"
+import { Skeleton } from "@/components/ui/skeleton"
 
-import { TasksTable } from "../../_components/tasks-table"
 import { getTasks } from "../../_lib/queries"
 import { searchParamsSchema } from "../../_lib/validations"
+import { ProjectsTable } from "./_components/project-table"
+import { getProjects } from "@/app/_lib/queries/projects"
 
 export interface IndexPageProps {
   searchParams: SearchParams
@@ -20,7 +21,7 @@ export interface IndexPageProps {
 export default function page({ searchParams }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
-  const tasksPromise = getTasks(search)
+  const promise = getProjects(search)
   return (
     <div>
       <Heading
@@ -30,7 +31,7 @@ export default function page({ searchParams }: IndexPageProps) {
       />
 
       <Shell className="gap-2">
-        <TasksTableProvider>
+        {/* <TasksTableProvider> */}
           <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
             <DateRangePicker
               triggerSize="sm"
@@ -49,9 +50,9 @@ export default function page({ searchParams }: IndexPageProps) {
               />
             }
           >
-            <TasksTable tasksPromise={tasksPromise} />
+            <ProjectsTable promise={promise} />
           </React.Suspense>
-        </TasksTableProvider>
+        {/* </TasksTableProvider> */}
       </Shell>
     </div>
   )

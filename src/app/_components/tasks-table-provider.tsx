@@ -58,7 +58,7 @@ export function TasksTableProvider({ children }: React.PropsWithChildren) {
               >
                 <TooltipTrigger>
                   <flag.icon
-                    className="mr-2 size-3.5 shrink-0"
+                    className="ml-2 size-3.5 shrink-0"
                     aria-hidden="true"
                   />
                   {flag.label}

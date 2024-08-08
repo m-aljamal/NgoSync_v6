@@ -1,4 +1,4 @@
-import { tasks, type Task } from "@/db/schema"
+import { Project, tasks, type Task } from "@/db/schema"
 import { faker } from "@faker-js/faker"
 import {
   ArrowDownIcon,
@@ -34,7 +34,7 @@ export function generateRandomTask(): Task {
  * @param status - The status of the task.
  * @returns A React component representing the status icon.
  */
-export function getStatusIcon(status: Task["status"]) {
+export function getStatusIcon(status: Project["status"]) {
   const statusIcons = {
     canceled: CrossCircledIcon,
     done: CheckCircledIcon,

@@ -1,4 +1,4 @@
-import { tasks } from "@/db/schema"
+import { projects, tasks } from "@/db/schema"
 import * as z from "zod"
 
 export const searchParamsSchema = z.object({
@@ -6,6 +6,7 @@ export const searchParamsSchema = z.object({
   per_page: z.coerce.number().default(10),
   sort: z.string().optional(),
   title: z.string().optional(),
+  name: z.string().optional(),
   status: z.string().optional(),
   priority: z.string().optional(),
   from: z.string().optional(),
@@ -34,3 +35,14 @@ export const updateTaskSchema = z.object({
 })
 
 export type UpdateTaskSchema = z.infer<typeof updateTaskSchema>
+
+export type GetSearchSchema = z.infer<typeof searchParamsSchema>
+
+export const createProjectSchema = z.object({
+  name: z.string(),
+  nameTr: z.string(),
+  status: z.enum(projects.status.enumValues),
+  system: z.enum(projects.system.enumValues),
+})
+
+export type CreateProjectSchema = z.infer<typeof createProjectSchema>

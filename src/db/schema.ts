@@ -39,3 +39,28 @@ export const tasks = sqTable("tasks", {
 
 export type Task = typeof tasks.$inferSelect
 export type NewTask = typeof tasks.$inferInsert
+
+export const projects = sqTable("projects", {
+  id: text("id")
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+  name: text("name", { length: 128 }).notNull().unique(),
+  nameTr: text("name_tr", { length: 128 }),
+  description: text("description", { length: 128 }),
+  status: text("status", { enum: ["in-progress", "done", "canceled"] })
+    .notNull()
+    .default("in-progress"),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+  system: text("system", {
+    enum: ["school", "cultural_center", "relief", "office", "health"],
+  }).notNull(),
+})
+
+export type Project = typeof projects.$inferSelect
+export type NewProject = typeof projects.$inferInsert
