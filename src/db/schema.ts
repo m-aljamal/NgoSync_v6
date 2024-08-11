@@ -1,6 +1,6 @@
 import { sqTable } from "@/db/utils"
 import { sql } from "drizzle-orm"
-import { text } from "drizzle-orm/sqlite-core"
+import { blob, text } from "drizzle-orm/sqlite-core"
 
 import { generateId } from "@/lib/id"
 
@@ -8,8 +8,8 @@ export const tasks = sqTable("tasks", {
   id: text("id")
     .$defaultFn(() => generateId())
     .primaryKey(),
-  code: text("code", { length: 128 }).notNull().unique(),
-  title: text("title", { length: 128 }),
+  code: text("code").notNull().unique(),
+  title: text("title"),
   status: text("status", {
     length: 30,
     enum: ["todo", "in-progress", "done", "canceled"],
@@ -44,9 +44,9 @@ export const projects = sqTable("projects", {
   id: text("id")
     .$defaultFn(() => generateId())
     .primaryKey(),
-  name: text("name", { length: 128 }).notNull().unique(),
-  nameTr: text("name_tr", { length: 128 }),
-  description: text("description", { length: 128 }),
+  name: text("name").notNull().unique(),
+  nameTr: text("name_tr"),
+  description: text("description"),
   status: text("status", { enum: ["in-progress", "done", "canceled"] })
     .notNull()
     .default("in-progress"),
@@ -64,3 +64,35 @@ export const projects = sqTable("projects", {
 
 export type Project = typeof projects.$inferSelect
 export type NewProject = typeof projects.$inferInsert
+
+export const funds = sqTable("funds", {
+  id: text("id")
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+  name: text("name").notNull().unique(),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+})
+
+export const fundTransactions = sqTable("fund_transactions", {
+  id: text("id")
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+})
+
+export const projectsTransactions = sqTable("projects_transactions", {
+  id: text("id")
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+  // projectId: text("project_id").notNull(),
+  amount: blob("amount", { mode: "bigint" }).notNull(),
+  
+})
+
+export type ProjectTransaction = typeof projectsTransactions.$inferSelect
+export type NewProjectTransaction = typeof projectsTransactions.$inferInsert
