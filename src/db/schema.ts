@@ -1,6 +1,6 @@
 import { sqTable } from "@/db/utils"
 import { sql } from "drizzle-orm"
-import { blob, text } from "drizzle-orm/sqlite-core"
+import { integer, text } from "drizzle-orm/sqlite-core"
 
 import { generateId } from "@/lib/id"
 
@@ -90,8 +90,7 @@ export const projectsTransactions = sqTable("projects_transactions", {
     .$defaultFn(() => generateId())
     .primaryKey(),
   // projectId: text("project_id").notNull(),
-  amount: blob("amount", { mode: "bigint" }).notNull(),
-  
+  amount: integer("amount").notNull(),
 })
 
 export type ProjectTransaction = typeof projectsTransactions.$inferSelect
