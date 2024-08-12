@@ -1,9 +1,48 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0d33c0df-d834-4930-8285-80444f9e2550",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "b52a5ec5-a108-4d81-90ed-b04deff87220",
+  "prevId": "0d33c0df-d834-4930-8285-80444f9e2550",
   "tables": {
+    "ngosync_expenses_categories": {
+      "name": "ngosync_expenses_categories",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "CURRENT_TIMESTAMP"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "ngosync_fund_transactions": {
       "name": "ngosync_fund_transactions",
       "columns": {

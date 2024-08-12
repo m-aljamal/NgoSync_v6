@@ -9,6 +9,13 @@ function generateRandomTransaction() {
   return {
     id: generateId(),
     amount: Math.floor(Math.random() * 1000),
+    amountInUSD: Math.floor(Math.random() * 1000),
+    officialAmount: Math.floor(Math.random() * 1000),
+    proposalAmount: Math.floor(Math.random() * 1000),
+    type: "outcome",
+    description: "Lorem ipsum dolor sit amet",
+    isOfficial: false,
+    date: "2021-01-01",
   }
 }
 

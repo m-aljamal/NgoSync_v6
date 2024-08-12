@@ -91,7 +91,91 @@ export const projectsTransactions = sqTable("projects_transactions", {
     .primaryKey(),
   // projectId: text("project_id").notNull(),
   amount: integer("amount").notNull(),
+  amountInUSD: integer("amount_in_usd").notNull(),
+  officialAmount: integer("official_amount"),
+  proposalAmount: integer("proposal_amount"),
+  type: text("type", { enum: ["income", "outcome"] }).notNull(),
+  description: text("description"),
+  isOfficial: integer("is_offical", { mode: "boolean" })
+    .notNull()
+    .default(false),
+  date: text("date")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 })
 
 export type ProjectTransaction = typeof projectsTransactions.$inferSelect
 export type NewProjectTransaction = typeof projectsTransactions.$inferInsert
+
+export const expensesCategories = sqTable("expenses_categories", {
+  id: text("id")
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+  name: text("name").notNull(),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+})
+
+export type ExpensesCategory = typeof expensesCategories.$inferSelect
+export type NewExpensesCategory = typeof expensesCategories.$inferInsert
+
+export const doners = sqTable("doners", {
+  id: text("id")
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+  name: text("name").notNull(),
+  gender: text("gender", { enum: ["male", "female"] }).notNull(),
+  email: text("email"),
+  phone: text("phone"),
+  type: text("type", { enum: ["individual", "orgnization"] }).notNull(),
+  status: text("status", { enum: ["active", "inactive"] }).notNull(),
+  description: text("description"),
+  address: text("address"),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+})
+
+export type Doner = typeof doners.$inferSelect
+export type NewDoner = typeof doners.$inferInsert
+
+export const donations = sqTable("donations", {
+  id: text("id")
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+  amount: integer("amount").notNull(),
+  paymentType: text("payment_type", {
+    enum: ["cash", "debt"],
+  }).notNull(),
+  isOfficial: integer("is_offical", { mode: "boolean" })
+    .notNull()
+    .default(false),
+  receiptDescription: text("receipt_description"),
+  amountInText: text("amount_in_text"),
+  createdAt: text("created_at")
+    .notNull()
+    .default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at")
+    .notNull()
+    .default(sql`(CURRENT_TIMESTAMP)`)
+    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+})
+
+export type Donation = typeof donations.$inferSelect
+export type NewDonation = typeof donations.$inferInsert

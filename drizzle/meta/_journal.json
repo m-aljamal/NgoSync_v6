@@ -1,12 +1,33 @@
 {
-  "version": "5",
-  "dialect": "mysql",
+  "version": "7",
+  "dialect": "sqlite",
   "entries": [
     {
       "idx": 0,
       "version": "6",
-      "when": 1715957734792,
-      "tag": "0000_normal_lorna_dane",
+      "when": 1723454417815,
+      "tag": "0000_cuddly_maestro",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1723455479996,
+      "tag": "0001_overconfident_miracleman",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1723457356748,
+      "tag": "0002_lonely_black_widow",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1723457898367,
+      "tag": "0003_curly_mystique",
       "breakpoints": true
     }
   ]

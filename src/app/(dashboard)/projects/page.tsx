@@ -3,17 +3,15 @@
 import type { SearchParams } from "@/types"
 import * as React from "react"
 
-import { TasksTableProvider } from "@/app/_components/tasks-table-provider"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
 import { Skeleton } from "@/components/ui/skeleton"
 
-import { getTasks } from "../../_lib/queries"
+import { getProjects } from "@/app/_lib/queries/projects"
 import { searchParamsSchema } from "../../_lib/validations"
 import { ProjectsTable } from "./_components/project-table"
-import { getProjects } from "@/app/_lib/queries/projects"
 
 export interface IndexPageProps {
   searchParams: SearchParams
