@@ -1,8 +1,15 @@
+import React from "react"
 import { type SearchParams } from "@/types"
 
+import { Skeleton } from "@/components/ui/skeleton"
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
+import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
+import { Shell } from "@/components/shell"
 import { getexpenses } from "@/app/_lib/queries/expenses"
 import { searchParamsSchema } from "@/app/_lib/validations"
+
+import { ExpensesTable } from "./_components/expenses-table"
 
 export interface IndexPageProps {
   searchParams: SearchParams
@@ -38,7 +45,7 @@ export default function Expenses({ searchParams }: IndexPageProps) {
             />
           }
         >
-          <ProjectsTable promise={promise} />
+          <ExpensesTable promise={promise} />
         </React.Suspense>
         {/* </TasksTableProvider> */}
       </Shell>

@@ -2,14 +2,7 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import {
-  Project,
-  projects,
-  projectsTransactions,
-  ProjectTransaction,
-  tasks,
-  type Task,
-} from "@/db/schema"
+import { projectsTransactions, ProjectTransaction, tasks } from "@/db/schema"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, gte, lte, or, sql, type SQL } from "drizzle-orm"
 
@@ -31,11 +24,15 @@ export async function getexpenses(input: GetSearchSchema) {
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
       "createdAt",
       "desc",
-    ]) as [keyof Task | undefined, "asc" | "desc" | undefined]
+    ]) as [keyof ProjectTransaction | undefined, "asc" | "desc" | undefined]
 
     // Convert the date strings to date objects
     const fromDay = from ? sql`to_date(${from}, 'yyyy-mm-dd')` : undefined
     const toDay = to ? sql`to_date(${to}, 'yyy-mm-dd')` : undefined
+    console.log({
+      fromDay,
+      toDay,
+    })
 
     const expressions: (SQL<unknown> | undefined)[] = [
       amount
@@ -62,7 +59,10 @@ export async function getexpenses(input: GetSearchSchema) {
         : undefined,
       // Filter by createdAt
       fromDay && toDay
-        ? and(gte(projectsTransactions.createdAt, fromDay), lte(projectsTransactions.createdAt, toDay))
+        ? and(
+            gte(projectsTransactions.createdAt, fromDay),
+            lte(projectsTransactions.createdAt, toDay)
+          )
         : undefined,
     ]
 
@@ -72,18 +72,21 @@ export async function getexpenses(input: GetSearchSchema) {
     // Transaction is used to ensure both queries are executed in a single transaction
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
-        .select()
+        .select({
+          amount: sql<number>`${projectsTransactions.amount}/1000`,
+          createdAt: projectsTransactions.createdAt,
+        })
         .from(projectsTransactions)
         .limit(per_page)
         .offset(offset)
         .where(where)
-      // .orderBy(
-      //   column && column in tasks
-      //     ? order === "asc"
-      //       ? asc(tasks[column])
-      //       : desc(tasks[column])
-      //     : desc(tasks.id)
-      // )
+        .orderBy(
+          column && column in projectsTransactions
+            ? order === "asc"
+              ? asc(projectsTransactions[column])
+              : desc(projectsTransactions[column])
+            : desc(projectsTransactions.id)
+        )
 
       const total = await tx
         .select({
