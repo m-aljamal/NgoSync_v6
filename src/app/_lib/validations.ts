@@ -12,6 +12,7 @@ export const searchParamsSchema = z.object({
   from: z.string().optional(),
   to: z.string().optional(),
   operator: z.enum(["and", "or"]).optional(),
+  amount: z.coerce.number().optional(),
 })
 
 export const getTasksSchema = searchParamsSchema

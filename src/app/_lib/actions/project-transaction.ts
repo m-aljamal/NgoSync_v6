@@ -2,20 +2,23 @@
 
 import { db } from "@/db"
 import { projectsTransactions, type ProjectTransaction } from "@/db/schema"
+import { format } from "date-fns"
 
 import { generateId } from "@/lib/id"
 
-function generateRandomTransaction() {
+function generateRandomTransaction(): ProjectTransaction {
   return {
     id: generateId(),
-    amount: Math.floor(Math.random() * 1000),
-    amountInUSD: Math.floor(Math.random() * 1000),
-    officialAmount: Math.floor(Math.random() * 1000),
-    proposalAmount: Math.floor(Math.random() * 1000),
+    amount: Math.floor(Math.random() * 1000) * 1000,
+    amountInUSD: Math.floor(Math.random() * 1000) * 1000,
+    officialAmount: Math.floor(Math.random() * 1000) * 1000,
+    proposalAmount: Math.floor(Math.random() * 1000) * 1000,
     type: "outcome",
     description: "Lorem ipsum dolor sit amet",
     isOfficial: false,
-    date: "2021-01-01",
+    date: format(new Date(), "yyyy-MM-dd"),
+    createdAt: format(new Date(), "yyyy-MM-dd HH:mm:ss"), // Add this
+    updatedAt: format(new Date(), "yyyy-MM-dd HH:mm:ss"), // Add this
   }
 }
 
