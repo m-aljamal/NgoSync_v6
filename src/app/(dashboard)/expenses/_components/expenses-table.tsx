@@ -1,21 +1,21 @@
 "use client"
 "use memo"
 
+import * as React from "react"
 import { projects, ProjectTransaction, type Project } from "@/db/schema"
 import { type DataTableFilterField } from "@/types"
-import * as React from "react"
 
-import { useTasksTable } from "@/app/_components/tasks-table-provider"
-import { type getProjects } from "@/app/_lib/queries/projects"
-import { getStatusIcon } from "@/app/_lib/utils"
+import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { useDataTable } from "@/hooks/use-data-table"
-  
-import { getexpenses } from "@/app/_lib/queries/expenses"
+import { useTasksTable } from "@/app/_components/tasks-table-provider"
 import { TasksTableToolbarActions } from "@/app/_components/tasks-table-toolbar-actions"
-import { ExpensesTableToolbarActions } from "./expenses-table-toolbar-actions"
+import { getexpenses } from "@/app/_lib/queries/expenses"
+import { type getProjects } from "@/app/_lib/queries/projects"
+import { getStatusIcon } from "@/app/_lib/utils"
+
 import { getColumns } from "./expense-table-columns"
+import { ExpensesTableToolbarActions } from "./expenses-table-toolbar-actions"
 
 interface TableProps {
   promise: ReturnType<typeof getexpenses>
@@ -26,7 +26,7 @@ export function ExpensesTable({ promise }: TableProps) {
   // const { featureFlags } = useTasksTable()
 
   const { data, pageCount } = React.use(promise)
- 
+
   // Memoize the columns so they don't re-render on every render
   const columns = React.useMemo(() => getColumns(), [])
 
@@ -36,7 +36,6 @@ export function ExpensesTable({ promise }: TableProps) {
       value: "amount",
       placeholder: "بحث عن عنوان",
     },
-    
   ]
 
   const { table } = useDataTable({

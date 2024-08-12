@@ -26,14 +26,13 @@ export async function getexpenses(input: GetSearchSchema) {
       "desc",
     ]) as [keyof ProjectTransaction | undefined, "asc" | "desc" | undefined]
 
-    // Convert the date strings to date objects
-    // const fromDay = from ? sql`to_date(${from}, 'yyyy-mm-dd')` : undefined
-    // const toDay = to ? sql`to_date(${to}, 'yyy-mm-dd')` : undefined
+    const fromDay = from
+      ? sql`${projectsTransactions.createdAt} >= ${from}`
+      : undefined
+    const toDay = to
+      ? sql`${projectsTransactions.createdAt} <= ${to}`
+      : undefined
 
-    const fromDay = from ? sql`${projectsTransactions.createdAt} >= ${from}` : undefined
-const toDay = to ? sql`${projectsTransactions.createdAt} <= ${to}` : undefined
-
-     
     const expressions: (SQL<unknown> | undefined)[] = [
       amount
         ? filterColumn({
@@ -59,11 +58,12 @@ const toDay = to ? sql`${projectsTransactions.createdAt} <= ${to}` : undefined
         : undefined,
       // Filter by createdAt
       fromDay && toDay
-    ? and(
-        sql`${projectsTransactions.createdAt} >= ${from}`,
-        sql`${projectsTransactions.createdAt} <= ${to}`
-      )
-    : undefined,
+        ? and(
+            sql`${projectsTransactions.createdAt} >= ${from}`,
+            sql`${projectsTransactions.createdAt} <= ${to}`
+          )
+        : undefined,
+      fromDay ? fromDay : undefined,
     ]
 
     const where: DrizzleWhere<ProjectTransaction> =
@@ -73,6 +73,15 @@ const toDay = to ? sql`${projectsTransactions.createdAt} <= ${to}` : undefined
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
         .select({
+          id: projectsTransactions.id,
+          amountInUSD: projectsTransactions.amountInUSD,
+          officialAmount: projectsTransactions.officialAmount,
+          proposalAmount: projectsTransactions.proposalAmount,
+          type: projectsTransactions.type,
+          description: projectsTransactions.description,
+          isOfficial: projectsTransactions.isOfficial,
+          date: projectsTransactions.date,
+          updatedAt: projectsTransactions.updatedAt,
           amount: sql<number>`${projectsTransactions.amount}/1000`,
           createdAt: projectsTransactions.createdAt,
         })
