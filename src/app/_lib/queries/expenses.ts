@@ -27,13 +27,13 @@ export async function getexpenses(input: GetSearchSchema) {
     ]) as [keyof ProjectTransaction | undefined, "asc" | "desc" | undefined]
 
     // Convert the date strings to date objects
-    const fromDay = from ? sql`to_date(${from}, 'yyyy-mm-dd')` : undefined
-    const toDay = to ? sql`to_date(${to}, 'yyy-mm-dd')` : undefined
-    console.log({
-      fromDay,
-      toDay,
-    })
+    // const fromDay = from ? sql`to_date(${from}, 'yyyy-mm-dd')` : undefined
+    // const toDay = to ? sql`to_date(${to}, 'yyy-mm-dd')` : undefined
 
+    const fromDay = from ? sql`${projectsTransactions.createdAt} >= ${from}` : undefined
+const toDay = to ? sql`${projectsTransactions.createdAt} <= ${to}` : undefined
+
+     
     const expressions: (SQL<unknown> | undefined)[] = [
       amount
         ? filterColumn({
@@ -59,11 +59,11 @@ export async function getexpenses(input: GetSearchSchema) {
         : undefined,
       // Filter by createdAt
       fromDay && toDay
-        ? and(
-            gte(projectsTransactions.createdAt, fromDay),
-            lte(projectsTransactions.createdAt, toDay)
-          )
-        : undefined,
+    ? and(
+        sql`${projectsTransactions.createdAt} >= ${from}`,
+        sql`${projectsTransactions.createdAt} <= ${to}`
+      )
+    : undefined,
     ]
 
     const where: DrizzleWhere<ProjectTransaction> =
