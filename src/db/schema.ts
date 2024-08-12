@@ -1,6 +1,7 @@
 import { sqTable } from "@/db/utils"
-import { sql } from "drizzle-orm"
-import { integer, text } from "drizzle-orm/sqlite-core"
+import { relations, sql } from "drizzle-orm"
+import { integer, primaryKey, text } from "drizzle-orm/sqlite-core"
+import type { AdapterAccountType } from "next-auth/adapters"
 
 import { generateId } from "@/lib/id"
 
@@ -60,7 +61,26 @@ export const projects = sqTable("projects", {
   system: text("system", {
     enum: ["school", "cultural_center", "relief", "office", "health"],
   }).notNull(),
+  userId: text("user_id").notNull(),
 })
+
+export const projectRelations = relations(projects, ({ one, many }) => ({
+  // projectsTransactions: many(projectsTransactions),
+  // donations: many(donations),
+  // representative: one(representatives, {
+  //   fields: [projects.representativeId],
+  //   references: [representatives.id],
+  // }),
+  users: one(users, {
+    fields: [projects.userId],
+    references: [users.id],
+  }),
+  // proposals: many(proposals),
+  // expensesCategories: many(expensesCategories),
+  // employees: many(employees),
+  // courses: many(courses),
+  // students: many(students),
+}))
 
 export type Project = typeof projects.$inferSelect
 export type NewProject = typeof projects.$inferInsert
@@ -179,3 +199,91 @@ export const donations = sqTable("donations", {
 
 export type Donation = typeof donations.$inferSelect
 export type NewDonation = typeof donations.$inferInsert
+
+export const users = sqTable("user", {
+  id: text("id")
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  email: text("email").notNull(),
+  emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
+  image: text("image"),
+  password: text("password"),
+  role: text("userRole", { enum: ["admin", "project_manager", "viewer"] })
+    .notNull()
+    .default("viewer"),
+})
+
+export const userRelations = relations(users, ({ many }) => ({
+  projects: many(projects),
+}))
+
+export const accounts = sqTable(
+  "account",
+  {
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type").$type<AdapterAccountType>().notNull(),
+    provider: text("provider").notNull(),
+    providerAccountId: text("providerAccountId").notNull(),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: text("token_type"),
+    scope: text("scope"),
+    id_token: text("id_token"),
+    session_state: text("session_state"),
+  },
+  (account) => ({
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
+  })
+)
+
+export const sessions = sqTable("session", {
+  sessionToken: text("sessionToken").primaryKey(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
+})
+
+export const verificationTokens = sqTable(
+  "verificationToken",
+  {
+    identifier: text("identifier").notNull(),
+    token: text("token").notNull(),
+    expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
+  },
+  (verificationToken) => ({
+    compositePk: primaryKey({
+      columns: [verificationToken.identifier, verificationToken.token],
+    }),
+  })
+)
+
+export const authenticators = sqTable(
+  "authenticator",
+  {
+    credentialID: text("credentialID").notNull().unique(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    providerAccountId: text("providerAccountId").notNull(),
+    credentialPublicKey: text("credentialPublicKey").notNull(),
+    counter: integer("counter").notNull(),
+    credentialDeviceType: text("credentialDeviceType").notNull(),
+    credentialBackedUp: integer("credentialBackedUp", {
+      mode: "boolean",
+    }).notNull(),
+    transports: text("transports"),
+  },
+  (authenticator) => ({
+    compositePK: primaryKey({
+      columns: [authenticator.userId, authenticator.credentialID],
+    }),
+  })
+)
