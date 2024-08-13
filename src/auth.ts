@@ -49,7 +49,7 @@ export const {
 
       return session
     },
-    async jwt({ token, user }) {
+    async jwt({ token }) {
       if (!token.sub) return token
       const existingUser = await getUser({ id: token.sub })
       if (!existingUser) return token
