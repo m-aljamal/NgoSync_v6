@@ -41,28 +41,36 @@ export const tasks = sqTable("tasks", {
 export type Task = typeof tasks.$inferSelect
 export type NewTask = typeof tasks.$inferInsert
 
-export const projects = sqTable("projects", {
-  id: text("id")
-    .$defaultFn(() => generateId())
-    .primaryKey(),
-  name: text("name").notNull().unique(),
-  nameTr: text("name_tr"),
-  description: text("description"),
-  status: text("status", { enum: ["in-progress", "done", "canceled"] })
-    .notNull()
-    .default("in-progress"),
-  createdAt: text("created_at")
-    .notNull()
-    .default(sql`CURRENT_TIMESTAMP`),
-  updatedAt: text("updated_at")
-    .notNull()
-    .default(sql`(CURRENT_TIMESTAMP)`)
-    .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
-  system: text("system", {
-    enum: ["school", "cultural_center", "relief", "office", "health"],
-  }).notNull(),
-  userId: text("user_id").notNull(),
-})
+export const projects = sqTable(
+  "projects",
+  {
+    id: text("id")
+      .$defaultFn(() => generateId())
+      .primaryKey(),
+    name: text("name").notNull().unique(),
+    nameTr: text("name_tr"),
+    description: text("description"),
+    status: text("status", { enum: ["in-progress", "done", "canceled"] })
+      .notNull()
+      .default("in-progress"),
+    createdAt: text("created_at")
+      .notNull()
+      .default(sql`CURRENT_TIMESTAMP`),
+    updatedAt: text("updated_at")
+      .notNull()
+      .default(sql`(CURRENT_TIMESTAMP)`)
+      .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
+    system: text("system", {
+      enum: ["school", "cultural_center", "relief", "office", "health"],
+    }).notNull(),
+    userId: text("user_id").notNull(),
+  },
+  (project) => ({
+    compositePK: primaryKey({
+      columns: [project.userId],
+    }),
+  })
+)
 
 export const projectRelations = relations(projects, ({ one, many }) => ({
   // projectsTransactions: many(projectsTransactions),

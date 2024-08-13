@@ -14,13 +14,14 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import {
-  Select,
+  Select as SelectComponent,
   SelectContent,
   SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { AppSelect } from "@/components/select"
 import { type CreateProjectSchema } from "@/app/_lib/validations"
 
 interface CreateTaskFormProps
@@ -37,10 +38,7 @@ export function CreateProjectForm({
 }: CreateTaskFormProps) {
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-4"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="name"
@@ -70,11 +68,37 @@ export function CreateProjectForm({
 
         <FormField
           control={form.control}
+          name="userId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>المسؤول عن المشروع</FormLabel>
+
+              <AppSelect
+                
+                onChange={field.onChange}
+                value={field.value}
+                options={users?.map((user) => ({
+                  value: user.id.toString(),
+                  label: user.name,
+                }))}
+                placeholder="المسؤول عن المشروع"
+              />
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
           name="status"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Status</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <SelectComponent
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger className="capitalize">
                     <SelectValue placeholder="Select a status" />
@@ -93,7 +117,7 @@ export function CreateProjectForm({
                     ))}
                   </SelectGroup>
                 </SelectContent>
-              </Select>
+              </SelectComponent>
               <FormMessage />
             </FormItem>
           )}
@@ -104,7 +128,10 @@ export function CreateProjectForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>system</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <SelectComponent
+                onValueChange={field.onChange}
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger className="capitalize">
                     <SelectValue placeholder="Select a priority" />
@@ -123,7 +150,7 @@ export function CreateProjectForm({
                     ))}
                   </SelectGroup>
                 </SelectContent>
-              </Select>
+              </SelectComponent>
               <FormMessage />
             </FormItem>
           )}
