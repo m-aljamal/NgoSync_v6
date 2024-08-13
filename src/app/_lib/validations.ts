@@ -44,6 +44,7 @@ export const createProjectSchema = z.object({
   nameTr: z.string(),
   status: z.enum(projects.status.enumValues),
   system: z.enum(projects.system.enumValues),
+  userId: z.string(),
 })
 
 export type CreateProjectSchema = z.infer<typeof createProjectSchema>

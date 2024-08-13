@@ -36,6 +36,20 @@
       "when": 1723483497203,
       "tag": "0004_flawless_ghost_rider",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1723548513357,
+      "tag": "0005_amusing_may_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1723548541538,
+      "tag": "0006_greedy_ikaris",
+      "breakpoints": true
     }
   ]
 }

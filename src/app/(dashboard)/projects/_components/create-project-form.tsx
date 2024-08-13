@@ -3,6 +3,7 @@
 import * as React from "react"
 import { projects } from "@/db/schema"
 import { type UseFormReturn } from "react-hook-form"
+import useSWR from "swr"
 
 import {
   Form,
@@ -36,6 +37,18 @@ export function CreateProjectForm({
   onSubmit,
   children,
 }: CreateTaskFormProps) {
+  const fetcher = (...args) => fetch(...args).then((res) => res.json())
+
+  const { data, error, isLoading } = useSWR("/api/form-data", fetcher, {
+    refreshInterval: 500,
+  })
+
+  console.log({
+    data,
+    error,
+    isLoading,
+  })
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -74,13 +87,16 @@ export function CreateProjectForm({
               <FormLabel>المسؤول عن المشروع</FormLabel>
 
               <AppSelect
-                
                 onChange={field.onChange}
                 value={field.value}
-                options={users?.map((user) => ({
-                  value: user.id.toString(),
-                  label: user.name,
-                }))}
+                options={
+                  data &&
+                  !error &&
+                  data?.map((user) => ({
+                    value: user.id.toString(),
+                    label: user.name,
+                  }))
+                }
                 placeholder="المسؤول عن المشروع"
               />
 
