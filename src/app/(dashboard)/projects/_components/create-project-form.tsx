@@ -39,9 +39,7 @@ export function CreateProjectForm({
 }: CreateTaskFormProps) {
   const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
-  const { data, error, isLoading } = useSWR("/api/form-data", fetcher, {
-    refreshInterval: 500,
-  })
+  const { data, error, isLoading } = useSWR("/api/form-data", fetcher)
 
   console.log({
     data,
