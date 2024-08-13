@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { type users } from "@/db/schema"
+import { accounts, sessions, users, verificationTokens } from "@/db/schema"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import NextAuth, { type DefaultSession, type Session } from "next-auth"
 import { type JWT } from "next-auth/jwt"
@@ -59,7 +59,12 @@ export const {
       return token
     },
   },
-  adapter: DrizzleAdapter(db),
+  adapter: DrizzleAdapter(db, {
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens,
+  }),
   session: { strategy: "jwt" },
   ...authConfig,
 })

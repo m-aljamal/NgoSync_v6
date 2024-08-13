@@ -1,10 +1,10 @@
-import type { icons } from "./icons";
+import { users } from "@/db/schema"
 
+import type { icons } from "./icons"
 
 export interface Route {
   title: string
-  // roles?: (typeof users.$inferSelect.role)[];
-  roles?: string[];
+  roles?: (typeof users.$inferSelect.role)[]
 
   icon?: keyof typeof icons
   href?: string
@@ -13,8 +13,7 @@ export interface Route {
     href: string
     description: string
     icon?: keyof typeof icons
-      roles?: string[];
-    //   roles: (typeof users.$inferSelect.role)[];
+    roles: (typeof users.$inferSelect.role)[]
   }[]
 }
 
@@ -22,7 +21,7 @@ export const routes: Route[] = [
   {
     title: "الرئيسية",
     href: "/overview",
-    roles: ["ADMIN", "PROJECT_MANAGER"],
+    roles: ["admin", "project_manager"],
   },
   {
     title: "المشاريع",
@@ -32,7 +31,7 @@ export const routes: Route[] = [
         icon: "Presentation",
         href: "/projects",
         description: "جميع المشاريع وأنشطة المنظمة",
-        roles: ["ADMIN", "PROJECT_MANAGER"],
+        roles: ["admin", "project_manager"],
       },
 
       {
@@ -40,48 +39,48 @@ export const routes: Route[] = [
         icon: "SquareKanban",
         href: "/proposals",
         description: "جميع الدراسات المالية للمشاريع",
-        roles: ["ADMIN"],
+        roles: ["admin"],
       },
       {
         title: "التوثيق الرسمي",
         icon: "BriefcaseBusiness",
         href: "/official-documents/overview",
         description: "التوثيق الرسمي للحركات المالية",
-        roles: ["ADMIN"],
+        roles: ["admin"],
       },
       {
         title: "الموظفين",
         href: "/employees",
         icon: "Users",
         description: "جميع موظفين في المشاريع",
-        roles: ["ADMIN", "PROJECT_MANAGER"],
+        roles: ["admin", "project_manager"],
       },
       {
         title: "المستفيدين",
         href: "/beneficiaries",
         icon: "UsersRound",
         description: "جميع المستفيدين من المشاريع",
-        roles: ["ADMIN"],
+        roles: ["admin"],
       },
     ],
   },
   {
     title: "الموارد المالية",
-    roles: ["ADMIN"],
+    roles: ["admin"],
     children: [
       {
         icon: "HandCoins",
         title: "المتبرعين",
         description: "معلومات المتبرعين للمنظمة",
         href: "/doners",
-        roles: ["ADMIN"],
+        roles: ["admin"],
       },
       {
         icon: "Coins",
         title: "التبرعات",
         description: "جميع التبرعات المالية للمنظمة",
         href: "/donations",
-        roles: ["ADMIN"],
+        roles: ["admin"],
       },
     ],
   },
@@ -93,35 +92,35 @@ export const routes: Route[] = [
         title: "الصناديق",
         description: "جميع الصناديق المالية",
         href: "/funds",
-        roles: ["ADMIN"],
+        roles: ["admin"],
       },
       {
         icon: "Redo",
         title: "المصاريف",
         description: "جميع المصاريف المالية للمنظمة",
         href: "/expenses",
-        roles: ["ADMIN", "PROJECT_MANAGER"],
+        roles: ["admin", "project_manager"],
       },
       {
         icon: "BookUser",
         title: "الرواتب",
         description: "رواتب الموظفين",
         href: "/salaries",
-        roles: ["ADMIN", "PROJECT_MANAGER"],
+        roles: ["admin", "project_manager"],
       },
       {
         icon: "ClipboardList",
         title: "تصنيفات المصاريف",
         description: "جميع تصنيفات المصاريف المالية ",
         href: "/expenses-categories",
-        roles: ["ADMIN", "PROJECT_MANAGER"],
+        roles: ["admin", "project_manager"],
       },
       {
         icon: "NotepadText",
         title: "القروض",
         description: "القروض المالية للموظفين",
         href: "/loans/overview",
-        roles: ["ADMIN"],
+        roles: ["admin"],
       },
     ],
   },
@@ -133,28 +132,28 @@ export const routes: Route[] = [
         title: "حوالات المشاريع",
         description: "تحويل من صندوق الى مشروع",
         href: "/transfers-from-fund-to-project",
-        roles: ["ADMIN"],
+        roles: ["admin"],
       },
       {
         icon: "MoveDownLeft",
         title: "حوالات الصناديق",
         description: "تحويل من مشروع الى صندوق",
         href: "/transfers-from-project-to-fund",
-        roles: ["ADMIN", "PROJECT_MANAGER"],
+        roles: ["admin", "project_manager"],
       },
       {
         icon: "ArrowLeftRight",
         title: "حوالات بين المشاريع",
         description: "تحويل من مشروع الى مشروع",
         href: "/transfers-from-project-to-project",
-        roles: ["ADMIN", "PROJECT_MANAGER"],
+        roles: ["admin", "project_manager"],
       },
       {
         icon: "ArrowLeftRight",
         title: "حوالات بين الصناديق",
         description: "تحويل من صندوق الى صندوق",
         href: "/transfers-from-fund-to-fund",
-        roles: ["ADMIN"],
+        roles: ["admin"],
       },
     ],
   },
@@ -167,34 +166,34 @@ export const routes: Route[] = [
         title: "العملات",
         href: "/currencies",
         description: "جميع العملات المالية",
-        roles: ["ADMIN"],
+        roles: ["admin"],
       },
       {
         icon: "Coins",
         title: "أسعار الصرف",
         href: "/exchange-rates",
         description: "أسعار صرف العملات",
-        roles: ["ADMIN", "PROJECT_MANAGER"],
+        roles: ["admin", "project_manager"],
       },
       {
         icon: "Boxes",
         title: "بين الصناديق",
         href: "/exchange-between-funds",
         description: "صرف عملات بين الصناديق",
-        roles: ["ADMIN"],
+        roles: ["admin"],
       },
       {
         icon: "BringToFront",
         title: "بين المشاريع",
         href: "/exchange-between-projects",
         description: "صرف عملات بين المشاريع",
-        roles: ["ADMIN", "PROJECT_MANAGER"],
+        roles: ["admin", "project_manager"],
       },
     ],
   },
   {
     title: "المستخدمين",
     href: "/system-users",
-    roles: ["ADMIN"],
+    roles: ["admin"],
   },
 ]

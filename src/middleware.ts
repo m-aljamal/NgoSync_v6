@@ -15,17 +15,6 @@ export default auth((req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(API_AUTH_PREFIX)
   const isPublicRoute = PUBLIC_ROUTES.includes(nextUrl.pathname)
   const isAuthRoute = AUTH_ROUTES.includes(nextUrl.pathname)
-  console.log({
-    isAuthenticated,
-    isApiAuthRoute,
-    isPublicRoute,
-    isAuthRoute,
-    nextUrl,
-    API_AUTH_PREFIX,
-    PUBLIC_ROUTES,
-    AUTH_ROUTES,
-    DEFAULT_REDIRECT,
-  })
 
   // public auth api routes are accessible to everyone
   if (isApiAuthRoute) {
