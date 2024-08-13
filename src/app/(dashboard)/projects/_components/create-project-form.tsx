@@ -37,15 +37,19 @@ export function CreateProjectForm({
   onSubmit,
   children,
 }: CreateTaskFormProps) {
-  const fetcher = (...args) => fetch(...args).then((res) => res.json())
+  const fetcher = (...args: [RequestInfo | URL, RequestInit?]) => 
+    fetch(...args).then((res) => res.json());
 
-  const { data, error, isLoading } = useSWR("/api/form-data", fetcher)
+  const { data, error, isLoading } = useSWR<
+    Array<{ id: number; name: string }>,
+    Error
+  >(`/api/form-data/users`, fetcher);
 
   console.log({
     data,
     error,
     isLoading,
-  })
+  });
 
   return (
     <Form {...form}>
