@@ -3,6 +3,7 @@
 import * as React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { PlusIcon, ReloadIcon } from "@radix-ui/react-icons"
+import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
@@ -38,26 +39,32 @@ import { CreateProjectForm } from "./create-project-form"
 
 export function CreateProjectDialog() {
   const [open, setOpen] = React.useState(false)
-  const [isCreatePending, startCreateTransition] = React.useTransition()
+
   const isDesktop = useMediaQuery("(min-width: 640px)")
 
   const form = useForm<CreateProjectSchema>({
     resolver: zodResolver(createProjectSchema),
+    defaultValues: {
+      status: "in-progress",
+    },
+  })
+  const { executeAsync, isExecuting } = useAction(createProject, {
+    onSuccess: () => {
+      toast.success("تم إنشاء المشروع")
+    },
+    onError: ({ error }) => {
+      toast.error(error.serverError)
+    },
+    onExecute: () => {
+      toast.loading("جاري إنشاء المشروع")
+    },
   })
 
-  function onSubmit(input: CreateProjectSchema) {
-    startCreateTransition(async () => {
-      const { error } = await createProject(input)
-
-      if (error) {
-        toast.error(error)
-        return
-      }
-
-      form.reset()
-      setOpen(false)
-      toast.success("تم إنشاء المشروع")
-    })
+  async function onSubmit(input: CreateProjectSchema) {
+    await executeAsync(input)
+    form.reset()
+    setOpen(false)
+    toast.dismiss()
   }
 
   if (isDesktop)
@@ -78,8 +85,8 @@ export function CreateProjectDialog() {
           </DialogHeader>
           <CreateProjectForm form={form} onSubmit={onSubmit}>
             <DialogFooter className="gap-2 pt-2">
-              <Button disabled={isCreatePending}>
-                {isCreatePending && (
+              <Button disabled={isExecuting}>
+                {isExecuting && (
                   <ReloadIcon
                     className="ml-2 size-4 animate-spin"
                     aria-hidden="true"
@@ -119,8 +126,8 @@ export function CreateProjectDialog() {
             <DrawerClose asChild>
               <Button variant="outline"> إلغاء</Button>
             </DrawerClose>
-            <Button disabled={isCreatePending}>
-              {isCreatePending && (
+            <Button disabled={isExecuting}>
+              {isExecuting && (
                 <ReloadIcon
                   className="mr-2 size-4 animate-spin"
                   aria-hidden="true"
