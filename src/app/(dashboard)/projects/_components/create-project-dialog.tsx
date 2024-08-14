@@ -62,7 +62,7 @@ export function CreateProjectDialog() {
 
   if (isDesktop)
     return (
-      <Dialog open={open} onOpenChange={setOpen} >
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm">
             <PlusIcon className="mr-2 size-4" aria-hidden="true" />
@@ -109,25 +109,27 @@ export function CreateProjectDialog() {
 
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Create task</DrawerTitle>
+          <DrawerTitle>إضافة مشروع</DrawerTitle>
           <DrawerDescription>
-            Fill in the details below to create a new task.
+            قم بملء التفاصيل أدناه لإنشاء مشروع جديد.
           </DrawerDescription>
         </DrawerHeader>
-        <DrawerFooter className="gap-2 sm:gap-0">
-          <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
-          </DrawerClose>
-          <Button disabled={isCreatePending}>
-            {isCreatePending && (
-              <ReloadIcon
-                className="mr-2 size-4 animate-spin"
-                aria-hidden="true"
-              />
-            )}
-            Create
-          </Button>
-        </DrawerFooter>
+        <CreateProjectForm form={form} onSubmit={onSubmit}>
+          <DrawerFooter className="gap-2 sm:gap-0">
+            <DrawerClose asChild>
+              <Button variant="outline"> إلغاء</Button>
+            </DrawerClose>
+            <Button disabled={isCreatePending}>
+              {isCreatePending && (
+                <ReloadIcon
+                  className="mr-2 size-4 animate-spin"
+                  aria-hidden="true"
+                />
+              )}
+              إنشاء
+            </Button>
+          </DrawerFooter>
+        </CreateProjectForm>
       </DrawerContent>
     </Drawer>
   )
