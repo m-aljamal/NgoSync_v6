@@ -79,6 +79,7 @@ export function CreateProjectForm({
               <FormLabel>المسؤول عن المشروع</FormLabel>
 
               <AppSelect
+                isLoading={isLoading}
                 onChange={field.onChange}
                 value={field.value}
                 options={users?.map((user) => ({

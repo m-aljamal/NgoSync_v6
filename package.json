@@ -24,7 +24,9 @@
     "db:studio": "dotenv drizzle-kit studio"
   },
   "dependencies": {
+    "@auth/core": "^0.34.2",
     "@auth/drizzle-adapter": "^1.4.2",
+    "@hono/auth-js": "^1.0.10",
     "@hono/zod-validator": "^0.2.2",
     "@hookform/resolvers": "^3.4.2",
     "@libsql/client": "^0.8.0",
