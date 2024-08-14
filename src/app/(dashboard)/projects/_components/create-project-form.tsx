@@ -5,6 +5,7 @@ import { projects } from "@/db/schema"
 import { type UseFormReturn } from "react-hook-form"
 import useSWR from "swr"
 
+import { useGetUsers } from "@/hooks/use-get-users"
 import {
   Form,
   FormControl,
@@ -37,19 +38,7 @@ export function CreateProjectForm({
   onSubmit,
   children,
 }: CreateTaskFormProps) {
-  const fetcher = (...args: [RequestInfo | URL, RequestInit?]) => 
-    fetch(...args).then((res) => res.json());
-
-  const { data, error, isLoading } = useSWR<
-    Array<{ id: number; name: string }>,
-    Error
-  >(`/api/form-data/users`, fetcher);
-
-  console.log({
-    data,
-    error,
-    isLoading,
-  });
+  const { data: users, isLoading } = useGetUsers()
 
   return (
     <Form {...form}>
@@ -92,14 +81,10 @@ export function CreateProjectForm({
               <AppSelect
                 onChange={field.onChange}
                 value={field.value}
-                options={
-                  data &&
-                  !error &&
-                  data?.map((user) => ({
-                    value: user.id.toString(),
-                    label: user.name,
-                  }))
-                }
+                options={users?.map((user) => ({
+                  value: user.id.toString(),
+                  label: user.name,
+                }))}
                 placeholder="المسؤول عن المشروع"
               />
 

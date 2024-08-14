@@ -6,10 +6,11 @@ import { TailwindIndicator } from "@/components/tailwind-indicator"
 import "@/styles/globals.css"
 
 import type { Metadata, Viewport } from "next"
+import { Tajawal } from "next/font/google"
+import { QueryProvider } from "@/providers/query-provider"
 
 import { fontMono, fontSans } from "@/lib/fonts"
 import { Toaster } from "@/components/ui/toaster"
-import { Tajawal } from "next/font/google";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -67,7 +68,7 @@ const font = Tajawal({
   display: "block",
   variable: "--font-tajawal",
   weight: ["200", "300", "400", "500", "700", "800", "900"],
-});
+})
 
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
@@ -82,21 +83,23 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         )}
         dir="rtl"
       >
-        <Direction>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <div className="relative flex min-h-screen flex-col">
-              <main className="flex-1">{children}</main>
-            </div>
-            
-            <TailwindIndicator />
-          </ThemeProvider>
-        </Direction>
-        <Toaster />
+        <QueryProvider>
+          <Direction>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <div className="relative flex min-h-screen flex-col">
+                <main className="flex-1">{children}</main>
+              </div>
+
+              <TailwindIndicator />
+            </ThemeProvider>
+          </Direction>
+          <Toaster />
+        </QueryProvider>
       </body>
     </html>
   )
