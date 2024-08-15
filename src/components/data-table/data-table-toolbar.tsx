@@ -85,7 +85,7 @@ export function DataTableToolbar<TData>({
             className="h-8 px-2 lg:px-3"
             onClick={() => table.resetColumnFilters()}
           >
-            Reset
+            ازالة
             <Cross2Icon className="mr-2 size-4" aria-hidden="true" />
           </Button>
         )}

@@ -72,8 +72,8 @@ export function DeleteProjectsDialog({
         {showTrigger ? (
           <DialogTrigger asChild>
             <Button variant="outline" size="sm">
-              <TrashIcon className="mr-2 size-4" aria-hidden="true" />
-              Delete ({projects.length})
+              <TrashIcon className="ml-2 size-4" aria-hidden="true" />
+              حذف ({projects.length})
             </Button>
           </DialogTrigger>
         ) : null}

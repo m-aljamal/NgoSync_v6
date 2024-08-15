@@ -10,6 +10,10 @@ import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { useTasksTable } from "@/app/_components/tasks-table-provider"
 import { type getProjects } from "@/app/_lib/queries/projects"
+import {
+  projectStatusTranslation,
+  projectSystemTranslation,
+} from "@/app/_lib/translate"
 import { getStatusIcon } from "@/app/_lib/utils"
 
 import { getColumns } from "./project-table-columns"
@@ -38,7 +42,7 @@ export function ProjectsTable({ promise }: TasksTableProps) {
       label: "الحالة",
       value: "status",
       options: projects.status.enumValues.map((status) => ({
-        label: status[0]?.toUpperCase() + status.slice(1),
+        label: projectStatusTranslation[status],
         value: status,
         icon: getStatusIcon(status),
         withCount: true,
@@ -48,7 +52,7 @@ export function ProjectsTable({ promise }: TasksTableProps) {
       label: "النظام",
       value: "system",
       options: projects.system.enumValues.map((system) => ({
-        label: system[0]?.toUpperCase() + system.slice(1),
+        label: projectSystemTranslation[system],
         value: system,
         withCount: true,
       })),

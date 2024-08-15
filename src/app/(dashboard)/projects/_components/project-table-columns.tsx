@@ -30,8 +30,9 @@ import {
   projectSystemTranslation,
 } from "@/app/_lib/translate"
 import { getStatusIcon } from "@/app/_lib/utils"
-import { UpdateProjectSheet } from "./update-project-sheet"
+
 import { DeleteProjectsDialog } from "./delete-project-dialog"
+import { UpdateProjectSheet } from "./update-project-sheet"
 
 export function getColumns(): ColumnDef<Project>[] {
   return [
@@ -64,7 +65,11 @@ export function getColumns(): ColumnDef<Project>[] {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="الاسم" />
       ),
-      cell: ({ row }) => <div className="w-20">{row.getValue("name")}</div>,
+      cell: ({ row }) => (
+        <div className="max-w-[31.25rem] truncate font-medium">
+          {row.getValue("name")}
+        </div>
+      ),
       enableSorting: false,
       enableHiding: false,
     },
@@ -73,13 +78,13 @@ export function getColumns(): ColumnDef<Project>[] {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Adi" />
       ),
-      cell: ({ row }) => <div className="w-20">{row.getValue("nameTr")}</div>,
+      cell: ({ row }) => <div>{row.getValue("nameTr")}</div>,
     },
 
     {
       accessorKey: "status",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Status" />
+        <DataTableColumnHeader column={column} title="الحالة" />
       ),
       cell: ({ row }) => {
         const status = projects.status.enumValues.find(
@@ -128,16 +133,15 @@ export function getColumns(): ColumnDef<Project>[] {
     },
 
     {
-      accessorKey: "تاريخ الانشاء",
+      accessorKey: "created_at",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Created At" />
+        <DataTableColumnHeader column={column} title="تاريخ الانشاء" />
       ),
       cell: ({ cell }) => formatDate(cell.row.original.createdAt, "dd-MM-yyyy"),
     },
     {
       id: "actions",
       cell: function Cell({ row }) {
-        const [isUpdatePending, startUpdateTransition] = React.useTransition()
         const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
           React.useState(false)
         const [showDeleteTaskDialog, setShowDeleteTaskDialog] =

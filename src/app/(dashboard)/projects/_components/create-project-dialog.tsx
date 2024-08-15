@@ -48,7 +48,7 @@ export function CreateProjectDialog() {
       status: "in-progress",
     },
   })
-  
+
   const { executeAsync, isExecuting } = useAction(createProject, {
     onSuccess: () => {
       toast.success("تم إنشاء المشروع")
@@ -73,7 +73,7 @@ export function CreateProjectDialog() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant="outline" size="sm">
-            <PlusIcon className="mr-2 size-4" aria-hidden="true" />
+            <PlusIcon className="ml-2 size-4" aria-hidden="true" />
             إضافة
           </Button>
         </DialogTrigger>
