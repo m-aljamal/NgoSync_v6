@@ -59,6 +59,7 @@ export const AppSelect = ({
         />
       ) : (
         <Select
+        menuPlacement="auto"
           maxMenuHeight={150}
           placeholder={placeholder}
           className="h-10 text-sm"
