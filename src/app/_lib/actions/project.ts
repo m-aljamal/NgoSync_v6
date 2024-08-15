@@ -57,3 +57,12 @@ export const updateProject = actionClient
       revalidatePath("/projects")
     }
   )
+
+
+export const deleteProject = actionClient
+  .schema()
+  .action(async ({ parsedInput: { id } }) => {
+    noStore()
+    await db.delete(projects).where(eq(projects.id, id))
+    revalidatePath("/projects")
+  })
