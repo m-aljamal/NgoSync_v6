@@ -27,19 +27,21 @@ interface CreateTaskFormProps
   children: React.ReactNode
   form: UseFormReturn<CreateProjectSchema>
   onSubmit: (data: CreateProjectSchema) => void
+  isUpdate?: boolean
 }
 
 export function CreateProjectForm({
   form,
   onSubmit,
   children,
+  isUpdate,
 }: CreateTaskFormProps) {
   const { data: users, isLoading } = useGetUsers()
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup>
+        <InputGroup isUpdate={isUpdate}>
           <FormField
             control={form.control}
             name="name"

@@ -30,6 +30,7 @@ import {
   projectSystemTranslation,
 } from "@/app/_lib/translate"
 import { getStatusIcon } from "@/app/_lib/utils"
+import { UpdateProjectSheet } from "./update-project-sheet"
 
 export function getColumns(): ColumnDef<Project>[] {
   return [
@@ -132,90 +133,57 @@ export function getColumns(): ColumnDef<Project>[] {
       ),
       cell: ({ cell }) => formatDate(cell.row.original.createdAt, "dd-MM-yyyy"),
     },
-    // {
-    //   id: "actions",
-    //   cell: function Cell({ row }) {
-    //     const [isUpdatePending, startUpdateTransition] = React.useTransition()
-    //     const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
-    //       React.useState(false)
-    //     const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
-    //       React.useState(false)
+    {
+      id: "actions",
+      cell: function Cell({ row }) {
+        const [isUpdatePending, startUpdateTransition] = React.useTransition()
+        const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
+          React.useState(false)
+        const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
+          React.useState(false)
 
-    //     return (
-    //       <>
-    //         <UpdateTaskSheet
-    //           open={showUpdateTaskSheet}
-    //           onOpenChange={setShowUpdateTaskSheet}
-    //           task={row.original}
-    //         />
-    //         <DeleteTasksDialog
-    //           open={showDeleteTaskDialog}
-    //           onOpenChange={setShowDeleteTaskDialog}
-    //           tasks={[row.original]}
-    //           showTrigger={false}
-    //           onSuccess={() => row.toggleSelected(false)}
-    //         />
-    //         <DropdownMenu>
-    //           <DropdownMenuTrigger asChild>
-    //             <Button
-    //               aria-label="Open menu"
-    //               variant="ghost"
-    //               className="flex size-8 p-0 data-[state=open]:bg-muted"
-    //             >
-    //               <DotsHorizontalIcon className="size-4" aria-hidden="true" />
-    //             </Button>
-    //           </DropdownMenuTrigger>
-    //           <DropdownMenuContent align="start" className="w-40">
-    //             <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
-    //               تعديل
-    //             </DropdownMenuItem>
-    //             <DropdownMenuSub>
-    //               <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-    //               <DropdownMenuSubContent>
-    //                 <DropdownMenuRadioGroup
-    //                   value={row.original.label}
-    //                   onValueChange={(value) => {
-    //                     startUpdateTransition(() => {
-    //                       toast.promise(
-    //                         updateTask({
-    //                           id: row.original.id,
-    //                           label: value as Task["label"],
-    //                         }),
-    //                         {
-    //                           loading: "Updating...",
-    //                           success: "Label updated",
-    //                           error: (err) => getErrorMessage(err),
-    //                         }
-    //                       )
-    //                     })
-    //                   }}
-    //                 >
-    //                   {tasks.label.enumValues.map((label) => (
-    //                     <DropdownMenuRadioItem
-    //                       key={label}
-    //                       value={label}
-    //                       className="capitalize"
-    //                       disabled={isUpdatePending}
-    //                     >
-    //                       {label}
-    //                     </DropdownMenuRadioItem>
-    //                   ))}
-    //                 </DropdownMenuRadioGroup>
-    //               </DropdownMenuSubContent>
-    //             </DropdownMenuSub>
-    //             <DropdownMenuSeparator />
-    //             <DropdownMenuItem
-    //               onSelect={() => setShowDeleteTaskDialog(true)}
-    //             >
-    //               حذف
-    //               <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-    //             </DropdownMenuItem>
-    //           </DropdownMenuContent>
-    //         </DropdownMenu>
-    //       </>
-    //     )
-    //   },
-    //   size: 40,
-    // },
+        return (
+          <>
+            <UpdateProjectSheet
+              open={showUpdateTaskSheet}
+              onOpenChange={setShowUpdateTaskSheet}
+              project={row.original}
+            />
+            {/* <DeleteTasksDialog
+              open={showDeleteTaskDialog}
+              onOpenChange={setShowDeleteTaskDialog}
+              tasks={[row.original]}
+              showTrigger={false}
+              onSuccess={() => row.toggleSelected(false)}
+            /> */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  aria-label="Open menu"
+                  variant="ghost"
+                  className="flex size-8 p-0 data-[state=open]:bg-muted"
+                >
+                  <DotsHorizontalIcon className="size-4" aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
+                  تعديل
+                </DropdownMenuItem>
+
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onSelect={() => setShowDeleteTaskDialog(true)}
+                >
+                  حذف
+                  <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
+        )
+      },
+      size: 40,
+    },
   ]
 }
