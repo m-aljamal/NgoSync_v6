@@ -20,6 +20,7 @@ export default function page({ searchParams }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
   const promise = getProjects(search)
+  
   return (
     <div>
       <Heading
