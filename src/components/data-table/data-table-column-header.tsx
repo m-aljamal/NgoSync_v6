@@ -32,7 +32,7 @@ export function DataTableColumnHeader<TData, TValue>({
   }
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={cn("flex items-center gap-x-2", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -68,7 +68,7 @@ export function DataTableColumnHeader<TData, TValue>({
                   className="ml-2 size-3.5 text-muted-foreground/70"
                   aria-hidden="true"
                 />
-                Asc
+                تصاعدي
               </DropdownMenuItem>
               <DropdownMenuItem
                 aria-label="Sort descending"
@@ -78,7 +78,7 @@ export function DataTableColumnHeader<TData, TValue>({
                   className="ml-2 size-3.5 text-muted-foreground/70"
                   aria-hidden="true"
                 />
-                Desc
+                تنازلي
               </DropdownMenuItem>
             </>
           )}
@@ -94,7 +94,7 @@ export function DataTableColumnHeader<TData, TValue>({
                 className="ml-2 size-3.5 text-muted-foreground/70"
                 aria-hidden="true"
               />
-              Hide
+              إخفاء
             </DropdownMenuItem>
           )}
         </DropdownMenuContent>

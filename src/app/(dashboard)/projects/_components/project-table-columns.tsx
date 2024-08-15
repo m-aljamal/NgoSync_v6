@@ -1,12 +1,13 @@
 "use client"
 
+import * as React from "react"
 import { Project, projects, tasks, type Task } from "@/db/schema"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
-import * as React from "react"
+import { formatDate } from "date-fns"
 import { toast } from "sonner"
 
-import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
+import { getErrorMessage } from "@/lib/handle-error"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -23,11 +24,12 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { getErrorMessage } from "@/lib/handle-error"
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
+import {
+  projectStatusTranslation,
+  projectSystemTranslation,
+} from "@/app/_lib/translate"
 import { getStatusIcon } from "@/app/_lib/utils"
-import { formatDate } from "date-fns"
-
- 
 
 export function getColumns(): ColumnDef<Project>[] {
   return [
@@ -60,30 +62,18 @@ export function getColumns(): ColumnDef<Project>[] {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="الاسم" />
       ),
-      // cell: ({ row }) => <div className="w-20">{row.getValue("code")}</div>,
-      // enableSorting: false,
-      // enableHiding: false,
+      cell: ({ row }) => <div className="w-20">{row.getValue("name")}</div>,
+      enableSorting: false,
+      enableHiding: false,
     },
     {
       accessorKey: "nameTr",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Adi" />
       ),
-      // cell: ({ row }) => {
-      //   const label = tasks.label.enumValues.find(
-      //     (label) => label === row.original.label
-      //   )
-
-      //   return (
-      //     <div className="flex gap-2">
-      //       {label && <Badge variant="outline">{label}</Badge>}
-      //       <span className="max-w-[31.25rem] truncate font-medium">
-      //         {row.getValue("title")}
-      //       </span>
-      //     </div>
-      //   )
-      // },
+      cell: ({ row }) => <div className="w-20">{row.getValue("nameTr")}</div>,
     },
+
     {
       accessorKey: "status",
       header: ({ column }) => (
@@ -104,7 +94,7 @@ export function getColumns(): ColumnDef<Project>[] {
               className="ml-2 size-4 text-muted-foreground"
               aria-hidden="true"
             />
-            <span className="capitalize">{status}</span>
+            <span>{projectStatusTranslation[status]}</span>
           </div>
         )
       },
@@ -112,40 +102,35 @@ export function getColumns(): ColumnDef<Project>[] {
         return Array.isArray(value) && value.includes(row.getValue(id))
       },
     },
-    // {
-    //   accessorKey: "priority",
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader column={column} title="Priority" />
-    //   ),
-    //   cell: ({ row }) => {
-    //     const priority = tasks.priority.enumValues.find(
-    //       (priority) => priority === row.original.priority
-    //     )
-
-    //     if (!priority) return null
-
-    //     const Icon = getPriorityIcon(priority)
-
-    //     return (
-    //       <div className="flex items-center">
-    //         <Icon
-    //           className="ml-2 size-4 text-muted-foreground"
-    //           aria-hidden="true"
-    //         />
-    //         <span className="capitalize">{priority}</span>
-    //       </div>
-    //     )
-    //   },
-    //   filterFn: (row, id, value) => {
-    //     return Array.isArray(value) && value.includes(row.getValue(id))
-    //   },
-    // },
     {
-      accessorKey: "createdAt",
+      accessorKey: "system",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="النظام" />
+      ),
+      cell: ({ row }) => {
+        const system = projects.system.enumValues.find(
+          (status) => status === row.original.system
+        )
+
+        if (!system) return null
+
+        return (
+          <div className="flex w-[6.25rem] items-center">
+            <span>{projectSystemTranslation[system]}</span>
+          </div>
+        )
+      },
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
+    },
+
+    {
+      accessorKey: "تاريخ الانشاء",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Created At" />
       ),
-      cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
+      cell: ({ cell }) => formatDate(cell.row.original.createdAt, "dd-MM-yyyy"),
     },
     // {
     //   id: "actions",

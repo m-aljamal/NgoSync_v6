@@ -37,6 +37,8 @@ export const AppSelect = ({
     <>
       {creatable ? (
         <CreateableSelect
+          menuPlacement="auto"
+          maxMenuHeight={150}
           placeholder={placeholder}
           className="h-10 text-sm"
           styles={{
@@ -59,7 +61,7 @@ export const AppSelect = ({
         />
       ) : (
         <Select
-        menuPlacement="auto"
+          menuPlacement="auto"
           maxMenuHeight={150}
           placeholder={placeholder}
           className="h-10 text-sm"
