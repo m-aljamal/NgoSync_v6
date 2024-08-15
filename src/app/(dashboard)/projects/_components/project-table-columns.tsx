@@ -31,6 +31,7 @@ import {
 } from "@/app/_lib/translate"
 import { getStatusIcon } from "@/app/_lib/utils"
 import { UpdateProjectSheet } from "./update-project-sheet"
+import { DeleteProjectsDialog } from "./delete-project-dialog"
 
 export function getColumns(): ColumnDef<Project>[] {
   return [
@@ -149,13 +150,13 @@ export function getColumns(): ColumnDef<Project>[] {
               onOpenChange={setShowUpdateTaskSheet}
               project={row.original}
             />
-            {/* <DeleteTasksDialog
+            <DeleteProjectsDialog
               open={showDeleteTaskDialog}
               onOpenChange={setShowDeleteTaskDialog}
-              tasks={[row.original]}
+              projects={[row.original]}
               showTrigger={false}
               onSuccess={() => row.toggleSelected(false)}
-            /> */}
+            />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button

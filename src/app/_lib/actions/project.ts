@@ -3,11 +3,15 @@
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
 import { projects } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { actionClient } from "../safe-action"
-import { createProjectSchema } from "../validations"
+import {
+  createProjectSchema,
+  deleteArraySchema,
+  deleteSchema,
+} from "../validations"
 
 export const createProject = actionClient
   .schema(createProjectSchema, {
@@ -40,8 +44,8 @@ export const updateProject = actionClient
         system,
         userId,
         id,
-      });
-      
+      })
+
       noStore()
       if (!id) throw new Error("id is required")
       await db
@@ -58,11 +62,29 @@ export const updateProject = actionClient
     }
   )
 
-
 export const deleteProject = actionClient
-  .schema()
+  .schema(deleteSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
   .action(async ({ parsedInput: { id } }) => {
+    console.log({ id });
+    console.log("deleteProject");
+    
+    
     noStore()
+    if (!id) throw new Error("id is required")
     await db.delete(projects).where(eq(projects.id, id))
+    revalidatePath("/projects")
+  })
+
+export const deleteProjects = actionClient
+  .schema(deleteArraySchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { ids } }) => {
+    noStore()
+    await db.delete(projects).where(inArray(projects.id, ids))
     revalidatePath("/projects")
   })

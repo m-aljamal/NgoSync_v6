@@ -49,7 +49,15 @@ export const createProjectSchema = z.object({
   userId: z.string(),
   id: z.string().optional(),
 })
-
- 
-
 export type CreateProjectSchema = z.infer<typeof createProjectSchema>
+
+export const deleteSchema = z.object({
+  id: z.string(),
+})
+export type DeleteSchema = z.infer<typeof deleteSchema>
+
+export const deleteArraySchema = z.object({
+  ids: z.array(z.string()),
+})
+
+export type DeleteArraySchema = z.infer<typeof deleteArraySchema>

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { CreateTaskDialog } from "@/app/_components/create-task-dialog"
 import { DeleteTasksDialog } from "@/app/_components/delete-tasks-dialog"
 import { CreateProjectDialog } from "./create-project-dialog"
+import { DeleteProjectsDialog } from "./delete-project-dialog"
 
 interface TasksTableToolbarActionsProps {
   table: Table<Project>
@@ -19,14 +20,14 @@ export function TasksTableToolbarActions({
 }: TasksTableToolbarActionsProps) {
   return (
     <div className="flex items-center gap-2">
-      {/* {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-        <DeleteTasksDialog
-          tasks={table
+      {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+        <DeleteProjectsDialog
+          projects={table
             .getFilteredSelectedRowModel()
             .rows.map((row) => row.original)}
           onSuccess={() => table.toggleAllRowsSelected(false)}
         />
-      ) : null} */}
+      ) : null}
       <CreateProjectDialog />
       <Button
         variant="outline"

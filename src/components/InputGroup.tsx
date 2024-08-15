@@ -8,7 +8,7 @@ export default function InputGroup({
   isUpdate
 }: {
   children: React.ReactNode
-  isUpdate: boolean
+  isUpdate?: boolean
 }) {
   const isDesktop = useMediaQuery("(min-width: 640px)")
 
