@@ -23,9 +23,7 @@ export function ProjectsTable({ promise }: TasksTableProps) {
   // const { featureFlags } = useTasksTable()
 
   const { data, pageCount } = React.use(promise)
-  console.log({
-    data
-  });
+   
   
 
   // Memoize the columns so they don't re-render on every render

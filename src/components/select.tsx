@@ -59,6 +59,7 @@ export const AppSelect = ({
         />
       ) : (
         <Select
+          maxMenuHeight={50}
           placeholder={placeholder}
           className="h-10 text-sm"
           styles={{
