@@ -4,7 +4,7 @@ import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import { projectsTransactions, ProjectTransaction, tasks } from "@/db/schema"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, gte, lte, or, sql, type SQL } from "drizzle-orm"
+import { and, asc, count, desc, or, sql, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 

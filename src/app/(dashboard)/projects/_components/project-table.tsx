@@ -1,16 +1,17 @@
 "use client"
 "use memo"
 
+import * as React from "react"
 import { projects, type Project } from "@/db/schema"
 import { type DataTableFilterField } from "@/types"
-import * as React from "react"
 
+import { useDataTable } from "@/hooks/use-data-table"
+import { DataTable } from "@/components/data-table/data-table"
+import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { useTasksTable } from "@/app/_components/tasks-table-provider"
 import { type getProjects } from "@/app/_lib/queries/projects"
 import { getStatusIcon } from "@/app/_lib/utils"
-import { DataTable } from "@/components/data-table/data-table"
-import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { useDataTable } from "@/hooks/use-data-table"
+
 import { getColumns } from "./project-table-columns"
 import { TasksTableToolbarActions } from "./tasks-table-toolbar-actions"
 
@@ -23,8 +24,6 @@ export function ProjectsTable({ promise }: TasksTableProps) {
   // const { featureFlags } = useTasksTable()
 
   const { data, pageCount } = React.use(promise)
-   
-  
 
   // Memoize the columns so they don't re-render on every render
   const columns = React.useMemo(() => getColumns(), [])
@@ -42,6 +41,15 @@ export function ProjectsTable({ promise }: TasksTableProps) {
         label: status[0]?.toUpperCase() + status.slice(1),
         value: status,
         icon: getStatusIcon(status),
+        withCount: true,
+      })),
+    },
+    {
+      label: "النظام",
+      value: "system",
+      options: projects.system.enumValues.map((system) => ({
+        label: system[0]?.toUpperCase() + system.slice(1),
+        value: system,
         withCount: true,
       })),
     },

@@ -9,6 +9,7 @@ export const searchParamsSchema = z.object({
   name: z.string().optional(),
   status: z.string().optional(),
   priority: z.string().optional(),
+  system: z.string().optional(),
   from: z.string().optional(),
   to: z.string().optional(),
   operator: z.enum(["and", "or"]).optional(),
@@ -33,6 +34,7 @@ export const updateTaskSchema = z.object({
   label: z.enum(tasks.label.enumValues).optional(),
   status: z.enum(tasks.status.enumValues).optional(),
   priority: z.enum(tasks.priority.enumValues).optional(),
+  system: z.enum(projects.system.enumValues).optional(),
 })
 
 export type UpdateTaskSchema = z.infer<typeof updateTaskSchema>

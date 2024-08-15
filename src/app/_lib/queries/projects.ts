@@ -2,9 +2,9 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { Project, projects, tasks, type Task } from "@/db/schema"
+import { projects, type Project } from "@/db/schema"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, gte, lte, or, sql, type SQL } from "drizzle-orm"
+import { and, asc, count, desc, or, sql, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -12,7 +12,7 @@ import { type GetSearchSchema } from "../validations"
 
 export async function getProjects(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, name, status, priority, operator, from, to } =
+  const { page, per_page, sort, name, status, operator, from, to, system } =
     input
 
   try {
@@ -24,11 +24,11 @@ export async function getProjects(input: GetSearchSchema) {
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
       "createdAt",
       "desc",
-    ]) as [keyof Task | undefined, "asc" | "desc" | undefined]
+    ]) as [keyof Project | undefined, "asc" | "desc" | undefined]
 
     // Convert the date strings to date objects
-    const fromDay = from ? sql`to_date(${from}, 'yyyy-mm-dd')` : undefined
-    const toDay = to ? sql`to_date(${to}, 'yyy-mm-dd')` : undefined
+    const fromDay = from ? sql`${projects.createdAt} >= ${from}` : undefined
+    const toDay = to ? sql`${projects.createdAt} <= ${to}` : undefined
 
     const expressions: (SQL<unknown> | undefined)[] = [
       name
@@ -40,22 +40,25 @@ export async function getProjects(input: GetSearchSchema) {
       // Filter tasks by status
       !!status
         ? filterColumn({
-            column: tasks.status,
+            column: projects.status,
             value: status,
             isSelectable: true,
           })
         : undefined,
-      // Filter tasks by priority
-      !!priority
+      !!system
         ? filterColumn({
-            column: tasks.priority,
-            value: priority,
+            column: projects.system,
+            value: system,
             isSelectable: true,
           })
         : undefined,
+
       // Filter by createdAt
       fromDay && toDay
-        ? and(gte(tasks.createdAt, fromDay), lte(tasks.createdAt, toDay))
+        ? and(
+            sql`${projects.createdAt} >= ${from}`,
+            sql`${projects.createdAt} <= ${to}`
+          )
         : undefined,
     ]
 
@@ -70,13 +73,13 @@ export async function getProjects(input: GetSearchSchema) {
         .limit(per_page)
         .offset(offset)
         .where(where)
-      // .orderBy(
-      //   column && column in tasks
-      //     ? order === "asc"
-      //       ? asc(tasks[column])
-      //       : desc(tasks[column])
-      //     : desc(tasks.id)
-      // )
+        .orderBy(
+          column && column in projects
+            ? order === "asc"
+              ? asc(projects[column])
+              : desc(projects[column])
+            : desc(projects.id)
+        )
 
       const total = await tx
         .select({
