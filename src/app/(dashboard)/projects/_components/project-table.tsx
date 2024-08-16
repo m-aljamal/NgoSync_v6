@@ -8,7 +8,6 @@ import { type DataTableFilterField } from "@/types"
 import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { useTasksTable } from "@/app/_components/tasks-table-provider"
 import { type getProjects } from "@/app/_lib/queries/projects"
 import {
   projectStatusTranslation,
@@ -24,12 +23,8 @@ interface TasksTableProps {
 }
 
 export function ProjectsTable({ promise }: TasksTableProps) {
-  // Feature flags for showcasing some additional features. Feel free to remove them.
-  // const { featureFlags } = useTasksTable()
-
   const { data, pageCount } = React.use(promise)
 
-  // Memoize the columns so they don't re-render on every render
   const columns = React.useMemo(() => getColumns(), [])
 
   const filterFields: DataTableFilterField<Project>[] = [
@@ -63,15 +58,12 @@ export function ProjectsTable({ promise }: TasksTableProps) {
     data,
     columns,
     pageCount,
-    /* optional props */
     filterFields,
-    // enableAdvancedFilter: featureFlags.includes("advancedFilter"),
     state: {
       sorting: [{ id: "createdAt", desc: true }],
       pagination: { pageIndex: 0, pageSize: 10 },
       columnPinning: { right: ["actions"] },
     },
-    /* */
   })
 
   return (

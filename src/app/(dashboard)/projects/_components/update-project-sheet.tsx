@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Project, tasks, type Task } from "@/db/schema"
+import { type Project } from "@/db/schema"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ReloadIcon } from "@radix-ui/react-icons"
 import { useAction } from "next-safe-action/hooks"
@@ -9,22 +9,6 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import {
   Sheet,
   SheetClose,
@@ -34,17 +18,13 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { Textarea } from "@/components/ui/textarea"
-import { createProject, updateProject } from "@/app/_lib/actions/project"
+import { updateProject } from "@/app/_lib/actions/project"
 import {
   createProjectSchema,
-  CreateProjectSchema,
+  type CreateProjectSchema,
 } from "@/app/_lib/validations"
 
-import { CreateProjectForm } from "./create-project-form"
-
-// import { updateTask } from "../_lib/actions"
-// import { updateTaskSchema, type UpdateTaskSchema } from "../_lib/validations"
+import { ProjectForm } from "./project-form"
 
 interface UpdateProjectSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
@@ -55,18 +35,6 @@ export function UpdateProjectSheet({
   project,
   ...props
 }: UpdateProjectSheetProps) {
-  const [isUpdatePending, startUpdateTransition] = React.useTransition()
-
-  // const form = useForm<UpdateTaskSchema>({
-  //   resolver: zodResolver(updateTaskSchema),
-  //   defaultValues: {
-  //     title: task.title ?? "",
-  //     label: task.label,
-  //     status: task.status,
-  //     priority: task.priority,
-  //   },
-  // })
-
   const form = useForm<CreateProjectSchema>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
@@ -117,7 +85,7 @@ export function UpdateProjectSheet({
             عدل معلومات المشروع واحفظ التغييرات
           </SheetDescription>
         </SheetHeader>
-        <CreateProjectForm form={form} onSubmit={onSubmit} isUpdate>
+        <ProjectForm form={form} onSubmit={onSubmit} isUpdate>
           <SheetFooter className="gap-2 pt-2">
             <Button disabled={isExecuting}>
               {isExecuting && (
@@ -134,146 +102,7 @@ export function UpdateProjectSheet({
               </Button>
             </SheetClose>
           </SheetFooter>
-        </CreateProjectForm>
-        {/* <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="flex flex-col gap-4"
-          >
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Title</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Do a kickflip"
-                      className="resize-none"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="label"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Label</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="capitalize">
-                        <SelectValue placeholder="Select a label" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectGroup>
-                        {tasks.label.enumValues.map((item) => (
-                          <SelectItem
-                            key={item}
-                            value={item}
-                            className="capitalize"
-                          >
-                            {item}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="capitalize">
-                        <SelectValue placeholder="Select a status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectGroup>
-                        {tasks.status.enumValues.map((item) => (
-                          <SelectItem
-                            key={item}
-                            value={item}
-                            className="capitalize"
-                          >
-                            {item}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="priority"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Priority</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="capitalize">
-                        <SelectValue placeholder="Select a priority" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectGroup>
-                        {tasks.priority.enumValues.map((item) => (
-                          <SelectItem
-                            key={item}
-                            value={item}
-                            className="capitalize"
-                          >
-                            {item}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <SheetFooter className="gap-2 pt-2 sm:space-x-0">
-              <SheetClose asChild>
-                <Button type="button" variant="outline">
-                  Cancel
-                </Button>
-              </SheetClose>
-              <Button disabled={isUpdatePending}>
-                {isUpdatePending && (
-                  <ReloadIcon
-                    className="mr-2 size-4 animate-spin"
-                    aria-hidden="true"
-                  />
-                )}
-                Save
-              </Button>
-            </SheetFooter>
-          </form>
-        </Form> */}
+        </ProjectForm>
       </SheetContent>
     </Sheet>
   )

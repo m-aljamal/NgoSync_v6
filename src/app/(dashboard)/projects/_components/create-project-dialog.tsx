@@ -35,7 +35,7 @@ import {
   type CreateProjectSchema,
 } from "@/app/_lib/validations"
 
-import { CreateProjectForm } from "./create-project-form"
+import { ProjectForm } from "./project-form"
 
 export function CreateProjectDialog() {
   const [open, setOpen] = React.useState(false)
@@ -84,7 +84,7 @@ export function CreateProjectDialog() {
               قم بملء التفاصيل أدناه لإنشاء مشروع جديد.
             </DialogDescription>
           </DialogHeader>
-          <CreateProjectForm form={form} onSubmit={onSubmit}>
+          <ProjectForm form={form} onSubmit={onSubmit}>
             <DialogFooter className="gap-2 pt-2">
               <Button disabled={isExecuting}>
                 {isExecuting && (
@@ -101,7 +101,7 @@ export function CreateProjectDialog() {
                 </Button>
               </DialogClose>
             </DialogFooter>
-          </CreateProjectForm>
+          </ProjectForm>
         </DialogContent>
       </Dialog>
     )
@@ -122,7 +122,7 @@ export function CreateProjectDialog() {
             قم بملء التفاصيل أدناه لإنشاء مشروع جديد.
           </DrawerDescription>
         </DrawerHeader>
-        <CreateProjectForm form={form} onSubmit={onSubmit}>
+        <ProjectForm form={form} onSubmit={onSubmit}>
           <DrawerFooter className="gap-2 sm:gap-0">
             <DrawerClose asChild>
               <Button variant="outline"> إلغاء</Button>
@@ -137,7 +137,7 @@ export function CreateProjectDialog() {
               إنشاء
             </Button>
           </DrawerFooter>
-        </CreateProjectForm>
+        </ProjectForm>
       </DrawerContent>
     </Drawer>
   )

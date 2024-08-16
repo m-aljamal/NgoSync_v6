@@ -30,7 +30,7 @@ interface CreateTaskFormProps
   isUpdate?: boolean
 }
 
-export function CreateProjectForm({
+export function ProjectForm({
   form,
   onSubmit,
   children,
