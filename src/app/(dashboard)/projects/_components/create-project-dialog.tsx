@@ -110,7 +110,7 @@ export function CreateProjectDialog() {
     <Drawer open={open} onOpenChange={setOpen}>
       <DrawerTrigger asChild>
         <Button variant="outline" size="sm">
-          <PlusIcon className="mr-2 size-4" aria-hidden="true" />
+          <PlusIcon className="ml-2 size-4" aria-hidden="true" />
           اضافة
         </Button>
       </DrawerTrigger>

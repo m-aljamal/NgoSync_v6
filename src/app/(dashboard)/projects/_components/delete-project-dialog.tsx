@@ -87,7 +87,7 @@ export function DeleteProjectsDialog({
           </DialogHeader>
           <DialogFooter className="gap-2 sm:space-x-0">
             <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline">الغاء</Button>
             </DialogClose>
             <Button
               aria-label="Delete selected rows"
@@ -97,11 +97,11 @@ export function DeleteProjectsDialog({
             >
               {isExecuting && (
                 <ReloadIcon
-                  className="mr-2 size-4 animate-spin"
+                  className="ml-2 size-4 animate-spin"
                   aria-hidden="true"
                 />
               )}
-              Delete
+              حذف
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -114,7 +114,7 @@ export function DeleteProjectsDialog({
       {showTrigger ? (
         <DrawerTrigger asChild>
           <Button variant="outline" size="sm">
-            <TrashIcon className="mr-2 size-4" aria-hidden="true" />
+            <TrashIcon className="ml-2 size-4" aria-hidden="true" />
             حذف ({projects.length})
           </Button>
         </DrawerTrigger>
@@ -140,7 +140,7 @@ export function DeleteProjectsDialog({
           >
             {isExecuting && (
               <ReloadIcon
-                className="mr-2 size-4 animate-spin"
+                className="ml-2 size-4 animate-spin"
                 aria-hidden="true"
               />
             )}
