@@ -37,15 +37,6 @@ export const updateProject = actionClient
   })
   .action(
     async ({ parsedInput: { name, nameTr, status, system, userId, id } }) => {
-      console.log({
-        name,
-        nameTr,
-        status,
-        system,
-        userId,
-        id,
-      })
-
       noStore()
       if (!id) throw new Error("id is required")
       await db
@@ -68,10 +59,9 @@ export const deleteProject = actionClient
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput: { id } }) => {
-    console.log({ id });
-    console.log("deleteProject");
-    
-    
+    console.log({ id })
+    console.log("deleteProject")
+
     noStore()
     if (!id) throw new Error("id is required")
     await db.delete(projects).where(eq(projects.id, id))

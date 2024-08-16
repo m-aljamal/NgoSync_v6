@@ -57,6 +57,9 @@ export function CreateProjectDialog() {
   const { executeAsync, isExecuting } = useAction(createProject, {
     onSuccess: () => {
       toast.success("تم إنشاء المشروع")
+      form.reset()
+      toast.dismiss()
+      onClose()
     },
     onError: ({ error }) => {
       toast.error(error.serverError)
@@ -65,9 +68,6 @@ export function CreateProjectDialog() {
 
   async function onSubmit(input: CreateProjectSchema) {
     await executeAsync(input)
-    form.reset()
-    toast.dismiss()
-    onClose()
   }
 
   return (
