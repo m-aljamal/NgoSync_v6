@@ -6,8 +6,7 @@ import { type Table } from "@tanstack/react-table"
 
 import { exportTableToCSV } from "@/lib/export"
 import { Button } from "@/components/ui/button"
-import { CreateTaskDialog } from "@/app/_components/create-task-dialog"
-import { DeleteTasksDialog } from "@/app/_components/delete-tasks-dialog"
+
 import { CreateProjectDialog } from "./create-project-dialog"
 import { DeleteProjectsDialog } from "./delete-project-dialog"
 
@@ -34,7 +33,7 @@ export function TasksTableToolbarActions({
         size="sm"
         onClick={() =>
           exportTableToCSV(table, {
-            filename: "tasks",
+            filename: "projects",
             excludeColumns: ["select", "actions"],
           })
         }

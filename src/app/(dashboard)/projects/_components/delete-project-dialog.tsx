@@ -54,7 +54,7 @@ export function DeleteProjectsDialog({
       toast.error(error.serverError)
     },
     onExecute: () => {
-      toast.loading("جاري الحزف")
+      toast.loading("جاري الحذف")
     },
   })
 
