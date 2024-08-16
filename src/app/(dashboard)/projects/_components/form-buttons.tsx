@@ -36,7 +36,7 @@ export default function FormButtons({ isExecuting }: { isExecuting: boolean }) {
       </DrawerClose>
       <Button disabled={isExecuting}>
         {isExecuting && (
-          <ReloadIcon className="mr-2 size-4 animate-spin" aria-hidden="true" />
+          <ReloadIcon className="ml-2 size-4 animate-spin" aria-hidden="true" />
         )}
         إنشاء
       </Button>

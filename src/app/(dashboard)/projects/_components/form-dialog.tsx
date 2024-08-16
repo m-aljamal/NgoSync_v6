@@ -28,12 +28,15 @@ export default function FormDialog({
 }: {
   children: React.ReactNode
 }) {
-  const { isOpen, toggle } = useFormDialog()
+  const { isOpen, onOpen, onClose } = useFormDialog()
   const isDesktop = useMediaQuery("(min-width: 640px)")
 
   if (isDesktop)
     return (
-      <Dialog open={isOpen} onOpenChange={toggle}>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(isOpen) => (isOpen ? onOpen() : onClose())}
+      >
         <DialogTrigger asChild>
           <Button variant="outline" size="sm">
             <PlusIcon className="ml-2 size-4" aria-hidden="true" />
@@ -53,7 +56,10 @@ export default function FormDialog({
     )
 
   return (
-    <Drawer open={isOpen} onOpenChange={toggle}>
+    <Drawer
+      open={isOpen}
+      onOpenChange={(isOpen) => (isOpen ? onOpen() : onClose())}
+    >
       <DrawerTrigger asChild>
         <Button variant="outline" size="sm">
           <PlusIcon className="ml-2 size-4" aria-hidden="true" />

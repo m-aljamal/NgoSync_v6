@@ -7,6 +7,7 @@ import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
+import { useFormDialog } from "@/hooks/use-form-dialog"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { Button } from "@/components/ui/button"
 import {
@@ -41,13 +42,15 @@ import { ProjectForm } from "./project-form"
 
 export function CreateProjectDialog() {
   const [open, setOpen] = React.useState(false)
-
+  const { onClose } = useFormDialog()
   const isDesktop = useMediaQuery("(min-width: 640px)")
 
   const form = useForm<CreateProjectSchema>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
       status: "in-progress",
+      name: "",
+      nameTr: "",
     },
   })
 
@@ -58,37 +61,18 @@ export function CreateProjectDialog() {
     onError: ({ error }) => {
       toast.error(error.serverError)
     },
-    onExecute: () => {
-      toast.loading("جاري إنشاء المشروع")
-    },
   })
 
   async function onSubmit(input: CreateProjectSchema) {
     await executeAsync(input)
     form.reset()
-    setOpen(false)
     toast.dismiss()
+    onClose()
   }
 
   return (
     <FormDialog>
       <ProjectForm form={form} onSubmit={onSubmit}>
-        {/* <DialogFooter className="gap-2 pt-2">
-          <Button disabled={isExecuting}>
-            {isExecuting && (
-              <ReloadIcon
-                className="ml-2 size-4 animate-spin"
-                aria-hidden="true"
-              />
-            )}
-            إنشاء
-          </Button>
-          <DialogClose asChild>
-            <Button type="button" variant="outline">
-              إلغاء
-            </Button>
-          </DialogClose>
-        </DialogFooter> */}
         <FormButtons isExecuting={isExecuting} />
       </ProjectForm>
     </FormDialog>
