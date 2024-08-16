@@ -41,7 +41,7 @@ export default function MobileNavigation() {
   }
   return (
     <Sheet open={isOpen} onOpenChange={setIsopen}>
-      <SheetTrigger>
+      <SheetTrigger asChild>
         <Button
           variant="outline"
           size="sm"
@@ -54,10 +54,15 @@ export default function MobileNavigation() {
         <SheetHeader className="mb-2 items-start">
           <SheetTitle>NgoSync</SheetTitle>
         </SheetHeader>
-        {routes.map((route) => {
+        {routes.map((route, index) => {
           const active = isActive(route)
           return route.children?.length ? (
-            <Accordion type="single" collapsible className="w-full">
+            <Accordion
+              type="single"
+              collapsible
+              className="w-full"
+              key={route.href ?? `route-${index}`}
+            >
               <AccordionItem value="item-1" className="border-0 px-4">
                 <AccordionTrigger>{route.title}</AccordionTrigger>
                 <AccordionContent>
@@ -79,7 +84,10 @@ export default function MobileNavigation() {
               </AccordionItem>
             </Accordion>
           ) : (
-            <nav className="flex flex-col gap-y-2">
+            <nav
+              className="flex flex-col gap-y-2"
+              key={route.href ?? `route-${index}`}
+            >
               <Button
                 key={route.title}
                 variant={active ? "secondary" : "ghost"}
