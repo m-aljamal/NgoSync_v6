@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Project, type Task } from "@/db/schema"
+import { type Project } from "@/db/schema"
 import { ReloadIcon, TrashIcon } from "@radix-ui/react-icons"
 import { type Row } from "@tanstack/react-table"
 import { useAction } from "next-safe-action/hooks"
@@ -29,8 +29,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
-import { deleteProject, deleteProjects } from "@/app/_lib/actions/project"
-import { DeleteArraySchema, DeleteSchema } from "@/app/_lib/validations"
+import { deleteProjects } from "@/app/_lib/actions/project"
 
 interface DeleteProjectDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
@@ -79,11 +78,11 @@ export function DeleteProjectsDialog({
         ) : null}
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogTitle>هل متأكد من الحذف؟</DialogTitle>
             <DialogDescription>
-              This action cannot be undone. This will permanently delete your{" "}
+              يمكن التراجع عن هذا الإجراء. سيتم حذف بشكل دائم{" "}
               <span className="font-medium">{projects.length}</span>
-              {projects.length === 1 ? " task" : " tasks"} from our servers.
+              {projects.length === 1 ? " عنصر" : " عناصر"} من النظام
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:space-x-0">
@@ -116,22 +115,22 @@ export function DeleteProjectsDialog({
         <DrawerTrigger asChild>
           <Button variant="outline" size="sm">
             <TrashIcon className="mr-2 size-4" aria-hidden="true" />
-            Delete ({projects.length})
+            حذف ({projects.length})
           </Button>
         </DrawerTrigger>
       ) : null}
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Are you absolutely sure?</DrawerTitle>
+          <DrawerTitle> هل متأكد من الحذف؟</DrawerTitle>
           <DrawerDescription>
-            This action cannot be undone. This will permanently delete your{" "}
+            يمكن التراجع عن هذا الإجراء. سيتم حذف بشكل دائم{" "}
             <span className="font-medium">{projects.length}</span>
-            {projects.length === 1 ? " task" : " tasks"} from our servers.
+            {projects.length === 1 ? " عنصر" : " عناصر"} من النظام
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
           <DrawerClose asChild>
-            <Button variant="outline">Cancel</Button>
+            <Button variant="outline">الفاء</Button>
           </DrawerClose>
           <Button
             aria-label="Delete selected rows"
@@ -145,7 +144,7 @@ export function DeleteProjectsDialog({
                 aria-hidden="true"
               />
             )}
-            Delete
+            حذف
           </Button>
         </DrawerFooter>
       </DrawerContent>
