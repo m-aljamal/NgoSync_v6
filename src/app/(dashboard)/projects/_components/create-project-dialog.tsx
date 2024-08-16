@@ -35,6 +35,8 @@ import {
   type CreateProjectSchema,
 } from "@/app/_lib/validations"
 
+import FormButtons from "./form-buttons"
+import FormDialog from "./form-dialog"
 import { ProjectForm } from "./project-form"
 
 export function CreateProjectDialog() {
@@ -67,6 +69,30 @@ export function CreateProjectDialog() {
     setOpen(false)
     toast.dismiss()
   }
+
+  return (
+    <FormDialog>
+      <ProjectForm form={form} onSubmit={onSubmit}>
+        {/* <DialogFooter className="gap-2 pt-2">
+          <Button disabled={isExecuting}>
+            {isExecuting && (
+              <ReloadIcon
+                className="ml-2 size-4 animate-spin"
+                aria-hidden="true"
+              />
+            )}
+            إنشاء
+          </Button>
+          <DialogClose asChild>
+            <Button type="button" variant="outline">
+              إلغاء
+            </Button>
+          </DialogClose>
+        </DialogFooter> */}
+        <FormButtons isExecuting={isExecuting} />
+      </ProjectForm>
+    </FormDialog>
+  )
 
   if (isDesktop)
     return (
