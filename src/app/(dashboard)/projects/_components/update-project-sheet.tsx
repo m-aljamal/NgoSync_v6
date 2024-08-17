@@ -3,21 +3,13 @@
 import * as React from "react"
 import { type Project } from "@/db/schema"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { ReloadIcon } from "@radix-ui/react-icons"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
-import { Button } from "@/components/ui/button"
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
+import { type Sheet } from "@/components/ui/sheet"
+import UpdateButtons from "@/components/update-buttons"
+import { UpdateSheet } from "@/components/update-sheet"
 import { updateProject } from "@/app/_lib/actions/project"
 import {
   createProjectSchema,
@@ -77,33 +69,10 @@ export function UpdateProjectSheet({
     props.onOpenChange?.(false)
   }
   return (
-    <Sheet {...props}>
-      <SheetContent className="flex flex-col gap-6 sm:max-w-md">
-        <SheetHeader className="text-right">
-          <SheetTitle>تعديل مشروع</SheetTitle>
-          <SheetDescription>
-            عدل معلومات المشروع واحفظ التغييرات
-          </SheetDescription>
-        </SheetHeader>
-        <ProjectForm form={form} onSubmit={onSubmit} isUpdate>
-          <SheetFooter className="gap-2 pt-2">
-            <Button disabled={isExecuting}>
-              {isExecuting && (
-                <ReloadIcon
-                  className="ml-2 size-4 animate-spin"
-                  aria-hidden="true"
-                />
-              )}
-              تعديل
-            </Button>
-            <SheetClose asChild>
-              <Button type="button" variant="outline">
-                إلغاء
-              </Button>
-            </SheetClose>
-          </SheetFooter>
-        </ProjectForm>
-      </SheetContent>
-    </Sheet>
+    <UpdateSheet {...props}>
+      <ProjectForm form={form} onSubmit={onSubmit} isUpdate>
+        <UpdateButtons isExecuting={isExecuting} />
+      </ProjectForm>
+    </UpdateSheet>
   )
 }

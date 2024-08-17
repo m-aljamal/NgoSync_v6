@@ -14,10 +14,11 @@ import { ProjectsTable } from "./_components/project-table"
 export interface IndexPageProps {
   searchParams: SearchParams
 }
-export default function page({ searchParams }: IndexPageProps) {
+export default  function page({ searchParams }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
   const promise = getProjects(search)
+  
 
   return (
     <div>

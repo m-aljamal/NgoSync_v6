@@ -6,14 +6,14 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { useFormDialog } from "@/hooks/use-form-dialog"
+import FormButtons from "@/components/form-buttons"
+import FormDialog from "@/components/form-dialog"
 import { createProject } from "@/app/_lib/actions/project"
 import {
   createProjectSchema,
   type CreateProjectSchema,
 } from "@/app/_lib/validations"
 
-import FormButtons from "./form-buttons"
-import FormDialog from "./form-dialog"
 import { ProjectForm } from "./project-form"
 
 export function CreateProjectDialog() {

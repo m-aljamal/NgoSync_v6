@@ -30,7 +30,8 @@ export default function FormDialog({
 }) {
   const { isOpen, onOpen, onClose } = useFormDialog()
   const isDesktop = useMediaQuery("(min-width: 640px)")
-
+  const title = "إضافة جديد"
+  const description = "قم بملء التفاصيل أدناه لإنشاء عنصر جديد."
   if (isDesktop)
     return (
       <Dialog
@@ -45,10 +46,8 @@ export default function FormDialog({
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>إضافة مشروع</DialogTitle>
-            <DialogDescription>
-              قم بملء التفاصيل أدناه لإنشاء مشروع جديد.
-            </DialogDescription>
+            <DialogTitle>{title}</DialogTitle>
+            <DialogDescription>{description}</DialogDescription>
           </DialogHeader>
           {children}
         </DialogContent>
@@ -69,10 +68,8 @@ export default function FormDialog({
 
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>إضافة مشروع</DrawerTitle>
-          <DrawerDescription>
-            قم بملء التفاصيل أدناه لإنشاء مشروع جديد.
-          </DrawerDescription>
+          <DrawerTitle>{title}</DrawerTitle>
+          <DrawerDescription>{description}</DrawerDescription>
         </DrawerHeader>
         {children}
       </DrawerContent>
