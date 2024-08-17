@@ -9,8 +9,7 @@ import { flattenValidationErrors } from "next-safe-action"
 
 import { generateId } from "@/lib/id"
 
-import { getUsers } from "../queries/user"
-import { actionClient } from "../safe-action"
+ import { actionClient } from "../safe-action"
 import {
   createProjectSchema,
   deleteArraySchema,
@@ -24,9 +23,9 @@ function generateProjects(): Project {
     nameTr: `Project ${Math.floor(Math.random() * 1000)}`,
     status: Math.random() > 0.5 ? "in-progress" : "done",
     system: Math.random() > 0.5 ? "school" : "cultural_center",
-    userId: "24bf9749-d56a-487d-a938-1e0593624b5e",
-    createdAt: format(new Date(), "yyyy-MM-dd HH:mm:ss"), // Add this
-    updatedAt: format(new Date(), "yyyy-MM-dd HH:mm:ss"), // Add this
+    userId: "1c9a2b90-8145-4e2f-9dd5-1c2d0612d20e",
+    createdAt: new Date(),
+    updatedAt: new Date(),
     description: "Lorem ipsum dolor sit amet",
   }
 }

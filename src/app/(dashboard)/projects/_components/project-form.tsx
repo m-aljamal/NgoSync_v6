@@ -82,7 +82,7 @@ export function ProjectForm({
                   onChange={field.onChange}
                   value={field.value}
                   options={users?.map((user) => ({
-                    value: user.id.toString(),
+                    value: user.id,
                     label: user.name,
                   }))}
                   placeholder="المسؤول عن المشروع"

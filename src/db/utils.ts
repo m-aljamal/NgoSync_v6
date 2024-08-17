@@ -1,4 +1,4 @@
-import {  sqliteTableCreator } from 'drizzle-orm/sqlite-core';
+import { pgTableCreator } from "drizzle-orm/pg-core"
 
 import { databasePrefix } from "@/lib/constants"
 
@@ -8,8 +8,7 @@ import { databasePrefix } from "@/lib/constants"
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const sqTable = sqliteTableCreator((name) => `${databasePrefix}_${name}`)
-
+export const pgTable = pgTableCreator((name) => `${databasePrefix}_${name}`)
 // @see https://gist.github.com/rphlmr/0d1722a794ed5a16da0fdf6652902b15
 
 export function takeFirst<T>(items: T[]) {

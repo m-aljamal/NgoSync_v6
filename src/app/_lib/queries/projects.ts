@@ -4,7 +4,7 @@ import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import { projects, type Project } from "@/db/schema"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, or, sql, type SQL } from "drizzle-orm"
+import { and, asc, count, desc, gte, lte, or, sql, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -27,8 +27,8 @@ export async function getProjects(input: GetSearchSchema) {
     ]) as [keyof Project | undefined, "asc" | "desc" | undefined]
 
     // Convert the date strings to date objects
-    const fromDay = from ? sql`${projects.createdAt} >= ${from}` : undefined
-    const toDay = to ? sql`${projects.createdAt} <= ${to}` : undefined
+    const fromDay = from ? sql`to_date(${from}, 'yyyy-mm-dd')` : undefined
+    const toDay = to ? sql`to_date(${to}, 'yyy-mm-dd')` : undefined
 
     const expressions: (SQL<unknown> | undefined)[] = [
       name
@@ -55,10 +55,7 @@ export async function getProjects(input: GetSearchSchema) {
 
       // Filter by createdAt
       fromDay && toDay
-        ? and(
-            sql`${projects.createdAt} >= ${from}`,
-            sql`${projects.createdAt} <= ${to}`
-          )
+        ? and(gte(projects.createdAt, fromDay), lte(projects.createdAt, toDay))
         : undefined,
     ]
 

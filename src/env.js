@@ -10,8 +10,9 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    TURSO_CONNECTION_URL: z.string(),
-    TURSO_AUTH_TOKEN: z.string(),
+      DATABASE_URL: z.string().url(),
+    // TURSO_CONNECTION_URL: z.string(),
+    // TURSO_AUTH_TOKEN: z.string(),
     AUTH_GOOGLE_ID: z.string(),
     AUTH_GOOGLE_SECRET: z.string(),
   },
@@ -31,8 +32,9 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    TURSO_CONNECTION_URL: process.env.TURSO_CONNECTION_URL,
-    TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
+    DATABASE_URL: process.env.DATABASE_URL,
+    // TURSO_CONNECTION_URL: process.env.TURSO_CONNECTION_URL,
+    // TURSO_AUTH_TOKEN: process.env.TURSO_AUTH_TOKEN,
     NODE_ENV: process.env.NODE_ENV,
     AUTH_GOOGLE_ID: process.env.AUTH_GOOGLE_ID,
     AUTH_GOOGLE_SECRET: process.env.AUTH_GOOGLE_SECRET,
