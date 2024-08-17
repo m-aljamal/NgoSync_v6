@@ -1,0 +1,1 @@
+ALTER TABLE `ngosync_donations` ADD `doner_id` text NOT NULL;

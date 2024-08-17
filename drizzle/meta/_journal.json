@@ -50,6 +50,20 @@
       "when": 1723548541538,
       "tag": "0006_greedy_ikaris",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1723882801865,
+      "tag": "0007_purple_cyclops",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1723885425042,
+      "tag": "0008_material_switch",
+      "breakpoints": true
     }
   ]
 }

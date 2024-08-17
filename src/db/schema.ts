@@ -65,7 +65,7 @@ export const projects = sqTable("projects", {
 })
 
 export const projectRelations = relations(projects, ({ one, many }) => ({
-  // projectsTransactions: many(projectsTransactions),
+  projectsTransactions: many(projectsTransactions),
   // donations: many(donations),
   // representative: one(representatives, {
   //   fields: [projects.representativeId],
@@ -109,16 +109,31 @@ export const projectsTransactions = sqTable("projects_transactions", {
   id: text("id")
     .$defaultFn(() => generateId())
     .primaryKey(),
-  // projectId: text("project_id").notNull(),
+  projectId: text("project_id").notNull(),
   amount: integer("amount").notNull(),
   amountInUSD: integer("amount_in_usd").notNull(),
   officialAmount: integer("official_amount"),
   proposalAmount: integer("proposal_amount"),
+  currencyId: text("currency_id").notNull(),
   type: text("type", { enum: ["income", "outcome"] }).notNull(),
+  category: text("category", {
+    enum: [
+      "transfer_between_projects",
+      "expense",
+      "transfer_from_fund",
+      "transfer_to_fund",
+      "currency_exchange",
+      "loan",
+    ],
+  }).notNull(),
+  transactionStatus: text("transaction_status", {
+    enum: ["pending", "approved", "rejected"],
+  }).notNull(),
   description: text("description"),
   isOfficial: integer("is_offical", { mode: "boolean" })
     .notNull()
     .default(false),
+  expensesCategoryId: text("expenses_category_id"),
   date: text("date")
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -130,6 +145,34 @@ export const projectsTransactions = sqTable("projects_transactions", {
     .default(sql`(CURRENT_TIMESTAMP)`)
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 })
+
+export const projectsTransactionsRelations = relations(
+  projectsTransactions,
+  ({ one, many }) => ({
+    project: one(projects, {
+      fields: [projectsTransactions.projectId],
+      references: [projects.id],
+    }),
+    // proposal: one(proposals, {
+    //   fields: [projectsTransactions.proposalId],
+    //   references: [proposals.id],
+    // }),
+    // currency: one(currencies, {
+    //   fields: [projectsTransactions.currencyId],
+    //   references: [currencies.id],
+    // }),
+    // expensesCategory: one(expensesCategories, {
+    //   fields: [projectsTransactions.expensesCategoryId],
+    //   references: [expensesCategories.id],
+    // }),
+    // transfersFromFundToProject: many(transfersFromFundToProject),
+    // transfersFromProjectToFund: many(transfersFromProjectToFund),
+    // transferFromProjectToProject: many(transfersFromProjectToProject),
+    // currencyExchangesBetweenProjects: many(currencyExchangesBetweenProjects),
+    // salaryPayments: many(salaryPayments),
+    // loans: many(loans),
+  })
+)
 
 export type ProjectTransaction = typeof projectsTransactions.$inferSelect
 export type NewProjectTransaction = typeof projectsTransactions.$inferInsert
@@ -172,6 +215,10 @@ export const doners = sqTable("doners", {
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 })
 
+export const donerRelations = relations(doners, ({ many }) => ({
+  donations: many(donations),
+}))
+
 export type Doner = typeof doners.$inferSelect
 export type NewDoner = typeof doners.$inferInsert
 
@@ -179,6 +226,7 @@ export const donations = sqTable("donations", {
   id: text("id")
     .$defaultFn(() => generateId())
     .primaryKey(),
+  donerId: text("doner_id").notNull(),
   amount: integer("amount").notNull(),
   paymentType: text("payment_type", {
     enum: ["cash", "debt"],
@@ -196,6 +244,25 @@ export const donations = sqTable("donations", {
     .default(sql`(CURRENT_TIMESTAMP)`)
     .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`),
 })
+
+export const donationRelations = relations(donations, ({ one }) => ({
+  doner: one(doners, {
+    fields: [donations.donerId],
+    references: [doners.id],
+  }),
+  // fundTransaction: one(fundTransactions, {
+  //   fields: [donations.fundTransactionId],
+  //   references: [fundTransactions.id],
+  // }),
+  // project: one(projects, {
+  //   fields: [donations.projectId],
+  //   references: [projects.id],
+  // }),
+  // proposal: one(proposals, {
+  //   fields: [donations.proposalId],
+  //   references: [proposals.id],
+  // }),
+}))
 
 export type Donation = typeof donations.$inferSelect
 export type NewDonation = typeof donations.$inferInsert
