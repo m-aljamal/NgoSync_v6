@@ -60,9 +60,6 @@ export default function DeleteDialog({
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="gap-2 sm:space-x-0">
-            <DialogClose asChild>
-              <Button variant="outline">الغاء</Button>
-            </DialogClose>
             <Button
               aria-label="Delete selected rows"
               variant="destructive"
@@ -77,6 +74,9 @@ export default function DeleteDialog({
               )}
               حذف
             </Button>
+            <DialogClose asChild>
+              <Button variant="outline">الغاء</Button>
+            </DialogClose>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -102,9 +102,6 @@ export default function DeleteDialog({
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 sm:space-x-0">
-          <DrawerClose asChild>
-            <Button variant="outline">الفاء</Button>
-          </DrawerClose>
           <Button
             aria-label="Delete selected rows"
             variant="destructive"
@@ -119,6 +116,9 @@ export default function DeleteDialog({
             )}
             حذف
           </Button>
+          <DrawerClose asChild>
+            <Button variant="outline">الفاء</Button>
+          </DrawerClose>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

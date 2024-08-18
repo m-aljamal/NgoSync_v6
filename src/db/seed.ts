@@ -8,8 +8,8 @@ async function runSeed() {
   const start = Date.now()
 
   // await seedProjectTransactions()
-  // await seedTasks({ count: 100 })
-  await seedProjects()
+  await seedTasks({ count: 100 })
+  // await seedProjects()
 
   const end = Date.now()
 

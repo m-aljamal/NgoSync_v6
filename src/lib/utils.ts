@@ -10,7 +10,7 @@ export function formatDate(
   opts: Intl.DateTimeFormatOptions = {}
 ) {
   return new Intl.DateTimeFormat("en-US", {
-    month: opts.month ?? "long",
+    month: opts.month ?? "numeric",
     day: opts.day ?? "numeric",
     year: opts.year ?? "numeric",
     ...opts,

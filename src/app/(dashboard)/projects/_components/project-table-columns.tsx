@@ -125,11 +125,11 @@ export function getColumns(): ColumnDef<Project>[] {
     },
 
     {
-      accessorKey: "created_at",
+      accessorKey: "createdAt",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="تاريخ الانشاء" />
       ),
-      cell: ({ cell }) => formatDate(cell.row.original.createdAt, "dd-MM-yyyy"),
+      cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
     },
     {
       id: "actions",
