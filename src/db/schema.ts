@@ -210,6 +210,7 @@ export type NewExpensesCategory = typeof expensesCategories.$inferInsert
 export const genders = pgEnum("genders", ["male", "female"])
 export const donerTypes = pgEnum("doner_types", ["individual", "orgnization"])
 export const donerStatus = pgEnum("doner_status", ["active", "inactive"])
+
 export const doners = pgTable("doners", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())

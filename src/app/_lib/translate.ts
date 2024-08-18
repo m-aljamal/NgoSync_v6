@@ -27,3 +27,19 @@ export const donerStatusTranslation: Record<
   active: "نشط",
   inactive: "غير نشط",
 }
+
+export const genderTranslation: Record<
+  typeof doners.$inferSelect.gender,
+  string
+> = {
+  female: "أنثى",
+  male: "ذكر",
+}
+
+export const donerTypeTranslation: Record<
+  typeof doners.$inferSelect.type,
+  string
+> = {
+  individual: "فرد",
+  orgnization: "منظمة",
+}

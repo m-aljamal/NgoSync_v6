@@ -63,7 +63,7 @@ export function ProjectForm({
               <FormItem>
                 <FormLabel>Adi</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="اسم المشروع" {...field} />
+                  <Input type="text" placeholder="Adi" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -75,7 +75,7 @@ export function ProjectForm({
             name="userId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>المسؤول عن المشروع</FormLabel>
+                <FormLabel>المسؤول</FormLabel>
 
                 <AppSelect
                   isLoading={isLoading}
@@ -85,7 +85,7 @@ export function ProjectForm({
                     value: user.id,
                     label: user.name,
                   }))}
-                  placeholder="المسؤول عن المشروع"
+                  placeholder="المسؤول"
                 />
 
                 <FormMessage />
@@ -106,7 +106,7 @@ export function ProjectForm({
                     value: state,
                     label: projectStatusTranslation[state],
                   }))}
-                  placeholder="أختر حالة المشروع"
+                  placeholder="الحالة"
                 />
 
                 <FormMessage />
@@ -119,7 +119,7 @@ export function ProjectForm({
             name="system"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>نظام إدارة المشروع</FormLabel>
+                <FormLabel>النظام</FormLabel>
 
                 <AppSelect
                   onChange={field.onChange}
@@ -128,7 +128,7 @@ export function ProjectForm({
                     value: system,
                     label: projectSystemTranslation[system],
                   }))}
-                  placeholder="نظام إدارة المشروع"
+                  placeholder="النظام"
                 />
 
                 <FormMessage />
