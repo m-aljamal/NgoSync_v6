@@ -4,11 +4,12 @@ import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import { projects, type Project } from "@/db/schema"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, gte, lte, or, sql, type SQL } from "drizzle-orm"
+import { and, asc, count, desc, gte, lte, or, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
 import { type GetSearchSchema } from "../validations"
+import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
 export async function getProjects(input: GetSearchSchema) {
   noStore()
@@ -16,19 +17,14 @@ export async function getProjects(input: GetSearchSchema) {
     input
 
   try {
-    // Offset to paginate the results
-    const offset = (page - 1) * per_page
-    // Column and order to sort by
-    // Spliting the sort string by "." to get the column and order
-    // Example: "title.desc" => ["title", "desc"]
+    const offset = calculateOffset(page, per_page)
+
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
       "createdAt",
       "desc",
     ]) as [keyof Project | undefined, "asc" | "desc" | undefined]
 
-    // Convert the date strings to date objects
-    const fromDay = from ? sql`to_date(${from}, 'yyyy-mm-dd')` : undefined
-    const toDay = to ? sql`to_date(${to}, 'yyy-mm-dd')` : undefined
+    const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
       name
@@ -37,7 +33,7 @@ export async function getProjects(input: GetSearchSchema) {
             value: name,
           })
         : undefined,
-      // Filter tasks by status
+
       !!status
         ? filterColumn({
             column: projects.status,
@@ -53,7 +49,6 @@ export async function getProjects(input: GetSearchSchema) {
           })
         : undefined,
 
-      // Filter by createdAt
       fromDay && toDay
         ? and(gte(projects.createdAt, fromDay), lte(projects.createdAt, toDay))
         : undefined,
@@ -62,7 +57,6 @@ export async function getProjects(input: GetSearchSchema) {
     const where: DrizzleWhere<Project> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
 
-    // Transaction is used to ensure both queries are executed in a single transaction
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
         .select()
@@ -93,7 +87,8 @@ export async function getProjects(input: GetSearchSchema) {
       }
     })
 
-    const pageCount = Math.ceil(total / per_page)
+    const pageCount = calculatePageCount(total, per_page)
+
     return { data, pageCount }
   } catch (err) {
     return { data: [], pageCount: 0 }
