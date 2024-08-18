@@ -4,17 +4,16 @@ import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import { Doner, doners, projects, type Project } from "@/db/schema"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, or, sql, type SQL } from "drizzle-orm"
+import { and, asc, count, desc, gte, lte, or, sql, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
 import { type GetSearchSchema } from "../validations"
-import { calculateOffset, convertToDate } from "./utils"
+import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
 export async function getDoners(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, name, status, operator, from, to, system } =
-    input
+  const { page, per_page, sort, name, operator, from, to, donerType } = input
 
   try {
     const offset = calculateOffset(page, per_page)
@@ -35,54 +34,44 @@ export async function getDoners(input: GetSearchSchema) {
           })
         : undefined,
       // Filter tasks by status
-      !!status
+      !!donerType
         ? filterColumn({
-            column: projects.status,
-            value: status,
-            isSelectable: true,
-          })
-        : undefined,
-      !!system
-        ? filterColumn({
-            column: projects.system,
-            value: system,
+            column: doners.type,
+            value: donerType,
             isSelectable: true,
           })
         : undefined,
 
       // Filter by createdAt
       fromDay && toDay
-        ? and(
-            sql`${projects.createdAt} >= ${from}`,
-            sql`${projects.createdAt} <= ${to}`
-          )
+        ? and(gte(doners.createdAt, fromDay), lte(doners.createdAt, toDay))
         : undefined,
     ]
 
-    const where: DrizzleWhere<Project> =
+    const where: DrizzleWhere<Doner> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
 
     // Transaction is used to ensure both queries are executed in a single transaction
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
         .select()
-        .from(projects)
+        .from(doners)
         .limit(per_page)
         .offset(offset)
         .where(where)
         .orderBy(
-          column && column in projects
+          column && column in doners
             ? order === "asc"
-              ? asc(projects[column])
-              : desc(projects[column])
-            : desc(projects.id)
+              ? asc(doners[column])
+              : desc(doners[column])
+            : desc(doners.id)
         )
 
       const total = await tx
         .select({
           count: count(),
         })
-        .from(projects)
+        .from(doners)
         .where(where)
         .execute()
         .then((res) => res[0]?.count ?? 0)
@@ -93,7 +82,8 @@ export async function getDoners(input: GetSearchSchema) {
       }
     })
 
-    const pageCount = Math.ceil(total / per_page)
+    const pageCount = calculatePageCount(total, per_page)
+
     return { data, pageCount }
   } catch (err) {
     return { data: [], pageCount: 0 }

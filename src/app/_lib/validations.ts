@@ -1,4 +1,4 @@
-import { projects, tasks } from "@/db/schema"
+import { doners, projects, tasks } from "@/db/schema"
 import * as z from "zod"
 
 export const searchParamsSchema = z.object({
@@ -14,6 +14,7 @@ export const searchParamsSchema = z.object({
   to: z.string().optional(),
   operator: z.enum(["and", "or"]).optional(),
   amount: z.coerce.number().optional(),
+  donerType: z.enum(doners.type.enumValues).optional(),
 })
 
 export const getTasksSchema = searchParamsSchema
