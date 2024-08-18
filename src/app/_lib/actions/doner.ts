@@ -3,7 +3,7 @@
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
 import { doners, type Doner } from "@/db/schema"
-import { inArray } from "drizzle-orm"
+import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { generateId } from "@/lib/id"
@@ -82,5 +82,17 @@ export const deleteDoners = actionClient
   .action(async ({ parsedInput: { ids } }) => {
     noStore()
     await db.delete(doners).where(inArray(doners.id, ids))
+    revalidatePath("/doners")
+  })
+
+export const updateDoner = actionClient
+  .schema(createDonerSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: data }) => {
+    noStore()
+    if (!data.id) throw new Error("id is required")
+    await db.update(doners).set(data).where(eq(doners.id, data.id))
     revalidatePath("/doners")
   })

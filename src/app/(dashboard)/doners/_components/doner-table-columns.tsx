@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Doner, doners, projects, type Project } from "@/db/schema"
+import { doners, type Doner } from "@/db/schema"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
@@ -18,12 +18,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
-import {
-  donerStatusTranslation,
-  projectStatusTranslation,
-  projectSystemTranslation,
-} from "@/app/_lib/translate"
-import { getStatusIcon } from "@/app/_lib/utils"
+import { donerStatusTranslation } from "@/app/_lib/translate"
+
+import { DeleteDonersDialog } from "./delete-doner-dialog"
+import { UpdateDonerSheet } from "./update-doner-sheet"
 
 export function getColumns(): ColumnDef<Doner>[] {
   return [
@@ -97,56 +95,56 @@ export function getColumns(): ColumnDef<Doner>[] {
       ),
       cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
     },
-    // {
-    //   id: "actions",
-    //   cell: function Cell({ row }) {
-    //     const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
-    //       React.useState(false)
-    //     const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
-    //       React.useState(false)
+    {
+      id: "actions",
+      cell: function Cell({ row }) {
+        const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
+          React.useState(false)
+        const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
+          React.useState(false)
 
-    //     return (
-    //       <>
-    //         <UpdateProjectSheet
-    //           open={showUpdateTaskSheet}
-    //           onOpenChange={setShowUpdateTaskSheet}
-    //           project={row.original}
-    //         />
-    //         <DeleteProjectsDialog
-    //           open={showDeleteTaskDialog}
-    //           onOpenChange={setShowDeleteTaskDialog}
-    //           projects={[row.original]}
-    //           showTrigger={false}
-    //           onSuccess={() => row.toggleSelected(false)}
-    //         />
-    //         <DropdownMenu>
-    //           <DropdownMenuTrigger asChild>
-    //             <Button
-    //               aria-label="Open menu"
-    //               variant="ghost"
-    //               className="flex size-8 p-0 data-[state=open]:bg-muted"
-    //             >
-    //               <DotsHorizontalIcon className="size-4" aria-hidden="true" />
-    //             </Button>
-    //           </DropdownMenuTrigger>
-    //           <DropdownMenuContent align="end" className="w-40">
-    //             <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
-    //               تعديل
-    //             </DropdownMenuItem>
+        return (
+          <>
+            <UpdateDonerSheet
+              open={showUpdateTaskSheet}
+              onOpenChange={setShowUpdateTaskSheet}
+              doner={row.original}
+            />
+            <DeleteDonersDialog
+              open={showDeleteTaskDialog}
+              onOpenChange={setShowDeleteTaskDialog}
+              doners={[row.original]}
+              showTrigger={false}
+              onSuccess={() => row.toggleSelected(false)}
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  aria-label="Open menu"
+                  variant="ghost"
+                  className="flex size-8 p-0 data-[state=open]:bg-muted"
+                >
+                  <DotsHorizontalIcon className="size-4" aria-hidden="true" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
+                  تعديل
+                </DropdownMenuItem>
 
-    //             <DropdownMenuSeparator />
-    //             <DropdownMenuItem
-    //               onSelect={() => setShowDeleteTaskDialog(true)}
-    //             >
-    //               حذف
-    //               <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-    //             </DropdownMenuItem>
-    //           </DropdownMenuContent>
-    //         </DropdownMenu>
-    //       </>
-    //     )
-    //   },
-    //   size: 40,
-    // },
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onSelect={() => setShowDeleteTaskDialog(true)}
+                >
+                  حذف
+                  <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
+        )
+      },
+      size: 40,
+    },
   ]
 }
