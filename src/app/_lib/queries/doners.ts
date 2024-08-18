@@ -2,13 +2,14 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { projects, type Project } from "@/db/schema"
+import { Doner, doners, projects, type Project } from "@/db/schema"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, or, sql, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
 import { type GetSearchSchema } from "../validations"
+import { calculateOffset, convertToDate } from "./utils"
 
 export async function getDoners(input: GetSearchSchema) {
   noStore()
@@ -16,24 +17,20 @@ export async function getDoners(input: GetSearchSchema) {
     input
 
   try {
-    // Offset to paginate the results
-    const offset = (page - 1) * per_page
-    // Column and order to sort by
-    // Spliting the sort string by "." to get the column and order
-    // Example: "title.desc" => ["title", "desc"]
+    const offset = calculateOffset(page, per_page)
+
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
       "createdAt",
       "desc",
-    ]) as [keyof Project | undefined, "asc" | "desc" | undefined]
+    ]) as [keyof Doner | undefined, "asc" | "desc" | undefined]
 
     // Convert the date strings to date objects
-    const fromDay = from ? sql`${projects.createdAt} >= ${from}` : undefined
-    const toDay = to ? sql`${projects.createdAt} <= ${to}` : undefined
+    const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
       name
         ? filterColumn({
-            column: projects.name,
+            column: doners.name,
             value: name,
           })
         : undefined,
