@@ -24,12 +24,10 @@ export function generateRandomTask(): Task {
     status: faker.helpers.shuffle(tasks.status.enumValues)[0] ?? "todo",
     label: faker.helpers.shuffle(tasks.label.enumValues)[0] ?? "bug",
     priority: faker.helpers.shuffle(tasks.priority.enumValues)[0] ?? "low",
-    createdAt: new Date() ,
-    updatedAt: new Date() ,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   }
 }
-
-
 
 /**
  * Returns the appropriate status icon based on the provided status.

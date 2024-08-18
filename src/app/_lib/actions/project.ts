@@ -89,9 +89,6 @@ export const deleteProject = actionClient
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput: { id } }) => {
-    console.log({ id })
-    console.log("deleteProject")
-
     noStore()
     if (!id) throw new Error("id is required")
     await db.delete(projects).where(eq(projects.id, id))

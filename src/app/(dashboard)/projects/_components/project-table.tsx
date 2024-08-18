@@ -16,13 +16,13 @@ import {
 import { getStatusIcon } from "@/app/_lib/utils"
 
 import { getColumns } from "./project-table-columns"
-import { TasksTableToolbarActions } from "./tasks-table-toolbar-actions"
+import { TasksTableToolbarActions } from "./projects-table-toolbar-actions"
 
-interface TasksTableProps {
+interface ProjectTableProps {
   promise: ReturnType<typeof getProjects>
 }
 
-export function ProjectsTable({ promise }: TasksTableProps) {
+export function ProjectsTable({ promise }: ProjectTableProps) {
   const { data, pageCount } = React.use(promise)
 
   const columns = React.useMemo(() => getColumns(), [])

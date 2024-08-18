@@ -1,4 +1,5 @@
 import { seedTasks } from "@/app/_lib/actions"
+import { seedDoners } from "@/app/_lib/actions/doner"
 import { seedProjects } from "@/app/_lib/actions/project"
 import { seedProjectTransactions } from "@/app/_lib/actions/project-transaction"
 
@@ -8,8 +9,9 @@ async function runSeed() {
   const start = Date.now()
 
   // await seedProjectTransactions()
-  await seedTasks({ count: 100 })
-  // await seedProjects()
+  // await seedTasks({ count: 100 })
+  await seedProjects()
+  await seedDoners()
 
   const end = Date.now()
 

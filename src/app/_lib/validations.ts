@@ -62,3 +62,17 @@ export const deleteArraySchema = z.object({
 })
 
 export type DeleteArraySchema = z.infer<typeof deleteArraySchema>
+
+export const createDonerSchema = z.object({
+  name: z.string(),
+  gender: z.enum(doners.gender.enumValues),
+  type: z.enum(doners.type.enumValues),
+  status: z.enum(doners.status.enumValues),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+  description: z.string().optional(),
+  address: z.string().optional(),
+  id: z.string().optional(),
+})
+
+export type CreateDonerSchema = z.infer<typeof createDonerSchema>

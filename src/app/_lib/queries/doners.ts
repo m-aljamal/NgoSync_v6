@@ -2,9 +2,9 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { Doner, doners, projects, type Project } from "@/db/schema"
+import { doners, type Doner } from "@/db/schema"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, gte, lte, or, sql, type SQL } from "drizzle-orm"
+import { and, asc, count, desc, gte, lte, or, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
