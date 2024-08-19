@@ -54,8 +54,11 @@ export function exportTableToCSV<TData>(
     ),
   ].join("\n")
 
+  const utf8Bom = "\uFEFF"
   // Create a Blob with CSV content
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+  const blob = new Blob([utf8Bom + csvContent], {
+    type: "text/csv;charset=utf-8;",
+  })
 
   // Create a link and trigger the download
   const url = URL.createObjectURL(blob)

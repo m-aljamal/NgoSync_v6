@@ -33,7 +33,7 @@ export function CurrencyTableToolbarActions({
         size="sm"
         onClick={() =>
           exportTableToCSV(table, {
-            filename: "projects",
+            filename: "currencies",
             excludeColumns: ["select", "actions"],
           })
         }
