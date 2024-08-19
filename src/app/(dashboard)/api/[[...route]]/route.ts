@@ -1,13 +1,13 @@
 import { Hono } from "hono"
 import { handle } from "hono/vercel"
 
-import users from "./users"
+import form from "./form"
 
 // export const runtime = "edge"
 
 const app = new Hono().basePath("/api")
 
-const routes = app.route("/users", users)
+const routes = app.route("/form", form)
 
 export const GET = handle(app)
 export const POST = handle(app)

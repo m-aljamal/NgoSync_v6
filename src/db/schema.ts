@@ -64,7 +64,7 @@ export const projects = pgTable("projects", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())
     .primaryKey(),
-  name: varchar("name", { length: 128 }).unique(),
+  name: varchar("name", { length: 128 }).notNull().unique(),
   nameTr: varchar("nameTr", { length: 128 }),
   description: varchar("description", { length: 200 }),
   status: statusEnum("status_enum").notNull().default("in-progress"),

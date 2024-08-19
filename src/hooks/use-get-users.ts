@@ -2,11 +2,11 @@ import { useQuery } from "@tanstack/react-query"
 
 import { client } from "@/lib/hono"
 
-export const useGetUsers = () => {
+export const useGetFormData = (form:string) => {
   const query = useQuery({
-    queryKey: ["users"],
+    queryKey: ["form", form],
     queryFn: async () => {
-      const response = await client.api.users.$get()
+      const response = await client.api.form[":form"].$get({ param: { form: form } })
       if (!response.ok) {
         throw new Error("Failed to fetch users")
       }

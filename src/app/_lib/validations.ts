@@ -89,3 +89,11 @@ export const createCurrencySchema = z.object({
   id: z.string().optional(),
 })
 export type CreateCurrencySchema = z.infer<typeof createCurrencySchema>
+
+export const createExpenseCategorySchema = z.object({
+  name: z.string().min(2),
+  projectId: z.string().min(2),
+  id: z.string().optional(),
+})
+
+export type CreateExpenseCategorySchema = z.infer<typeof createExpenseCategorySchema>

@@ -6,9 +6,8 @@ import {
   currencies,
   doners,
   projects,
-  Proposal,
   proposals,
-  type Doner,
+  type Proposal,
 } from "@/db/schema"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
