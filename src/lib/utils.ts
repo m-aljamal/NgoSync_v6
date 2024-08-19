@@ -37,3 +37,23 @@ export function composeEventHandlers<E>(
     }
   }
 }
+
+export function convertAmountFromMiliunits(amount: number) {
+  return amount / 1000
+}
+
+export function convertAmountToMiliunits(amount: number) {
+  return Math.round(amount * 1000)
+}
+
+export function formatFractionDigits(value: number) {
+  return value % 1 !== 0 ? 3 : 0
+}
+export function formatCurrency(value: number, currency: string) {
+  return Intl.NumberFormat("tr-TR", {
+    style: "currency",
+    currency: currency,
+    minimumFractionDigits: formatFractionDigits(value),
+    maximumFractionDigits: 3,
+  }).format(value)
+}
