@@ -87,7 +87,7 @@ export const projectRelations = relations(projects, ({ one, many }) => ({
     fields: [projects.userId],
     references: [users.id],
   }),
-  // proposals: many(proposals),
+  proposals: many(proposals),
   // expensesCategories: many(expensesCategories),
   // employees: many(employees),
   // courses: many(courses),
@@ -114,6 +114,15 @@ export const currencies = pgTable("currencies", {
 export type Currency = typeof currencies.$inferSelect
 export type NewCurrency = typeof currencies.$inferInsert
 
+export const currencyRelations = relations(currencies, ({ many }) => ({
+  fundTransactions: many(fundTransactions),
+  proposals: many(proposals),
+  proposalsExpenses: many(proposalsExpenses),
+  projectsTransactions: many(projectsTransactions),
+  // employees: many(employees),
+  // currencyExchageRate: many(currencyExchageRate),
+}))
+
 export const proposals = pgTable("proposals", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())
@@ -127,6 +136,56 @@ export const proposals = pgTable("proposals", {
     .default(sql`current_timestamp`)
     .$onUpdate(() => new Date()),
 })
+
+export type Proposal = typeof proposals.$inferSelect
+export type NewProposal = typeof proposals.$inferInsert
+
+export const proposalRelations = relations(proposals, ({ one, many }) => ({
+  project: one(projects, {
+    fields: [proposals.projectId],
+    references: [projects.id],
+  }),
+  currency: one(currencies, {
+    fields: [proposals.currencyId],
+    references: [currencies.id],
+  }),
+  donations: many(donations),
+  proposalsExpenses: many(proposalsExpenses),
+  projectsTransactions: many(projectsTransactions),
+}))
+
+export const proposalsExpenses = pgTable("proposals_expenses", {
+  id: varchar("id", { length: 30 })
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+  proposalId: varchar("proposal_id", { length: 30 }).notNull(),
+  amount: integer("amount").notNull(),
+  currencyId: varchar("currency_id", { length: 30 }).notNull(),
+  description: varchar("description", { length: 200 }),
+  expensesCategoryId: varchar("expenses_category_id", { length: 30 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`current_timestamp`)
+    .$onUpdate(() => new Date()),
+})
+
+export const proposalsExpensesRelations = relations(
+  proposalsExpenses,
+  ({ one }) => ({
+    proposal: one(proposals, {
+      fields: [proposalsExpenses.proposalId],
+      references: [proposals.id],
+    }),
+    currency: one(currencies, {
+      fields: [proposalsExpenses.currencyId],
+      references: [currencies.id],
+    }),
+    expensesCategory: one(expensesCategories, {
+      fields: [proposalsExpenses.expensesCategoryId],
+      references: [expensesCategories.id],
+    }),
+  })
+)
 
 export const funds = pgTable("funds", {
   id: varchar("id", { length: 30 })
@@ -187,6 +246,7 @@ export const projectsTransactions = pgTable("projects_transactions", {
   isOfficial: boolean("is_offical").notNull().default(false),
   expensesCategoryId: varchar("expenses_category_id"),
   date: timestamp("date").defaultNow().notNull(),
+  proposalId: varchar("proposal_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
@@ -200,10 +260,10 @@ export const projectsTransactionsRelations = relations(
       fields: [projectsTransactions.projectId],
       references: [projects.id],
     }),
-    // proposal: one(proposals, {
-    //   fields: [projectsTransactions.proposalId],
-    //   references: [proposals.id],
-    // }),
+    proposal: one(proposals, {
+      fields: [projectsTransactions.proposalId],
+      references: [proposals.id],
+    }),
     // currency: one(currencies, {
     //   fields: [projectsTransactions.currencyId],
     //   references: [currencies.id],
@@ -229,11 +289,23 @@ export const expensesCategories = pgTable("expenses_categories", {
     .$defaultFn(() => generateId())
     .primaryKey(),
   name: varchar("name").notNull(),
+  projectId: varchar("project_id", { length: 30 }).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
     .$onUpdate(() => new Date()),
 })
+
+export const expensesCategoriesRelations = relations(
+  expensesCategories,
+  ({ one, many }) => ({
+    project: one(projects, {
+      fields: [expensesCategories.projectId],
+      references: [projects.id],
+    }),
+    proposalsExpenses: many(proposalsExpenses),
+  })
+)
 
 export type ExpensesCategory = typeof expensesCategories.$inferSelect
 export type NewExpensesCategory = typeof expensesCategories.$inferInsert
@@ -281,6 +353,8 @@ export const donations = pgTable("donations", {
   isOfficial: boolean("is_offical").notNull().default(false),
   receiptDescription: varchar("receipt_description", { length: 300 }),
   amountInText: varchar("amount_in_text", { length: 200 }),
+  projectId: varchar("project_id", { length: 30 }),
+  proposalId: varchar("proposal_id", { length: 30 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
@@ -300,10 +374,10 @@ export const donationRelations = relations(donations, ({ one }) => ({
   //   fields: [donations.projectId],
   //   references: [projects.id],
   // }),
-  // proposal: one(proposals, {
-  //   fields: [donations.proposalId],
-  //   references: [proposals.id],
-  // }),
+  proposal: one(proposals, {
+    fields: [donations.proposalId],
+    references: [proposals.id],
+  }),
 }))
 
 export type Donation = typeof donations.$inferSelect
