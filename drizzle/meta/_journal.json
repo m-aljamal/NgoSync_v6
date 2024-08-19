@@ -50,6 +50,13 @@
       "when": 1724055816016,
       "tag": "0006_third_mentallo",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1724057649768,
+      "tag": "0007_famous_titanium_man",
+      "breakpoints": true
     }
   ]
 }

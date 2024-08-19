@@ -97,6 +97,37 @@ export const projectRelations = relations(projects, ({ one, many }) => ({
 export type Project = typeof projects.$inferSelect
 export type NewProject = typeof projects.$inferInsert
 
+export const currencies = pgTable("currencies", {
+  id: varchar("id", { length: 30 })
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+  name: varchar("name", { length: 50 }).notNull().unique(),
+  code: varchar("code", { length: 50 }).notNull().unique(),
+  locale: varchar("locale").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`current_timestamp`)
+    .$onUpdate(() => new Date()),
+  official: boolean("official").default(false),
+})
+
+export type Currency = typeof currencies.$inferSelect
+export type NewCurrency = typeof currencies.$inferInsert
+
+export const proposals = pgTable("proposals", {
+  id: varchar("id", { length: 30 })
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+  name: varchar("name", { length: 50 }).unique().notNull(),
+  projectId: varchar("project_id", { length: 30 }).notNull(),
+  amount: integer("amount").notNull(),
+  currencyId: varchar("currency_id", { length: 30 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`current_timestamp`)
+    .$onUpdate(() => new Date()),
+})
+
 export const funds = pgTable("funds", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())
