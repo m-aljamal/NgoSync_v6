@@ -16,7 +16,7 @@ import {
 import { getStatusIcon } from "@/app/_lib/utils"
 
 import { getColumns } from "./project-table-columns"
-import { TasksTableToolbarActions } from "./projects-table-toolbar-actions"
+import { ProjectsTableToolbarActions } from "./projects-table-toolbar-actions"
 
 interface ProjectTableProps {
   promise: ReturnType<typeof getProjects>
@@ -69,7 +69,7 @@ export function ProjectsTable({ promise }: ProjectTableProps) {
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <TasksTableToolbarActions table={table} />
+        <ProjectsTableToolbarActions table={table} />
       </DataTableToolbar>
     </DataTable>
   )

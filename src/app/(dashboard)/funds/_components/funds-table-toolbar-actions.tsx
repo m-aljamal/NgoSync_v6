@@ -1,33 +1,33 @@
 "use client"
 
-import { type Project } from "@/db/schema"
+import { type Fund } from "@/db/schema"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
 import { exportTableToCSV } from "@/lib/export"
 import { Button } from "@/components/ui/button"
 
-import { CreateProjectDialog } from "./create-project-dialog"
-import { DeleteProjectsDialog } from "./delete-project-dialog"
+import { CreateFundDialog } from "./create-fund-dialog"
+import { DeleteFundDialog } from "./delete-fund-dialog"
 
-interface ProjectsTableToolbarActionsProps {
-  table: Table<Project>
+interface FundsTableToolbarActionsProps {
+  table: Table<Fund>
 }
 
-export function ProjectsTableToolbarActions({
+export function FundsTableToolbarActions({
   table,
-}: ProjectsTableToolbarActionsProps) {
+}: FundsTableToolbarActionsProps) {
   return (
     <div className="flex items-center gap-2">
       {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-        <DeleteProjectsDialog
-          projects={table
+        <DeleteFundDialog
+          funds={table
             .getFilteredSelectedRowModel()
             .rows.map((row) => row.original)}
           onSuccess={() => table.toggleAllRowsSelected(false)}
         />
       ) : null}
-      <CreateProjectDialog />
+      <CreateFundDialog />
       <Button
         variant="outline"
         size="sm"

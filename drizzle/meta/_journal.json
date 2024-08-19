@@ -43,6 +43,13 @@
       "when": 1723955491240,
       "tag": "0005_groovy_gertrude_yorkes",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1724055816016,
+      "tag": "0006_third_mentallo",
+      "breakpoints": true
     }
   ]
 }
