@@ -6,7 +6,11 @@ import { doners } from "@/db/schema"
 import { X } from "lucide-react"
 import { useFieldArray, useWatch, type UseFormReturn } from "react-hook-form"
 
-import { useGetCurrencies, useGetExpensesCategoriesByProjectId, useGetProjects } from "@/hooks/use-get-form-data"
+import {
+  useGetCurrencies,
+  useGetExpensesCategoriesByProjectId,
+  useGetProjects,
+} from "@/hooks/use-get-form-data"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -64,12 +68,10 @@ export function ProposalForm({
     control: form.control,
     name: "projectId",
   })
- 
 
-  const {data} = useGetExpensesCategoriesByProjectId("VzOlGenhmwtc")
-  console.log(data);
-  
-   
+  const { data } = useGetExpensesCategoriesByProjectId(selectedProjectId)
+  console.log(data)
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

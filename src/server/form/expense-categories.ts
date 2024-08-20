@@ -19,23 +19,15 @@ const app = new Hono()
     "/:projectId",
     zValidator("param", z.object({ projectId: z.string() })),
     async (c) => {
-      try {
-        const { projectId } = c.req.valid("param")
-        const data = await db
-          .select({
-            id: expensesCategories.id,
-            name: expensesCategories.name,
-          })
-          .from(expensesCategories)
-          .where(eq(expensesCategories.projectId, projectId))
-        return c.json({ data })
-      } catch (error) {
-        return c.json({
-          message: "error in featching expenses categories by project",
+      const { projectId } = c.req.valid("param")
+      const data = await db
+        .select({
+          id: expensesCategories.id,
+          name: expensesCategories.name,
         })
-      }
-
-      return c.json({ data: [] })
+        .from(expensesCategories)
+        .where(eq(expensesCategories.projectId, projectId))
+      return c.json({ data })
     }
   )
 
