@@ -3,9 +3,11 @@
 import * as React from "react"
 import { useMemo } from "react"
 import { doners } from "@/db/schema"
+import { X } from "lucide-react"
 import { useFieldArray, useWatch, type UseFormReturn } from "react-hook-form"
 
-import { useGetFormData } from "@/hooks/use-get-users"
+import { useGetCurrencies, useGetProjects } from "@/hooks/use-get-form-data"
+import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
@@ -46,10 +48,9 @@ export function ProposalForm({
     name: "proposalExpenseCategories",
     control: form.control,
   })
-  const { data: projects, isLoading: projectsLoading } =
-    useGetFormData("projects")
-  const { data: currencies, isLoading: currenciesLoading } =
-    useGetFormData("currencies")
+
+  const { data: projects, isLoading: projectsLoading } = useGetProjects()
+  const { data: currencies, isLoading: currenciesLoading } = useGetCurrencies()
 
   const selectedCurrencyId = useWatch({
     control: form.control,
@@ -59,6 +60,11 @@ export function ProposalForm({
     return currencies?.find((currency) => currency.id === selectedCurrencyId)
   }, [selectedCurrencyId, currencies])
 
+  const selectedProjectId = useWatch({
+    control: form.control,
+    name: "projectId",
+  })
+   
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -139,6 +145,65 @@ export function ProposalForm({
               </FormItem>
             )}
           />
+          {fields.map((field, index) => (
+            <React.Fragment key={field.id}>
+              <Button
+                type="button"
+                className="-my-4 sm:col-span-full"
+                variant="ghost"
+                onClick={() => remove(index)}
+                size="icon"
+              >
+                <X className="size-4 text-muted-foreground" />
+              </Button>
+              <FormField
+                control={form.control}
+                name={`proposalExpenseCategories.${index}.amount`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>المبلغ</FormLabel>
+                    <FormControl>
+                      <AmountInput
+                        intlConfig={
+                          selectedCurrency && {
+                            locale: selectedCurrency.locale,
+                            currency: selectedCurrency.code,
+                          }
+                        }
+                        placeholder="0.00"
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </React.Fragment>
+          ))}
+          <div className="flex gap-x-4">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() =>
+                append({
+                  amount: 0,
+                  expensesCategoryId: "",
+                })
+              }
+            >
+              إضافة بند
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              size="sm"
+              onClick={() => remove(fields.length - 1)}
+            >
+              حذف بند
+            </Button>
+          </div>
         </InputGroup>
         {children}
       </form>

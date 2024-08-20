@@ -4,7 +4,7 @@ import * as React from "react"
 import { projects } from "@/db/schema"
 import { type UseFormReturn } from "react-hook-form"
 
-import { useGetFormData } from "@/hooks/use-get-users"
+import { useGetUsers } from "@/hooks/use-get-form-data"
 import {
   Form,
   FormControl,
@@ -36,8 +36,8 @@ export function ProjectForm({
   children,
   isUpdate,
 }: CreateTaskFormProps) {
-  const { data: users, isLoading } = useGetFormData("users")
-   
+  const { data: users, isLoading } = useGetUsers()
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

@@ -2,7 +2,7 @@ import { formatFractionDigits } from "@/lib/utils";
 import CurrecnyInput from "react-currency-input-field";
 
 type Props = {
-  value: string;
+  value: number;
   onChange: (value: string | undefined) => void;
   disabled?: boolean;
   placeholder?: string;
