@@ -69,8 +69,8 @@ export function ProposalForm({
     name: "projectId",
   })
 
-  const { data } = useGetExpensesCategoriesByProjectId(selectedProjectId)
-  console.log(data)
+  const { data: expensesCategories, isLoading: loadingExpensesCategories } =
+    useGetExpensesCategoriesByProjectId(selectedProjectId)
 
   return (
     <Form {...form}>
@@ -163,6 +163,27 @@ export function ProposalForm({
               >
                 <X className="size-4 text-muted-foreground" />
               </Button>
+              <FormField
+                control={form.control}
+                name={`proposalExpenseCategories.${index}.expensesCategoryId`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>الفئة</FormLabel>
+                    <AppSelect
+                      creatable
+                      isLoading={loadingExpensesCategories}
+                      onChange={field.onChange}
+                      value={field.value?.toString()}
+                      options={expensesCategories?.map((category) => ({
+                        value: category.id.toString(),
+                        label: category.name,
+                      }))}
+                      placeholder="أختر الفئة"
+                    />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name={`proposalExpenseCategories.${index}.amount`}

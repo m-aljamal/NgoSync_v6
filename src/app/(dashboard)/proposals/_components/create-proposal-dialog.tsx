@@ -23,6 +23,12 @@ export function CreateProposalDialog() {
     resolver: zodResolver(createProposalSchema),
     defaultValues: {
       name: "",
+      proposalExpenseCategories: [
+        {
+          amount: 0,
+          expensesCategoryId: "",
+        },
+      ],
     },
   })
 
