@@ -49,7 +49,7 @@ export function CreateProposalDialog() {
   }
 
   return (
-    <FormDialog>
+    <FormDialog >
       <ProposalForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </ProposalForm>

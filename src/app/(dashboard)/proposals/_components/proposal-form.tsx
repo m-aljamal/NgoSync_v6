@@ -84,14 +84,12 @@ export function ProposalForm({
     name: "proposalExpenseCategories",
   })
 
-   
   const remainingExpensesAmount = useMemo(() => {
     const totalExpenses = selectedExpenses.reduce((acc, expense) => {
-      return acc + (expense.amount || 0)
+      return acc + (+expense.amount || 0)
     }, 0)
-    console.log({totalExpenses,});
-    
-    return selectedAmount - totalExpenses
+
+    return +selectedAmount - totalExpenses
   }, [selectedAmount, selectedExpenses])
 
   return (
@@ -175,8 +173,8 @@ export function ProposalForm({
             )}
           />
 
-          <div className="sm:col-span-full">
-            <div className="grid grid-cols-2 gap-6">
+          <div className="col-span-full">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
@@ -192,7 +190,7 @@ export function ProposalForm({
                     {(selectedCurrency &&
                       selectedAmount &&
                       formatCurrency(
-                        selectedAmount || 0,
+                        +selectedAmount || 0,
                         selectedCurrency?.code
                       )) ??
                       0}
@@ -235,7 +233,7 @@ export function ProposalForm({
             <React.Fragment key={field.id}>
               <Button
                 type="button"
-                className="-my-4 sm:col-span-full"
+                className="  sm:col-span-full"
                 variant="ghost"
                 onClick={() => remove(index)}
                 size="icon"
