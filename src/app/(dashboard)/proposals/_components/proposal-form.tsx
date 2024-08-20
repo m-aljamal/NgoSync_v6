@@ -6,12 +6,14 @@ import { doners } from "@/db/schema"
 import { X } from "lucide-react"
 import { useFieldArray, useWatch, type UseFormReturn } from "react-hook-form"
 
+import { formatCurrency } from "@/lib/utils"
 import {
   useGetCurrencies,
   useGetExpensesCategoriesByProjectId,
   useGetProjects,
 } from "@/hooks/use-get-form-data"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Form,
   FormControl,
@@ -71,6 +73,26 @@ export function ProposalForm({
 
   const { data: expensesCategories, isLoading: loadingExpensesCategories } =
     useGetExpensesCategoriesByProjectId(selectedProjectId)
+
+  const selectedAmount = useWatch({
+    control: form.control,
+    name: "amount",
+  })
+
+  const selectedExpenses = useWatch({
+    control: form.control,
+    name: "proposalExpenseCategories",
+  })
+
+   
+  const remainingExpensesAmount = useMemo(() => {
+    const totalExpenses = selectedExpenses.reduce((acc, expense) => {
+      return acc + (expense.amount || 0)
+    }, 0)
+    console.log({totalExpenses,});
+    
+    return selectedAmount - totalExpenses
+  }, [selectedAmount, selectedExpenses])
 
   return (
     <Form {...form}>
@@ -152,6 +174,63 @@ export function ProposalForm({
               </FormItem>
             )}
           />
+
+          <div className="sm:col-span-full">
+            <div className="grid grid-cols-2 gap-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    قيمة الدراسة
+                  </CardTitle>
+
+                  <span className="font-bold text-muted-foreground">
+                    {selectedCurrency && selectedCurrency.name}
+                  </span>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {(selectedCurrency &&
+                      selectedAmount &&
+                      formatCurrency(
+                        selectedAmount || 0,
+                        selectedCurrency?.code
+                      )) ??
+                      0}
+                  </div>
+                  <p className="text-xs text-muted-foreground">قيمة الدراسة</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">
+                    المتبقي للمصروفات
+                  </CardTitle>
+
+                  <span className="font-bold text-muted-foreground">
+                    {selectedCurrency && selectedCurrency.name}
+                  </span>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">
+                    {(selectedCurrency &&
+                      selectedAmount &&
+                      formatCurrency(
+                        isNaN(remainingExpensesAmount)
+                          ? 0
+                          : remainingExpensesAmount,
+                        selectedCurrency?.code
+                      )) ??
+                      0}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    المبلغ المتبقي للمصروفات
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
           {fields.map((field, index) => (
             <React.Fragment key={field.id}>
               <Button

@@ -44,7 +44,7 @@ export default function FormDialog({
             إضافة
           </Button>
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent className="max-h-full   overflow-auto">
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
