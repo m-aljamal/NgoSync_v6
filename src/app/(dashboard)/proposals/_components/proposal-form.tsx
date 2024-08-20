@@ -85,7 +85,7 @@ export function ProposalForm({
   })
 
   const remainingExpensesAmount = useMemo(() => {
-    const totalExpenses = selectedExpenses.reduce((acc, expense) => {
+    const totalExpenses = selectedExpenses?.reduce((acc, expense) => {
       return acc + (+expense.amount || 0)
     }, 0)
 

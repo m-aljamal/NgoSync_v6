@@ -103,12 +103,12 @@ export type CreateExpenseCategorySchema = z.infer<
 export const createProposalSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(2),
-  amount: z.number().min(1),
+  amount: z.coerce.number().min(1),
   projectId: z.string().min(2),
   currencyId: z.string().min(2),
   proposalExpenseCategories: z.array(
     z.object({
-      amount: z.number().min(1),
+      amount: z.coerce.number().min(1),
       expensesCategoryId: z.string().min(2),
       id: z.string().optional(),
     })
