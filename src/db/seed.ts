@@ -2,7 +2,8 @@ import { seedTasks } from "@/app/_lib/actions"
 import { seedDoners } from "@/app/_lib/actions/doner"
 import { seedFunds } from "@/app/_lib/actions/fund"
 import { seedProjects } from "@/app/_lib/actions/project"
-import { seedProjectTransactions } from "@/app/_lib/actions/project-transaction"
+import { seedExpenseCategories } from "@/app/_lib/actions/project-transaction"
+import { seedProposals } from "@/app/_lib/actions/proposal"
 
 async function runSeed() {
   console.log("⏳ Running seed...")
@@ -13,6 +14,8 @@ async function runSeed() {
   await seedProjects()
   await seedDoners()
   await seedFunds()
+  await seedExpenseCategories()
+  await seedProposals()
 
   const end = Date.now()
 

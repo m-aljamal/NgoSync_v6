@@ -1,29 +1,29 @@
 "use client"
 
 import * as React from "react"
-import { type Doner } from "@/db/schema"
+import { type Proposal } from "@/db/schema"
 import { type Row } from "@tanstack/react-table"
 import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"
 
 import { type Dialog } from "@/components/ui/dialog"
 import DeleteDialog from "@/components/delete-dialog"
-import { deleteDoners } from "@/app/_lib/actions/doner"
+import { deleteProposals } from "@/app/_lib/actions/proposal"
 
-interface DeleteDonerDialogProps
+interface DeleteProposalDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  doners: Row<Doner>["original"][]
+  proposals: Row<Proposal>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }
 
-export function DeleteDonersDialog({
-  doners,
+export function DeleteProposalDialog({
+  proposals,
   showTrigger = true,
   onSuccess,
   ...props
-}: DeleteDonerDialogProps) {
-  const { executeAsync, isExecuting } = useAction(deleteDoners, {
+}: DeleteProposalDialogProps) {
+  const { executeAsync, isExecuting } = useAction(deleteProposals, {
     onSuccess: () => {
       toast.success("تم الحذف بنجاح")
       props.onOpenChange?.(false)
@@ -38,7 +38,7 @@ export function DeleteDonersDialog({
   })
 
   async function onDelete() {
-    await executeAsync({ ids: doners.map((p) => p.id) })
+    await executeAsync({ ids: proposals.map((p) => p.id) })
     toast.dismiss()
   }
 
@@ -46,7 +46,7 @@ export function DeleteDonersDialog({
     <DeleteDialog
       {...props}
       showTrigger={showTrigger}
-      length={doners.length}
+      length={proposals.length}
       onDelete={onDelete}
       isExecuting={isExecuting}
     />

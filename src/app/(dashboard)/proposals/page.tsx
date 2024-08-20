@@ -1,26 +1,26 @@
-import React from "react"
 import { type SearchParams } from "@/types"
+import React from "react"
 
-import { Skeleton } from "@/components/ui/skeleton"
+import { searchParamsSchema } from "@/app/_lib/validations"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getDoners } from "@/app/_lib/queries/doners"
-import { searchParamsSchema } from "@/app/_lib/validations"
+import { Skeleton } from "@/components/ui/skeleton"
 
-import { DonersTable } from "./_components/doners-table"
+import { getProposals } from "@/app/_lib/queries/proposals"
+import { ProposalsTable } from "./_components/proposals-table"
 
 export default function Proposals({ searchParams }: SearchParams) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getDoners(search)
+  const promise = getProposals(search)
 
   return (
     <div>
       <Heading
-        title="المتبرعين"
-        description="إدارة المتبرعين للمنظمة"
-        icon="HandCoins"
+        title="الدراسات المالية"
+        description="إدارة الدراسات المالية للمشاريع."
+        icon="SquareKanban"
       />
       <Shell className="gap-2">
         <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
@@ -41,7 +41,7 @@ export default function Proposals({ searchParams }: SearchParams) {
             />
           }
         >
-          <DonersTable promise={promise} />
+          <ProposalsTable promise={promise} />
         </React.Suspense>
       </Shell>
     </div>

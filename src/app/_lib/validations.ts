@@ -96,4 +96,23 @@ export const createExpenseCategorySchema = z.object({
   id: z.string().optional(),
 })
 
-export type CreateExpenseCategorySchema = z.infer<typeof createExpenseCategorySchema>
+export type CreateExpenseCategorySchema = z.infer<
+  typeof createExpenseCategorySchema
+>
+
+export const createProposalSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(2),
+  amount: z.number().min(1),
+  projectId: z.string().min(2),
+  currencyId: z.string().min(2),
+  proposalExpenseCategories: z.array(
+    z.object({
+      amount: z.number().min(1),
+      expensesCategoryId: z.string().min(2),
+      id: z.string().optional(),
+    })
+  ),
+})
+
+export type CreateProposalSchema = z.infer<typeof createProposalSchema>

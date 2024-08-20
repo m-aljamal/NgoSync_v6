@@ -1,12 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { doners, type Doner } from "@/db/schema"
+import { type Proposal } from "@/db/schema"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -18,12 +17,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
-import { donerStatusTranslation } from "@/app/_lib/translate"
 
-import { DeleteDonersDialog } from "./delete-doner-dialog"
-import { UpdateDonerSheet } from "./update-doner-sheet"
+import { DeleteProposalDialog } from "./delete-proposal-dialog"
+import { UpdateProposalSheet } from "./update-proposal-sheet"
 
-export function getColumns(): ColumnDef<Doner>[] {
+export function getColumns(): ColumnDef<Proposal>[] {
   return [
     {
       id: "select",
@@ -62,31 +60,6 @@ export function getColumns(): ColumnDef<Doner>[] {
       enableSorting: false,
       enableHiding: false,
     },
-    {
-      accessorKey: "type",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="النوع" />
-      ),
-    },
-
-    {
-      accessorKey: "status",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="الحالة" />
-      ),
-      cell: ({ row }) => {
-        const status = doners.status.enumValues.find(
-          (status) => status === row.original.status
-        )
-
-        if (!status) return null
-
-        return <Badge variant="outline">{donerStatusTranslation[status]}</Badge>
-      },
-      filterFn: (row, id, value) => {
-        return Array.isArray(value) && value.includes(row.getValue(id))
-      },
-    },
 
     {
       accessorKey: "createdAt",
@@ -105,15 +78,15 @@ export function getColumns(): ColumnDef<Doner>[] {
 
         return (
           <>
-            <UpdateDonerSheet
+            <UpdateProposalSheet
               open={showUpdateTaskSheet}
               onOpenChange={setShowUpdateTaskSheet}
-              doner={row.original}
+              proposal={row.original}
             />
-            <DeleteDonersDialog
+            <DeleteProposalDialog
               open={showDeleteTaskDialog}
               onOpenChange={setShowDeleteTaskDialog}
-              doners={[row.original]}
+              proposals={[row.original]}
               showTrigger={false}
               onSuccess={() => row.toggleSelected(false)}
             />

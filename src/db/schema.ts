@@ -169,6 +169,10 @@ export const proposalsExpenses = pgTable("proposals_expenses", {
     .$onUpdate(() => new Date()),
 })
 
+export type ProposalExpense = typeof proposalsExpenses.$inferSelect
+export type NewProposalExpense = typeof proposalsExpenses.$inferInsert
+
+
 export const proposalsExpensesRelations = relations(
   proposalsExpenses,
   ({ one }) => ({

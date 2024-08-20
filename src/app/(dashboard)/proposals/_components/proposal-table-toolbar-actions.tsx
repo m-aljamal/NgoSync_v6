@@ -1,39 +1,39 @@
 "use client"
 
-import { type Doner } from "@/db/schema"
+import { type Proposal } from "@/db/schema"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
 import { exportTableToCSV } from "@/lib/export"
 import { Button } from "@/components/ui/button"
 
-import { CreateDonerDialog } from "./create-doner-dialog"
-import { DeleteDonersDialog } from "./delete-doner-dialog"
+import { CreateProposalDialog } from "./create-proposal-dialog"
+import { DeleteProposalDialog } from "./delete-proposal-dialog"
 
-interface DonersTableToolbarActionsProps {
-  table: Table<Doner>
+interface ProposalTableToolbarActionsProps {
+  table: Table<Proposal>
 }
 
-export function DonersTableToolbarActions({
+export function ProposalsTableToolbarActions({
   table,
-}: DonersTableToolbarActionsProps) {
+}: ProposalTableToolbarActionsProps) {
   return (
     <div className="flex items-center gap-2">
       {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-        <DeleteDonersDialog
-          doners={table
+        <DeleteProposalDialog
+          proposals={table
             .getFilteredSelectedRowModel()
             .rows.map((row) => row.original)}
           onSuccess={() => table.toggleAllRowsSelected(false)}
         />
       ) : null}
-      <CreateDonerDialog />
+      <CreateProposalDialog />
       <Button
         variant="outline"
         size="sm"
         onClick={() =>
           exportTableToCSV(table, {
-            filename: "doners",
+            filename: "proposals",
             excludeColumns: ["select", "actions"],
           })
         }
