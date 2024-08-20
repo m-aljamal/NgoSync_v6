@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { useMemo } from "react"
-import { doners } from "@/db/schema"
 import { X } from "lucide-react"
 import { useFieldArray, useWatch, type UseFormReturn } from "react-hook-form"
 
@@ -26,15 +25,7 @@ import { Input } from "@/components/ui/input"
 import AmountInput from "@/components/amount-input"
 import InputGroup from "@/components/InputGroup"
 import { AppSelect } from "@/components/select"
-import {
-  donerStatusTranslation,
-  donerTypeTranslation,
-  genderTranslation,
-} from "@/app/_lib/translate"
-import {
-  CreateProposalSchema,
-  type CreateDonerSchema,
-} from "@/app/_lib/validations"
+import { type CreateProposalSchema } from "@/app/_lib/validations"
 
 interface CreateProposalFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -233,7 +224,7 @@ export function ProposalForm({
             <React.Fragment key={field.id}>
               <Button
                 type="button"
-                className="  sm:col-span-full"
+                className="sm:col-span-full"
                 variant="ghost"
                 onClick={() => remove(index)}
                 size="icon"
