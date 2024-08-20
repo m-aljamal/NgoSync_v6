@@ -45,3 +45,20 @@ export const useGetCurrencies = () => {
   })
   return query
 }
+
+export const useGetExpensesCategoriesByProjectId = (projectId: string) => {
+  const query = useQuery({
+    queryKey: ["expensesCategories", projectId],
+    queryFn: async () => {
+      const response = await client.api.form["expenses-categories"].$get({
+        query: { projectId },
+      })
+      if (!response.ok) {
+        throw new Error("Failed to fetch expenses categories")
+      }
+      const { data } = await response.json()
+      return data
+    },
+  })
+  return query
+}
