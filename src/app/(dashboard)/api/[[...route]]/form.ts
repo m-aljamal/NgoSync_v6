@@ -1,6 +1,7 @@
 import { db } from "@/db"
-import { expensesCategories, projects, users } from "@/db/schema"
+import { currencies, expensesCategories, projects, users } from "@/db/schema"
 import { zValidator } from "@hono/zod-validator"
+import { eq } from "drizzle-orm"
 import { Hono } from "hono"
 import { z } from "zod"
 
@@ -27,6 +28,16 @@ const app = new Hono().get(
           })
           .from(users)
         return c.json({ data: usersData })
+      case "currencies":
+        const currenciesData = await db
+          .select({
+            id: currencies.id,
+            name: currencies.name,
+            locale: currencies.locale,
+            code: currencies.code,
+          })
+          .from(currencies)
+        return c.json({ data: currenciesData })
       case "projects":
         const projectsData = await db
           .select({
@@ -34,6 +45,7 @@ const app = new Hono().get(
             name: projects.name,
           })
           .from(projects)
+          .where(eq(projects.status, "in-progress"))
         return c.json({ data: projectsData })
       default:
         return c.json({
