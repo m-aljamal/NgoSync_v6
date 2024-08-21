@@ -23,6 +23,8 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 
+import { ScrollArea } from "./ui/scroll-area"
+
 export default function FormDialog({
   children,
 }: {
@@ -44,12 +46,15 @@ export default function FormDialog({
             إضافة
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-h-full min-h-72 overflow-auto">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-          {children}
+        <DialogContent  >
+          <ScrollArea className="max-h-[80vh] p-6">
+            <DialogHeader>
+              <DialogTitle>{title}</DialogTitle>
+              <DialogDescription>{description}</DialogDescription>
+            </DialogHeader>
+
+            {children}
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     )
@@ -66,12 +71,12 @@ export default function FormDialog({
         </Button>
       </DrawerTrigger>
 
-      <DrawerContent className=" ">
+      <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>
         </DrawerHeader>
-        {children}
+        <ScrollArea className="overflow-y-auto">{children}</ScrollArea>
       </DrawerContent>
     </Drawer>
   )
