@@ -80,6 +80,7 @@ export async function getProjects(input: GetSearchSchema) {
         .where(where)
         .execute()
         .then((res) => res[0]?.count ?? 0)
+console.log(data);
 
       return {
         data,
@@ -91,6 +92,10 @@ export async function getProjects(input: GetSearchSchema) {
 
     return { data, pageCount }
   } catch (err) {
+    console.log({
+      err,
+    });
+    
     return { data: [], pageCount: 0 }
   }
 }

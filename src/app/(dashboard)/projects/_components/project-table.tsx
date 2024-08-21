@@ -24,7 +24,7 @@ interface ProjectTableProps {
 
 export function ProjectsTable({ promise }: ProjectTableProps) {
   const { data, pageCount } = React.use(promise)
-
+ 
   const columns = React.useMemo(() => getColumns(), [])
 
   const filterFields: DataTableFilterField<Project>[] = [
