@@ -3,9 +3,9 @@
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
 import {
-  Proposal,
   proposals,
   proposalsExpenses,
+  type Proposal,
   type ProposalExpense,
 } from "@/db/schema"
 import { eq, inArray } from "drizzle-orm"
