@@ -3,6 +3,7 @@
 import * as React from "react"
 import { type Proposal } from "@/db/schema"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -28,6 +29,7 @@ export function UpdateProposalSheet({
   proposal,
   ...props
 }: UpdateProposalSheetProps) {
+  const queryClient = useQueryClient()
   const { data } = useGetProposalExpensesCategories(proposal.id)
 
   const proposalExpenseCategories = React.useMemo(
@@ -61,7 +63,10 @@ export function UpdateProposalSheet({
   }, [proposal, form, defaultValues, proposalExpenseCategories])
 
   const { executeAsync, isExecuting } = useAction(updateProposal, {
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["proposalExpensesCategories"],
+      })
       toast.success("تم تعديل الدراسة")
       props.onOpenChange?.(false)
       form.reset()

@@ -1,15 +1,15 @@
 "use server"
 
+import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
 import {
   Proposal,
   proposals,
   proposalsExpenses,
-  type ProposalExpense
+  type ProposalExpense,
 } from "@/db/schema"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
-import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 
 import { generateId } from "@/lib/id"
 import { convertAmountToMiliunits } from "@/lib/utils"
