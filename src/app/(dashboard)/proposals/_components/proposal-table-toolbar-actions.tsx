@@ -1,6 +1,6 @@
 "use client"
 
-import { type Proposal } from "@/db/schema"
+import { ProposalWithRelations, type Proposal } from "@/db/schema"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
@@ -11,7 +11,7 @@ import { CreateProposalDialog } from "./create-proposal-dialog"
 import { DeleteProposalDialog } from "./delete-proposal-dialog"
 
 interface ProposalTableToolbarActionsProps {
-  table: Table<Proposal>
+  table: Table<ProposalWithRelations>
 }
 
 export function ProposalsTableToolbarActions({

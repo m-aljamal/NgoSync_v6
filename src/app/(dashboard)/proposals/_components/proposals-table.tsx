@@ -2,7 +2,7 @@
 "use memo"
 
 import * as React from "react"
-import { type Proposal } from "@/db/schema"
+import { ProposalWithRelations, type Proposal } from "@/db/schema"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
@@ -19,11 +19,10 @@ interface ProposalsTableProps {
 
 export function ProposalsTable({ promise }: ProposalsTableProps) {
   const { data, pageCount } = React.use(promise)
-console.log(data);
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<Proposal>[] = [
+  const filterFields: DataTableFilterField<ProposalWithRelations>[] = [
     {
       label: "Title",
       value: "name",

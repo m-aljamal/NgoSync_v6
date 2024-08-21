@@ -138,6 +138,7 @@ export const proposals = pgTable("proposals", {
 })
 
 export type Proposal = typeof proposals.$inferSelect
+
 export type NewProposal = typeof proposals.$inferInsert
 
 export const proposalRelations = relations(proposals, ({ one, many }) => ({
@@ -153,6 +154,10 @@ export const proposalRelations = relations(proposals, ({ one, many }) => ({
   proposalsExpenses: many(proposalsExpenses),
   projectsTransactions: many(projectsTransactions),
 }))
+export type ProposalWithRelations = Proposal & {
+  projectName: string
+  currencyCode: string
+}
 
 export const proposalsExpenses = pgTable("proposals_expenses", {
   id: varchar("id", { length: 30 })
@@ -171,7 +176,6 @@ export const proposalsExpenses = pgTable("proposals_expenses", {
 
 export type ProposalExpense = typeof proposalsExpenses.$inferSelect
 export type NewProposalExpense = typeof proposalsExpenses.$inferInsert
-
 
 export const proposalsExpensesRelations = relations(
   proposalsExpenses,

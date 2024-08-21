@@ -1,11 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { type Proposal } from "@/db/schema"
+import { ProposalWithRelations, type Proposal } from "@/db/schema"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
+import { formatCurrency } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -21,7 +22,7 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { DeleteProposalDialog } from "./delete-proposal-dialog"
 import { UpdateProposalSheet } from "./update-proposal-sheet"
 
-export function getColumns(): ColumnDef<Proposal>[] {
+export function getColumns(): ColumnDef<ProposalWithRelations>[] {
   return [
     {
       id: "select",
@@ -70,10 +71,18 @@ export function getColumns(): ColumnDef<Proposal>[] {
           {row.getValue("projectName")}
         </div>
       ),
-      enableSorting: false,
-      enableHiding: false,
     },
-     
+    {
+      accessorKey: "amount",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="القيمة" />
+      ),
+      cell: ({ row }) => (
+        <div>
+          {formatCurrency(row.getValue("amount"), row.original.currencyCode)}
+        </div>
+      ),
+    },
 
     {
       accessorKey: "createdAt",

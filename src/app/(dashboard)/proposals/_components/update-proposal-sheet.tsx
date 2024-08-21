@@ -29,7 +29,12 @@ export function UpdateProposalSheet({
 }: UpdateProposalSheetProps) {
   const form = useForm<CreateProposalSchema>({
     resolver: zodResolver(createProposalSchema),
-    defaultValues: {},
+    defaultValues: {
+      id: proposal.id,
+      name: proposal.name,
+      projectId: proposal.projectId,
+      amount: proposal.amount,
+    },
   })
 
   React.useEffect(() => {
@@ -37,6 +42,7 @@ export function UpdateProposalSheet({
       id: proposal.id,
       name: proposal.name,
       projectId: proposal.projectId,
+      amount: proposal.amount,
     })
   }, [proposal, form])
 
