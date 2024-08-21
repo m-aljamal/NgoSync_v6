@@ -17,7 +17,10 @@ interface UpdateSheetProps extends React.ComponentPropsWithRef<typeof Sheet> {
 export function UpdateSheet({ children, ...props }: UpdateSheetProps) {
   return (
     <Sheet {...props}>
-      <SheetContent className="flex flex-col gap-6 overflow-auto  " side="bottom">
+      <SheetContent
+        className="flex max-h-full flex-col gap-6 overflow-auto"
+        side="bottom"
+      >
         <SheetHeader className="text-right">
           <SheetTitle>تعديل</SheetTitle>
           <SheetDescription>عدل المعلومات واحفظ التغييرات</SheetDescription>
