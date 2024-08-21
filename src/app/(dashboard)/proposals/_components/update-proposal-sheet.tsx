@@ -7,6 +7,7 @@ import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
+import { useGetProposalExpensesCategories } from "@/hooks/use-get-form-data"
 import { type Sheet } from "@/components/ui/sheet"
 import UpdateButtons from "@/components/update-buttons"
 import { UpdateSheet } from "@/components/update-sheet"
@@ -27,24 +28,37 @@ export function UpdateProposalSheet({
   proposal,
   ...props
 }: UpdateProposalSheetProps) {
-  const form = useForm<CreateProposalSchema>({
-    resolver: zodResolver(createProposalSchema),
-    defaultValues: {
+  const { data } = useGetProposalExpensesCategories(proposal.id)
+
+  const proposalExpenseCategories = React.useMemo(
+    () =>
+      data?.map((item) => ({
+        amount: item.amount,
+        expensesCategoryId: item.expensesCategoryId,
+        id: item.id,
+      })) || [],
+    [data]
+  )
+
+  const defaultValues: CreateProposalSchema = React.useMemo(() => {
+    return {
       id: proposal.id,
       name: proposal.name,
       projectId: proposal.projectId,
       amount: proposal.amount,
-    },
+      currencyId: proposal.currencyId,
+      proposalExpenseCategories,
+    }
+  }, [proposal, proposalExpenseCategories])
+
+  const form = useForm<CreateProposalSchema>({
+    resolver: zodResolver(createProposalSchema),
+    defaultValues,
   })
 
   React.useEffect(() => {
-    form.reset({
-      id: proposal.id,
-      name: proposal.name,
-      projectId: proposal.projectId,
-      amount: proposal.amount,
-    })
-  }, [proposal, form])
+    form.reset(defaultValues)
+  }, [proposal, form, defaultValues])
 
   const { executeAsync, isExecuting } = useAction(updateProposal, {
     onSuccess: () => {

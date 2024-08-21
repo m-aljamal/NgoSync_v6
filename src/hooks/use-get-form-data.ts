@@ -64,3 +64,21 @@ export const useGetExpensesCategoriesByProjectId = (projectId: string) => {
   })
   return query
 }
+export const useGetProposalExpensesCategories = (proposalId: string) => {
+  const query = useQuery({
+    queryKey: ["proposalExpensesCategories", proposalId],
+    queryFn: async () => {
+      const response = await client.api.form["proposals-expenses"][
+        ":proposalId"
+      ].$get({
+        param: { proposalId },
+      })
+      if (!response.ok) {
+        throw new Error("Failed to fetch proposal expenses categories")
+      }
+      const { data } = await response.json()
+      return data
+    },
+  })
+  return query
+}
