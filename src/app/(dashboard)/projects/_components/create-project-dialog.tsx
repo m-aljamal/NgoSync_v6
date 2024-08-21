@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -18,7 +19,7 @@ import { ProjectForm } from "./project-form"
 
 export function CreateProjectDialog() {
   const { onClose } = useFormDialog()
-
+  const queryClient = useQueryClient()
   const form = useForm<CreateProjectSchema>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
@@ -31,6 +32,7 @@ export function CreateProjectDialog() {
   const { executeAsync, isExecuting } = useAction(createProject, {
     onSuccess: () => {
       toast.success("تم إنشاء المشروع")
+
       form.reset()
       toast.dismiss()
       onClose()
@@ -42,6 +44,9 @@ export function CreateProjectDialog() {
 
   async function onSubmit(input: CreateProjectSchema) {
     await executeAsync(input)
+    await queryClient.invalidateQueries({
+      queryKey: ["projects"],
+    })
   }
 
   return (
