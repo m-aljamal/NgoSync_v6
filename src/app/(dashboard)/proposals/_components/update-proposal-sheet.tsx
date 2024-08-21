@@ -36,6 +36,7 @@ export function UpdateProposalSheet({
     form.reset({
       id: proposal.id,
       name: proposal.name,
+      projectId: proposal.projectId,
     })
   }, [proposal, form])
 

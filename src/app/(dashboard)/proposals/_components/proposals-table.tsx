@@ -19,6 +19,7 @@ interface ProposalsTableProps {
 
 export function ProposalsTable({ promise }: ProposalsTableProps) {
   const { data, pageCount } = React.use(promise)
+console.log(data);
 
   const columns = React.useMemo(() => getColumns(), [])
 

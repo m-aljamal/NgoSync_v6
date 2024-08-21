@@ -60,6 +60,20 @@ export function getColumns(): ColumnDef<Proposal>[] {
       enableSorting: false,
       enableHiding: false,
     },
+    {
+      accessorKey: "projectName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المشروع" />
+      ),
+      cell: ({ row }) => (
+        <div className="max-w-[31.25rem] truncate font-medium">
+          {row.getValue("projectName")}
+        </div>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+     
 
     {
       accessorKey: "createdAt",

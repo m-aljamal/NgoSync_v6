@@ -2,9 +2,9 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { proposals, type Proposal } from "@/db/schema"
+import { projects, proposals, type Proposal } from "@/db/schema"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, gte, lte, or, type SQL } from "drizzle-orm"
+import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -46,11 +46,18 @@ export async function getProposals(input: GetSearchSchema) {
 
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
-        .select()
+        .select({
+          id: proposals.id,
+          name: proposals.name,
+          createdAt: proposals.createdAt,
+          projectId: proposals.projectId,
+          projectName: projects.name,
+         })
         .from(proposals)
         .limit(per_page)
         .offset(offset)
         .where(where)
+        .innerJoin(projects, eq(proposals.projectId, projects.id))
         .orderBy(
           column && column in proposals
             ? order === "asc"
