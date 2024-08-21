@@ -58,7 +58,7 @@ export function UpdateProposalSheet({
 
   React.useEffect(() => {
     form.reset(defaultValues)
-  }, [proposal, form, defaultValues])
+  }, [proposal, form, defaultValues, proposalExpenseCategories])
 
   const { executeAsync, isExecuting } = useAction(updateProposal, {
     onSuccess: () => {
