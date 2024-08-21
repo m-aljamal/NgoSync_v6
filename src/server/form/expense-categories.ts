@@ -1,7 +1,7 @@
 import { db } from "@/db"
 import { expensesCategories } from "@/db/schema"
 import { zValidator } from "@hono/zod-validator"
-import { eq } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 import { Hono } from "hono"
 import { z } from "zod"
 
@@ -13,6 +13,7 @@ const app = new Hono()
         name: expensesCategories.name,
       })
       .from(expensesCategories)
+      .orderBy(desc(expensesCategories.id))
     return c.json({ data })
   })
   .get(

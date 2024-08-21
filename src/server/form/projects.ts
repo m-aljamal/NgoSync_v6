@@ -1,6 +1,6 @@
 import { db } from "@/db"
 import { projects } from "@/db/schema"
-import { eq } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 import { Hono } from "hono"
 
 const app = new Hono().get("/", async (c) => {
@@ -11,6 +11,7 @@ const app = new Hono().get("/", async (c) => {
     })
     .from(projects)
     .where(eq(projects.status, "in-progress"))
+    .orderBy(desc(projects.createdAt))
   return c.json({ data })
 })
 
