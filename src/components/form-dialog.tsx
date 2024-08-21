@@ -44,7 +44,7 @@ export default function FormDialog({
             إضافة
           </Button>
         </DialogTrigger>
-        <DialogContent className="max-h-full overflow-auto">
+        <DialogContent className="max-h-full min-h-72 overflow-auto">
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription>{description}</DialogDescription>
@@ -66,7 +66,7 @@ export default function FormDialog({
         </Button>
       </DrawerTrigger>
 
-      <DrawerContent className="   ">
+      <DrawerContent className=" ">
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>
           <DrawerDescription>{description}</DrawerDescription>

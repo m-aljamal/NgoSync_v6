@@ -3,8 +3,7 @@
 import * as React from "react"
 import { type UseFormReturn } from "react-hook-form"
 
-import { useGetFormData } from "@/hooks/use-get-form-data"
-import {
+ import {
   Form,
   FormControl,
   FormField,
@@ -16,6 +15,7 @@ import { Input } from "@/components/ui/input"
 import InputGroup from "@/components/InputGroup"
 import { AppSelect } from "@/components/select"
 import { type CreateExpenseCategorySchema } from "@/app/_lib/validations"
+import { useGetProjects } from "@/hooks/use-get-form-data"
 
 interface CreateExpenseCategoryFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -31,7 +31,7 @@ export function ExpensesCategoryForm({
   children,
   isUpdate,
 }: CreateExpenseCategoryFormProps) {
-  const { data: projects, isLoading } = useGetFormData("projects")
+  const { data: projects, isLoading } = useGetProjects()
 
   return (
     <Form {...form}>

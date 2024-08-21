@@ -63,7 +63,7 @@ export const AppSelect = ({
         <Select
           isLoading={isLoading}
           menuPlacement="auto"
-          maxMenuHeight={150}
+          maxMenuHeight={120}
           placeholder={placeholder}
           className="h-10 text-sm"
           styles={{
