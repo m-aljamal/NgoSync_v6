@@ -1,0 +1,1 @@
+ALTER TABLE "ngosync_fund_transactions" ADD COLUMN "date" timestamp with time zone DEFAULT now() NOT NULL;

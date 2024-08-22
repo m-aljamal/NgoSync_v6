@@ -1,6 +1,9 @@
-import { doners, projects, tasks } from "@/db/schemas"
+import { donations, doners, projects, tasks } from "@/db/schemas"
 import * as z from "zod"
 
+const currencyId = z.string().min(2)
+const amount = z.coerce.number().min(1)
+const date = z.date()
 export const searchParamsSchema = z.object({
   page: z.coerce.number().default(1),
   per_page: z.coerce.number().default(10),
@@ -103,12 +106,12 @@ export type CreateExpenseCategorySchema = z.infer<
 export const createProposalSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(2),
-  amount: z.coerce.number().min(1),
+  amount,
   projectId: z.string().min(2),
-  currencyId: z.string().min(2),
+  currencyId,
   proposalExpenseCategories: z.array(
     z.object({
-      amount: z.coerce.number().min(1),
+      amount,
       expensesCategoryId: z.string().min(2),
       id: z.string().optional(),
     })
@@ -116,3 +119,21 @@ export const createProposalSchema = z.object({
 })
 
 export type CreateProposalSchema = z.infer<typeof createProposalSchema>
+
+export const createDonationSchema = z.object({
+  donerId: z.string().min(2),
+  fundId: z.string().min(1),
+  proposalId: z.string().optional(),
+  amount,
+  currencyId,
+  date,
+  id: z.string().optional(),
+  paymentType: z.enum(donations.paymentType.enumValues),
+  isOfficial: z.boolean().optional(),
+  receiptDescription: z.string().optional(),
+  amountInText: z.string().optional(),
+  projectId: z.string().optional(),
+  description: z.string().optional(),
+})
+
+export type CreateDonationSchema = z.infer<typeof createDonationSchema>

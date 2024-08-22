@@ -47,13 +47,12 @@ export default function FormDialog({
           </Button>
         </DialogTrigger>
         <DialogContent>
-          <ScrollArea className="max-h-[80vh] p-6">
+          <ScrollArea className="max-h-[80vh] p-2">
             <DialogHeader className="mb-5">
               <DialogTitle>{title}</DialogTitle>
               <DialogDescription>{description}</DialogDescription>
             </DialogHeader>
-
-            {children}
+            <main className="px-5">{children}</main>
           </ScrollArea>
         </DialogContent>
       </Dialog>

@@ -14,7 +14,7 @@ import { createExpenseCategorySchema, deleteArraySchema } from "../validations"
 function generateExpenseCategory(): Omit<ExpensesCategory, "projectId"> {
   return {
     id: generateId(),
-    name: `category ${Math.floor(Math.random() * 1000)}`,
+    name: `category ${Math.floor(Math.random() * 10)}`,
     createdAt: new Date(),
     updatedAt: new Date(),
   }
@@ -28,7 +28,7 @@ export async function seedExpenseCategories() {
     }
 
     const allExpensesCategories: ExpensesCategory[] = []
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       allExpensesCategories.push({
         ...generateExpenseCategory(),
         projectId:

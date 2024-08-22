@@ -20,8 +20,8 @@ import { createProposalSchema, deleteArraySchema } from "../validations"
 function generateProposal(): Omit<Proposal, "projectId" | "currencyId"> {
   return {
     id: generateId(),
-    name: `proposal ${Math.floor(Math.random() * 1000)}`,
-    amount: convertAmountToMiliunits(Math.floor(Math.random() * 10000)),
+    name: `proposal ${Math.floor(Math.random() * 100)}`,
+    amount: convertAmountToMiliunits(Math.floor(Math.random() * 100)),
     createdAt: new Date(),
     updatedAt: new Date(),
   }
@@ -33,7 +33,7 @@ function generateProposalExpense(): Omit<
 > {
   return {
     id: generateId(),
-    amount: convertAmountToMiliunits(Math.floor(Math.random() * 10000)),
+    amount: convertAmountToMiliunits(Math.floor(Math.random() * 100)),
     createdAt: new Date(),
     updatedAt: new Date(),
     description: "",
@@ -58,7 +58,7 @@ export async function seedProposals() {
 
     const allProposals: Proposal[] = []
     const allProposalsExpenses: ProposalExpense[] = []
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       const currencyId =
         currencies[Math.floor(Math.random() * currencies.length)]?.id || ""
 

@@ -73,6 +73,10 @@ export const donations = pgTable("donations", {
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
     .$onUpdate(() => new Date()),
+
+  date: timestamp("created_at", { mode: "string", withTimezone: true })
+    .notNull()
+    .defaultNow(),
 })
 
 export const donationRelations = relations(donations, ({ one }) => ({

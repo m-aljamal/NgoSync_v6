@@ -14,8 +14,8 @@ import { createFundSchema, deleteArraySchema } from "../validations"
 function generateFunds(): Fund {
   return {
     id: generateId(),
-    name: `fund ${Math.floor(Math.random() * 1000)}`,
-    createdAt: new Date("2021-01-01"),
+    name: `صندوق ${Math.floor(Math.random() * 10)}`,
+    createdAt: new Date(),
     updatedAt: new Date(),
   }
 }
@@ -23,7 +23,7 @@ function generateFunds(): Fund {
 export async function seedFunds() {
   try {
     const allFunds: Fund[] = []
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       allFunds.push(generateFunds())
     }
     await db.delete(funds)

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { useMemo } from "react"
-import { X } from "lucide-react"
+import { Plus, X } from "lucide-react"
 import { useFieldArray, useWatch, type UseFormReturn } from "react-hook-form"
 
 import { formatCurrency } from "@/lib/utils"
@@ -224,7 +224,7 @@ export function ProposalForm({
             <React.Fragment key={field.id}>
               <Button
                 type="button"
-                className="sm:col-span-full"
+                className="col-span-full"
                 variant="ghost"
                 onClick={() => remove(index)}
                 size="icon"
@@ -277,29 +277,21 @@ export function ProposalForm({
               />
             </React.Fragment>
           ))}
-          <div className="flex gap-x-4">
-            <Button
-              type="button"
-              variant="secondary"
-              size="sm"
-              onClick={() =>
-                append({
-                  amount: 0,
-                  expensesCategoryId: "",
-                })
-              }
-            >
-              إضافة بند
-            </Button>
-            <Button
-              type="button"
-              variant="destructive"
-              size="sm"
-              onClick={() => remove(fields.length - 1)}
-            >
-              حذف بند
-            </Button>
-          </div>
+
+          <Button
+            type="button"
+            className="col-span-full"
+            variant="ghost"
+            onClick={() =>
+              append({
+                amount: 0,
+                expensesCategoryId: "",
+              })
+            }
+            size="icon"
+          >
+            <Plus className="size-4 text-muted-foreground" />
+          </Button>
         </InputGroup>
         {children}
       </form>

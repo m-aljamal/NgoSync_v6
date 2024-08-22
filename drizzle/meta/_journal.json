@@ -15,6 +15,20 @@
       "when": 1724317953070,
       "tag": "0001_green_bug",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1724321669617,
+      "tag": "0002_rainy_taskmaster",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1724322540488,
+      "tag": "0003_flimsy_luke_cage",
+      "breakpoints": true
     }
   ]
 }

@@ -18,11 +18,11 @@ import {
 function generateProjects(): Project {
   return {
     id: generateId(),
-    name: `Project ${Math.floor(Math.random() * 1000)}`,
-    nameTr: `Project ${Math.floor(Math.random() * 1000)}`,
+    name: `مشروع ${Math.floor(Math.random() * 10)}`,
+    nameTr: `Project ${Math.floor(Math.random() * 10)}`,
     status: Math.random() > 0.5 ? "in-progress" : "done",
     system: Math.random() > 0.5 ? "school" : "cultural_center",
-    userId: "1c9a2b90-8145-4e2f-9dd5-1c2d0612d20e",
+    userId: "501415e3-3df8-47f9-aee0-1ad90b258d40",
     createdAt: new Date(),
     updatedAt: new Date(),
     description: "Lorem ipsum dolor sit amet",
@@ -32,7 +32,7 @@ function generateProjects(): Project {
 export async function seedProjects() {
   try {
     const allProjects: Project[] = []
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       allProjects.push(generateProjects())
     }
     await db.delete(projects)

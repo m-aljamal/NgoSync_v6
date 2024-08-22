@@ -45,6 +45,9 @@ export const fundTransactions = pgTable("fund_transactions", {
   amountInUSD: integer("amount_in_usd").notNull(),
   proposalAmount: integer("proposal_amount"),
   officialAmount: integer("official_amount"),
+  date: timestamp("date", { mode: "string", withTimezone: true })
+    .notNull()
+    .defaultNow(),
   type: transactionType("transaction_type").notNull(),
   description: varchar("description", { length: 200 }),
   category: fundTransactionCategory("transaction_category").notNull(),

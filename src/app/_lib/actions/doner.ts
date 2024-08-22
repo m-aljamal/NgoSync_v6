@@ -14,7 +14,7 @@ import { createDonerSchema, deleteArraySchema } from "../validations"
 function generateDoners(): Doner {
   return {
     id: generateId(),
-    name: `Doner ${Math.floor(Math.random() * 1000)}`,
+    name: `Doner ${Math.floor(Math.random() * 10)}`,
     gender: Math.random() > 0.5 ? "female" : "male",
     email: `doner${Math.floor(Math.random() * 1000)}@example.com`,
     phone: `+90${Math.floor(Math.random() * 100000000)}`,
@@ -30,7 +30,7 @@ function generateDoners(): Doner {
 export async function seedDoners() {
   try {
     const allDoners: Doner[] = []
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       allDoners.push(generateDoners())
     }
     await db.delete(doners)
