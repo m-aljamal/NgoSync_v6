@@ -1,0 +1,2 @@
+ALTER TABLE "ngosync_donations" ALTER COLUMN "created_at" SET DATA TYPE timestamp;--> statement-breakpoint
+ALTER TABLE "ngosync_donations" ADD COLUMN "date" timestamp with time zone DEFAULT now() NOT NULL;

@@ -18,7 +18,7 @@ import { proposals, proposalsExpenses } from "./proposal"
 
 export const transactionType = pgEnum("transaction_type", ["income", "outcome"])
 
-export const fundTransactionCategory = pgEnum("transaction_category", [
+export const fundTransactionCategoryEnum = pgEnum("transaction_category_enum", [
   "donation",
   "fund_transaction",
   "transfer_between_funds",
@@ -50,7 +50,7 @@ export const fundTransactions = pgTable("fund_transactions", {
     .defaultNow(),
   type: transactionType("transaction_type").notNull(),
   description: varchar("description", { length: 200 }),
-  category: fundTransactionCategory("transaction_category").notNull(),
+  category: fundTransactionCategoryEnum("transaction_category_enum").notNull(),
   isOfficial: boolean("is_offical").notNull().default(false),
 })
 
