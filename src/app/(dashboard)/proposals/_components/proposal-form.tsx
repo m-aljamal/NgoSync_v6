@@ -26,6 +26,7 @@ import AmountInput from "@/components/amount-input"
 import InputGroup from "@/components/InputGroup"
 import { AppSelect } from "@/components/select"
 import { type CreateProposalSchema } from "@/app/_lib/validations"
+import CurrencyAmountInput from "@/components/CurrencyAmountInput"
 
 interface CreateProposalFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -120,7 +121,8 @@ export function ProposalForm({
               </FormItem>
             )}
           />
-          <FormField
+          <CurrencyAmountInput form={form} />
+          {/* <FormField
             control={form.control}
             name="currencyId"
             render={({ field }) => (
@@ -162,7 +164,7 @@ export function ProposalForm({
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           <div className="col-span-full">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
