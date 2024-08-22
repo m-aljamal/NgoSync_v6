@@ -21,6 +21,9 @@ export function CreateDonationDialog() {
 
   const form = useForm<CreateDonationSchema>({
     resolver: zodResolver(createDonationSchema),
+    defaultValues: {
+      paymentType: "cash",
+    },
   })
 
   const { executeAsync, isExecuting } = useAction(createDonation, {
