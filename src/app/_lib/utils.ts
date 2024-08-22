@@ -1,4 +1,4 @@
-import { Project, tasks, type Task } from "@/db/schema"
+import { tasks, type Project, type Task } from "@/db/schemas"
 import { faker } from "@faker-js/faker"
 import {
   ArrowDownIcon,

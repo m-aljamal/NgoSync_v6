@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type Doner } from "@/db/schema"
+import { type Doner } from "@/db/schemas/donation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"

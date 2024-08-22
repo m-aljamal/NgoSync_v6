@@ -2,7 +2,7 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { currencies, type Currency } from "@/db/schema"
+import { currencies, type Currency } from "@/db/schemas/currency"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, gte, lte, or, type SQL } from "drizzle-orm"
 

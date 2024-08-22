@@ -2,7 +2,7 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { projects, type Project } from "@/db/schema"
+import { projects, type Project } from "@/db/schemas"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 

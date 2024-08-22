@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { users } from "@/db/schema"
+import { users } from "@/db/schemas/user"
 import { Hono } from "hono"
 
 const app = new Hono().get("/", async (c) => {

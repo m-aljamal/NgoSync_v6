@@ -2,7 +2,7 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { projects, type Project } from "@/db/schema"
+import { projects, type Project } from "@/db/schemas/project"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, gte, lte, or, type SQL } from "drizzle-orm"
 

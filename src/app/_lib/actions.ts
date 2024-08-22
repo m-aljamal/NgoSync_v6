@@ -2,7 +2,7 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db/index"
-import { tasks, type Task } from "@/db/schema"
+import { tasks, type Task } from "@/db/schemas"
 import { takeFirstOrThrow } from "@/db/utils"
 import { asc, count, eq, inArray, not } from "drizzle-orm"
 import { customAlphabet } from "nanoid"

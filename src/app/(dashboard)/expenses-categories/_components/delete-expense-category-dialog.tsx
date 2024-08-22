@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type ExpensesCategory } from "@/db/schema"
+import { type ExpensesCategory } from "@/db/schemas/transactions"
 import { type Row } from "@tanstack/react-table"
 import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"

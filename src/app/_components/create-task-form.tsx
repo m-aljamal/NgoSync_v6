@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { tasks } from "@/db/schema"
+import { tasks } from "@/db/schemas/task"
 import { type UseFormReturn } from "react-hook-form"
 
 import {

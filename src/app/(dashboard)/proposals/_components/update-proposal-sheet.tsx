@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type Proposal } from "@/db/schema"
+import { type Proposal } from "@/db/schemas/proposal"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQueryClient } from "@tanstack/react-query"
 import { useAction } from "next-safe-action/hooks"

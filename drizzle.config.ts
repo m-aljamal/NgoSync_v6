@@ -4,7 +4,7 @@ import { type Config } from "drizzle-kit"
 import { databasePrefix } from "@/lib/constants"
 
 export default {
-  schema: "./src/db/schema.ts",
+  schema: "./src/db/schemas/*",
   dialect: "postgresql",
   out: "./drizzle",
   dbCredentials: {

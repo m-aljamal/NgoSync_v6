@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type Currency } from "@/db/schema"
+import { type Currency } from "@/db/schemas/currency"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"

@@ -1,4 +1,4 @@
-import { doners, projects, tasks } from "@/db/schema"
+import { doners, projects, tasks } from "@/db/schemas"
 import * as z from "zod"
 
 export const searchParamsSchema = z.object({

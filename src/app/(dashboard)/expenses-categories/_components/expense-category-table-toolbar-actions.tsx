@@ -1,6 +1,6 @@
 "use client"
 
-import { type ExpensesCategory } from "@/db/schema"
+import { type ExpensesCategory } from "@/db/schemas/transactions"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 

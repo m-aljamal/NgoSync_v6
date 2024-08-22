@@ -7,7 +7,7 @@ import {
   proposalsExpenses,
   type Proposal,
   type ProposalExpense,
-} from "@/db/schema"
+} from "@/db/schemas"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 

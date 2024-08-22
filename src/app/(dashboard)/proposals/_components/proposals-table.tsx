@@ -2,7 +2,7 @@
 "use memo"
 
 import * as React from "react"
-import { type ProposalWithRelations } from "@/db/schema"
+import { type ProposalWithRelations } from "@/db/schemas/proposal"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { tasks, type Task } from "@/db/schema"
+import { tasks, type Task } from "@/db/schemas"
 import {
   ArrowUpIcon,
   CheckCircledIcon,

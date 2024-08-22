@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type Task } from "@/db/schema"
+import { type Task } from "@/db/schemas/task"
 import { ReloadIcon, TrashIcon } from "@radix-ui/react-icons"
 import { type Row } from "@tanstack/react-table"
 import { toast } from "sonner"

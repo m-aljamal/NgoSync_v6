@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { currencies } from "@/db/schema"
+import { currencies } from "@/db/schemas/currency"
 import { Hono } from "hono"
 
 const app = new Hono().get("/", async (c) => {

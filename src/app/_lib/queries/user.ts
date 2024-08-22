@@ -2,7 +2,7 @@ import { cache } from "react";
  
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { users } from "@/db/schemas/user";
 
 type User = {
   email?: string;

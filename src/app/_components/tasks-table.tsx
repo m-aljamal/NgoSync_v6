@@ -2,7 +2,7 @@
 "use memo"
 
 import * as React from "react"
-import { tasks, type Task } from "@/db/schema"
+import { tasks, type Task } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"

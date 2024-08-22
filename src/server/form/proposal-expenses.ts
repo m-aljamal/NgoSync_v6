@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { expensesCategories, proposalsExpenses } from "@/db/schema"
+import { expensesCategories, proposalsExpenses } from "@/db/schemas"
 import { zValidator } from "@hono/zod-validator"
 import { eq, sql } from "drizzle-orm"
 import { Hono } from "hono"

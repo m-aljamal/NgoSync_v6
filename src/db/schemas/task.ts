@@ -1,15 +1,9 @@
 import { pgTable } from "@/db/utils"
-import { relations, sql } from "drizzle-orm"
+import { sql } from "drizzle-orm"
 import {
-  boolean,
-  integer,
-  pgEnum,
-  primaryKey,
-  text,
   timestamp,
-  varchar,
+  varchar
 } from "drizzle-orm/pg-core"
-import type { AdapterAccountType } from "next-auth/adapters"
 
 import { generateId } from "@/lib/id"
 

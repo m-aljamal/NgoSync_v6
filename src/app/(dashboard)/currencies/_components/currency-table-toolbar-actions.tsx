@@ -1,6 +1,6 @@
 "use client"
 
-import { type Currency } from "@/db/schema"
+import { type Currency } from "@/db/schemas/currency"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 

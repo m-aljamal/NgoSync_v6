@@ -1,1 +1,0 @@
-ALTER TABLE "ngosync_funds" ALTER COLUMN "name" SET NOT NULL;

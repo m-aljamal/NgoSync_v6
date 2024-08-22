@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { projects } from "@/db/schema"
+import { projects } from "@/db/schemas/project"
 import { type UseFormReturn } from "react-hook-form"
 
 import { useGetUsers } from "@/hooks/use-get-form-data"

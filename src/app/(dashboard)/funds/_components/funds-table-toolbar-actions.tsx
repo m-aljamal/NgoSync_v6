@@ -1,6 +1,6 @@
 "use client"
 
-import { type Fund } from "@/db/schema"
+import { type Fund } from "@/db/schemas/fund"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 

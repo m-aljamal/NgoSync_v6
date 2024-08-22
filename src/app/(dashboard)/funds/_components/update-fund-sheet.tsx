@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type Fund } from "@/db/schema"
+import { type Fund } from "@/db/schemas/fund"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"

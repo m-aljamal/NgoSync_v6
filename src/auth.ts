@@ -1,5 +1,4 @@
 import { db } from "@/db"
-import { accounts, sessions, users, verificationTokens } from "@/db/schema"
 import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import NextAuth, { type DefaultSession, type Session } from "next-auth"
 import { type JWT } from "next-auth/jwt"
@@ -7,6 +6,12 @@ import { type JWT } from "next-auth/jwt"
 import { getUser } from "@/app/_lib/queries/user"
 
 import authConfig from "./auth.config"
+import {
+  accounts,
+  sessions,
+  users,
+  verificationTokens,
+} from "./db/schemas/user"
 
 export type ExtendedUser = DefaultSession["user"] & {
   role: typeof users.$inferSelect.role

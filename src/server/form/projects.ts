@@ -1,5 +1,5 @@
 import { db } from "@/db"
-import { projects } from "@/db/schema"
+import { projects } from "@/db/schemas/project"
 import { desc, eq } from "drizzle-orm"
 import { Hono } from "hono"
 

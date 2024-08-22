@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type Currency } from "@/db/schema"
+import { type Currency } from "@/db/schemas/currency"
 import { type Row } from "@tanstack/react-table"
 import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"

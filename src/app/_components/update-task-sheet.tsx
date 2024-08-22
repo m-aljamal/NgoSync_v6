@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { tasks, type Task } from "@/db/schema"
+import { tasks, type Task } from "@/db/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ReloadIcon } from "@radix-ui/react-icons"
 import { useForm } from "react-hook-form"

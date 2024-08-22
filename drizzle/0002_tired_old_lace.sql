@@ -1,1 +1,0 @@
-ALTER TABLE "ngosync_projects" ADD COLUMN "nameTr" varchar(128);

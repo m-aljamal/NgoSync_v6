@@ -29,7 +29,7 @@ import { drizzle } from "drizzle-orm/neon-serverless"
 // import { drizzle } from "drizzle-orm/postgres-js"
 // import postgres from "postgres"
 
-import * as schema from "./schema"
+import * as schema from "./schemas"
 
 const pool = new Pool({ connectionString: env.DATABASE_URL })
 export const db = drizzle(pool, { schema })

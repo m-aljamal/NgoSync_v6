@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { doners } from "@/db/schema"
+import { doners } from "@/db/schemas/donation"
 import { type UseFormReturn } from "react-hook-form"
 
 import {

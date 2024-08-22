@@ -46,7 +46,7 @@ export default function FormDialog({
             إضافة
           </Button>
         </DialogTrigger>
-        <DialogContent  >
+        <DialogContent>
           <ScrollArea className="max-h-[80vh] p-6">
             <DialogHeader className="mb-5">
               <DialogTitle>{title}</DialogTitle>

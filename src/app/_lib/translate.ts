@@ -1,4 +1,4 @@
-import { doners, type projects } from "@/db/schema"
+import type { doners, projects } from "@/db/schemas"
 
 export const projectStatusTranslation: Record<
   typeof projects.$inferSelect.status,

@@ -1,4 +1,4 @@
-import { users } from "@/db/schema"
+import { type users } from "@/db/schemas/user"
 
 import type { icons } from "./icons"
 
