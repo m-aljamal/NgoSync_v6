@@ -34,21 +34,7 @@ export const createDonation = actionClient
       },
     }) => {
       noStore()
-      console.log({
-        donerId,
-        fundId,
-        proposalId,
-        donationAmount,
-        paymentType,
-        projectId,
-        donationDate,
-        isOfficial,
-        receiptDescription,
-        amountInText,
-        currencyId,
-        description
-      });
-      
+
       const amount = convertAmountToMiliunits(donationAmount)
       const date = format(donationDate, "yyyy-MM-dd")
       await db.transaction(async (tx) => {
