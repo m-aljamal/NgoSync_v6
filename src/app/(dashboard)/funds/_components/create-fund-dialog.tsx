@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { useFormDialog } from "@/hooks/use-form-dialog"
-import FormButtons from "@/components/form-buttons"
-import FormDialog from "@/components/form-dialog"
+import FormButtons from "@/components/form-components/form-buttons"
+import FormDialog from "@/components/form-components/form-dialog"
 import { createFund } from "@/app/_lib/actions/fund"
 import { createFundSchema, type CreateFundSchema } from "@/app/_lib/validations"
 

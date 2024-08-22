@@ -8,8 +8,8 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { type Sheet } from "@/components/ui/sheet"
-import UpdateButtons from "@/components/update-buttons"
-import { UpdateSheet } from "@/components/update-sheet"
+import UpdateButtons from "@/components/form-components/update-buttons"
+import { UpdateSheet } from "@/components/form-components/update-sheet"
 import { updateFund } from "@/app/_lib/actions/fund"
 import { createFundSchema, type CreateFundSchema } from "@/app/_lib/validations"
 

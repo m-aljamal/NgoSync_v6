@@ -9,7 +9,6 @@ import { formatCurrency } from "@/lib/utils"
 import {
   useGetCurrencies,
   useGetExpensesCategoriesByProjectId,
-  useGetProjects,
 } from "@/hooks/use-get-form-data"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -22,11 +21,12 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import AmountInput from "@/components/amount-input"
-import InputGroup from "@/components/InputGroup"
-import { AppSelect } from "@/components/select"
+import AmountInput from "@/components/form-components/amount-input"
+import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
+import InputGroup from "@/components/form-components/InputGroup"
+import ProjectInput from "@/components/form-components/project-input"
+import { AppSelect } from "@/components/form-components/select"
 import { type CreateProposalSchema } from "@/app/_lib/validations"
-import CurrencyAmountInput from "@/components/CurrencyAmountInput"
 
 interface CreateProposalFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -47,8 +47,7 @@ export function ProposalForm({
     control: form.control,
   })
 
-  const { data: projects, isLoading: projectsLoading } = useGetProjects()
-  const { data: currencies, isLoading: currenciesLoading } = useGetCurrencies()
+  const { data: currencies } = useGetCurrencies()
 
   const selectedCurrencyId = useWatch({
     control: form.control,
@@ -101,70 +100,9 @@ export function ProposalForm({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="projectId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>المشروع</FormLabel>
-                <AppSelect
-                  isLoading={projectsLoading}
-                  onChange={field.onChange}
-                  value={field.value?.toString()}
-                  options={projects?.map((project) => ({
-                    value: project.id.toString(),
-                    label: project.name,
-                  }))}
-                  placeholder="أختر المشروع"
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <ProjectInput form={form} />
+
           <CurrencyAmountInput form={form} />
-          {/* <FormField
-            control={form.control}
-            name="currencyId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>العملة</FormLabel>
-                <AppSelect
-                  isLoading={currenciesLoading}
-                  onChange={field.onChange}
-                  value={field.value?.toString()}
-                  options={currencies?.map((currency) => ({
-                    value: currency.id.toString(),
-                    label: currency.name,
-                  }))}
-                  placeholder="أختر العملة"
-                />
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="amount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>قيمة الدراسة</FormLabel>
-                <FormControl>
-                  <AmountInput
-                    intlConfig={
-                      selectedCurrency && {
-                        locale: selectedCurrency.locale,
-                        currency: selectedCurrency.code,
-                      }
-                    }
-                    placeholder="0.00"
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          /> */}
 
           <div className="col-span-full">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

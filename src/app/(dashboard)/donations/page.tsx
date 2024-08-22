@@ -1,32 +1,27 @@
-import * as React from "react"
-import type { SearchParams } from "@/types"
+import { type SearchParams } from "@/types"
+import React from "react"
 
-import { Skeleton } from "@/components/ui/skeleton"
+import { getDonations } from "@/app/_lib/queries/donations"
+import { searchParamsSchema } from "@/app/_lib/validations"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getExpensesCategories } from "@/app/_lib/queries/project-transactions"
+import { Skeleton } from "@/components/ui/skeleton"
+import { DonationTable } from "./_components/donation-table"
 
-import { searchParamsSchema } from "../../_lib/validations"
-import { ExpenseCategoriesTable } from "./_components/expense-category-table"
-
-export interface IndexPageProps {
-  searchParams: SearchParams
-}
-export default function ExpenseCategories({ searchParams }: IndexPageProps) {
+ 
+export default function Proposals({ searchParams }: SearchParams) {
   const search = searchParamsSchema.parse(searchParams)
-
-  const promise = getExpensesCategories(search)
+  const promise = getDonations(search)
 
   return (
     <div>
       <Heading
-        title="تصنيفات المصاريف"
-        description="تصنيفات المصاريف  المالية للمشاريع"
-        icon="ClipboardList"
+        title="التبرعات"
+        description="إدارة التبرعات المالية للمنظمة."
+        icon="SquareKanban"
       />
-
       <Shell className="gap-2">
         <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
           <DateRangePicker
@@ -46,7 +41,7 @@ export default function ExpenseCategories({ searchParams }: IndexPageProps) {
             />
           }
         >
-          <ExpenseCategoriesTable promise={promise} />
+          <DonationTable promise={promise} />
         </React.Suspense>
       </Shell>
     </div>

@@ -3,7 +3,8 @@
 import * as React from "react"
 import { type UseFormReturn } from "react-hook-form"
 
- import {
+import { useGetProjects } from "@/hooks/use-get-form-data"
+import {
   Form,
   FormControl,
   FormField,
@@ -12,10 +13,9 @@ import { type UseFormReturn } from "react-hook-form"
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import InputGroup from "@/components/InputGroup"
-import { AppSelect } from "@/components/select"
+import InputGroup from "@/components/form-components/InputGroup"
+import { AppSelect } from "@/components/form-components/select"
 import { type CreateExpenseCategorySchema } from "@/app/_lib/validations"
-import { useGetProjects } from "@/hooks/use-get-form-data"
 
 interface CreateExpenseCategoryFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {

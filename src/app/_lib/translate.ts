@@ -1,4 +1,4 @@
-import type { doners, projects } from "@/db/schemas"
+import type { donations, doners, projects } from "@/db/schemas"
 
 export const projectStatusTranslation: Record<
   typeof projects.$inferSelect.status,
@@ -42,4 +42,12 @@ export const donerTypeTranslation: Record<
 > = {
   individual: "فرد",
   orgnization: "منظمة",
+}
+
+export const donationPaymentTypeTranslation: Record<
+  typeof donations.$inferSelect.paymentType,
+  string
+> = {
+  cash: "نقدي",
+  debt: "دين",
 }

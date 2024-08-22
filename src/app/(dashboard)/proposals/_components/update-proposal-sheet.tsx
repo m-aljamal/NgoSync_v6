@@ -10,8 +10,8 @@ import { toast } from "sonner"
 
 import { useGetProposalExpensesCategories } from "@/hooks/use-get-form-data"
 import { type Sheet } from "@/components/ui/sheet"
-import UpdateButtons from "@/components/update-buttons"
-import { UpdateSheet } from "@/components/update-sheet"
+import UpdateButtons from "@/components/form-components/update-buttons"
+import { UpdateSheet } from "@/components/form-components/update-sheet"
 import { updateProposal } from "@/app/_lib/actions/proposal"
 import {
   createProposalSchema,

@@ -1,14 +1,14 @@
-import { type SearchParams } from "@/types"
 import React from "react"
+import { type SearchParams } from "@/types"
 
-import { searchParamsSchema } from "@/app/_lib/validations"
+import { Skeleton } from "@/components/ui/skeleton"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { Skeleton } from "@/components/ui/skeleton"
-
 import { getProposals } from "@/app/_lib/queries/proposals"
+import { searchParamsSchema } from "@/app/_lib/validations"
+
 import { ProposalsTable } from "./_components/proposals-table"
 
 export default function Proposals({ searchParams }: SearchParams) {

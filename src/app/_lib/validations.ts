@@ -121,13 +121,13 @@ export const createProposalSchema = z.object({
 export type CreateProposalSchema = z.infer<typeof createProposalSchema>
 
 export const createDonationSchema = z.object({
+  date,
   donerId: z.string().min(2),
   fundId: z.string().min(1),
-  proposalId: z.string().optional(),
   amount,
   currencyId,
-  date,
   id: z.string().optional(),
+  proposalId: z.string().optional(),
   paymentType: z.enum(donations.paymentType.enumValues),
   isOfficial: z.boolean().optional(),
   receiptDescription: z.string().optional(),

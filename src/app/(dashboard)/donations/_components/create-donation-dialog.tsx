@@ -8,33 +8,24 @@ import { toast } from "sonner"
 import { useFormDialog } from "@/hooks/use-form-dialog"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
-import { createProposal } from "@/app/_lib/actions/proposal"
+import { createDonation } from "@/app/_lib/actions/donation"
 import {
-  createProposalSchema,
-  type CreateProposalSchema,
+  createDonationSchema,
+  type CreateDonationSchema,
 } from "@/app/_lib/validations"
 
-import { ProposalForm } from "./proposal-form"
+import { DonationForm } from "./donation-form"
 
-export function CreateProposalDialog() {
+export function CreateDonationDialog() {
   const { onClose } = useFormDialog()
 
-  const form = useForm<CreateProposalSchema>({
-    resolver: zodResolver(createProposalSchema),
-    defaultValues: {
-      name: "",
-      proposalExpenseCategories: [
-        {
-          amount: 0,
-          expensesCategoryId: "",
-        },
-      ],
-    },
+  const form = useForm<CreateDonationSchema>({
+    resolver: zodResolver(createDonationSchema),
   })
 
-  const { executeAsync, isExecuting } = useAction(createProposal, {
+  const { executeAsync, isExecuting } = useAction(createDonation, {
     onSuccess: () => {
-      toast.success("تم إنشاء الدراسة")
+      toast.success("تم إنشاء التبرع")
       form.reset()
       toast.dismiss()
       onClose()
@@ -44,15 +35,15 @@ export function CreateProposalDialog() {
     },
   })
 
-  async function onSubmit(input: CreateProposalSchema) {
+  async function onSubmit(input: CreateDonationSchema) {
     await executeAsync(input)
   }
 
   return (
     <FormDialog>
-      <ProposalForm form={form} onSubmit={onSubmit}>
+      <DonationForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
-      </ProposalForm>
+      </DonationForm>
     </FormDialog>
   )
 }

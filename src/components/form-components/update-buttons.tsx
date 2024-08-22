@@ -1,8 +1,8 @@
 import React from "react"
 import { ReloadIcon } from "@radix-ui/react-icons"
 
-import { Button } from "./ui/button"
-import { SheetClose, SheetFooter } from "./ui/sheet"
+import { Button } from "../ui/button"
+import { SheetClose, SheetFooter } from "../ui/sheet"
 
 export default function UpdateButtons({
   isExecuting,

@@ -16,8 +16,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import AmountInput from "@/components/amount-input"
-import { AppSelect } from "@/components/select"
+import AmountInput from "@/components/form-components/amount-input"
+import { AppSelect } from "@/components/form-components/select"
 
 export default function CurrencyAmountInput<T extends FieldValues>({
   form,

@@ -14,8 +14,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import InputGroup from "@/components/InputGroup"
-import { AppSelect } from "@/components/select"
+import InputGroup from "@/components/form-components/InputGroup"
+import { AppSelect } from "@/components/form-components/select"
 import {
   projectStatusTranslation,
   projectSystemTranslation,

@@ -13,8 +13,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Switch } from "@/components/ui/switch"
-import InputGroup from "@/components/InputGroup"
-import { AppSelect } from "@/components/select"
+import InputGroup from "@/components/form-components/InputGroup"
+import { AppSelect } from "@/components/form-components/select"
 import { type CreateCurrencySchema } from "@/app/_lib/validations"
 
 import { currencyList } from "./currency-list"

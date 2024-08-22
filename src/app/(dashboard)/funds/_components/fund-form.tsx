@@ -12,7 +12,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import InputGroup from "@/components/InputGroup"
+import InputGroup from "@/components/form-components/InputGroup"
 import { type CreateFundSchema } from "@/app/_lib/validations"
 
 interface CreateFundFormProps

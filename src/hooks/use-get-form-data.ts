@@ -82,3 +82,50 @@ export const useGetProposalExpensesCategories = (proposalId: string) => {
   })
   return query
 }
+
+export const useGetFunds = () => {
+  const query = useQuery({
+    queryKey: ["funds"],
+    queryFn: async () => {
+      const response = await client.api.form.funds.$get()
+      if (!response.ok) {
+        throw new Error("Failed to fetch funds")
+      }
+      const { data } = await response.json()
+      return data
+    },
+  })
+  return query
+}
+
+export const useGetDoners = () => {
+  const query = useQuery({
+    queryKey: ["doners"],
+    queryFn: async () => {
+      const response = await client.api.form.doners.$get()
+      if (!response.ok) {
+        throw new Error("Failed to fetch doners")
+      }
+      const { data } = await response.json()
+      return data
+    },
+  })
+  return query
+}
+
+export const useGetProposals = (projectId: string) => {
+  const query = useQuery({
+    queryKey: ["proposals", projectId],
+    queryFn: async () => {
+      const response = await client.api.form.proposals[":projectId"].$get({
+        param: { projectId },
+      })
+      if (!response.ok) {
+        throw new Error("Failed to fetch proposals")
+      }
+      const { data } = await response.json()
+      return data
+    },
+  })
+  return query
+}
