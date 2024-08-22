@@ -33,16 +33,17 @@ export function UpdateDonationSheet({
   const queryClient = useQueryClient()
   const { data } = useGetProposalExpensesCategories(donation.id)
 
-  // const defaultValues: CreateDonationSchema = React.useMemo(() => {
-  //   return {
-  //     id: proposal.id,
-  //     name: proposal.name,
-  //     projectId: proposal.projectId,
-  //     amount: proposal.amount,
-  //     currencyId: proposal.currencyId,
-  //     proposalExpenseCategories,
-  //   }
-  // }, [proposal, proposalExpenseCategories])
+  const defaultValues: CreateDonationSchema = React.useMemo(() => {
+    return {
+      id: donation.id,
+      date: donation.date,
+      fundId: donation.fundId ?? "",
+      amount: donation.amount,
+      currencyId: donation.currencyId ?? "",
+
+      
+    }
+  }, [proposal, proposalExpenseCategories])
 
   const form = useForm<CreateDonationSchema>({
     resolver: zodResolver(createDonationSchema),
