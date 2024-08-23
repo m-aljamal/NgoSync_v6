@@ -1,19 +1,23 @@
-import React from "react"
 import { type SearchParams } from "@/types"
+import React from "react"
 
-import { Skeleton } from "@/components/ui/skeleton"
+import { getTransferBetweenFunds } from "@/app/_lib/queries/transfers"
+import { searchParamsSchema } from "@/app/_lib/validations"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getExpenses } from "@/app/_lib/queries/project-transactions"
-import { searchParamsSchema } from "@/app/_lib/validations"
+import { Skeleton } from "@/components/ui/skeleton"
 
-import { ExpenseTable } from "./_components/expense-table"
+import {
+  TransferBetweenFundsTable
+} from "./_components/transfer-between-funds-table"
 
-export default function Proposals({ searchParams }: SearchParams) {
+export default function TransferBetweenFundsToFunds({
+  searchParams,
+}: SearchParams) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getExpenses(search)
+  const promise = getTransferBetweenFunds(search)
 
   return (
     <div>
@@ -41,7 +45,7 @@ export default function Proposals({ searchParams }: SearchParams) {
             />
           }
         >
-          <ExpenseTable promise={promise} />
+          <TransferBetweenFundsTable promise={promise} />
         </React.Suspense>
       </Shell>
     </div>

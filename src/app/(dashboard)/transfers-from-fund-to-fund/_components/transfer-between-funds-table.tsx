@@ -2,33 +2,34 @@
 "use memo"
 
 import * as React from "react"
-import { type ProjectTransaction } from "@/db/schemas"
+import { type TransferBetweenFundsWithRelations } from "@/db/schemas/transfer"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { type getExpenses } from "@/app/_lib/queries/project-transactions"
+import { type getTransferBetweenFunds } from "@/app/_lib/queries/transfers"
 
 import { getColumns } from "./transfer-between-funds-table-columns"
-import { ExpensesTableToolbarActions } from "./expenses-table-toolbar-actions"
+import { TransferBetweenFundsTableToolbarActions } from "./transfer-between-funds-table-toolbar-actions"
 
-interface ExpenseTableProps {
-  promise: ReturnType<typeof getExpenses>
+interface TransferBetweenFundsTableProps {
+  promise: ReturnType<typeof getTransferBetweenFunds>
 }
 
-export function ExpenseTable({ promise }: ExpenseTableProps) {
+export function TransferBetweenFundsTable({ promise }: TransferBetweenFundsTableProps) {
   const { data, pageCount } = React.use(promise)
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<ProjectTransaction>[] = [
-    {
-      label: "Amount",
-      value: "amount",
-      placeholder: "بحث عن مبلغ",
-    },
-  ]
+  const filterFields: DataTableFilterField<TransferBetweenFundsWithRelations>[] =
+    [
+      {
+        label: "Amount",
+        value: "amount",
+        placeholder: "بحث عن مبلغ",
+      },
+    ]
 
   const { table } = useDataTable({
     data,
@@ -45,7 +46,7 @@ export function ExpenseTable({ promise }: ExpenseTableProps) {
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <ExpensesTableToolbarActions table={table} />
+        <TransferBetweenFundsTableToolbarActions table={table} />
       </DataTableToolbar>
     </DataTable>
   )

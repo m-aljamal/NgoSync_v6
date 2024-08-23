@@ -52,7 +52,7 @@ export function TransferBetweenFundsForm({
           />
 
           <FundInput form={form} name="senderId" label="الصندوق المرسل" />
-          <FundInput form={form} name="senderId" label="الصندوق المستلم" />
+          <FundInput form={form} name="receiverId" label="الصندوق المستلم" />
 
           <FormField
             control={form.control}

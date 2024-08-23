@@ -44,5 +44,11 @@ export const transferBetweenFundsRelations = relations(
 export type TransferBetweenFunds = typeof transferBetweenFunds.$inferSelect
 export type NewTransferBetweenFunds = typeof transferBetweenFunds.$inferInsert
 export type TransferBetweenFundsWithRelations =
-  typeof transferBetweenFunds.$inferSelect &
-    typeof fundTransactions.$inferSelect
+  typeof transferBetweenFunds.$inferSelect & {
+    description?: string | null
+    senderFundId: string
+    receiverFundId: string
+    date: string
+    amount: number
+    currencyId: string
+  }

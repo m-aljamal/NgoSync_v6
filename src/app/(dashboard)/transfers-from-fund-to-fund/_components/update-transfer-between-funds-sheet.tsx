@@ -23,7 +23,7 @@ interface UpdateTransferBetweenFundsSheetProps
   transfer: TransferBetweenFundsWithRelations
 }
 
-export function UpdateExpenseSheet({
+export function UpdateTransferBetweenFundsSheet({
   transfer,
   ...props
 }: UpdateTransferBetweenFundsSheetProps) {
@@ -34,8 +34,8 @@ export function UpdateExpenseSheet({
       amount: transfer.amount,
       description: transfer.description ?? "",
       currencyId: transfer.currencyId,
-      senderId: transfer.sender,
-      receiverId: transfer.receiver,
+      senderId: transfer.senderFundId,
+      receiverId: transfer.receiverFundId,
     }
   }, [transfer])
 

@@ -2,15 +2,10 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import {
-  fundTransactions,
-  projectsTransactions,
-  tasks,
-  type ProjectTransaction,
-} from "@/db/schemas"
+import { fundTransactions, tasks } from "@/db/schemas"
 import {
   transferBetweenFunds,
-  TransferBetweenFunds,
+  type TransferBetweenFunds,
 } from "@/db/schemas/transfer"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, eq, or, sql, type SQL } from "drizzle-orm"
@@ -22,8 +17,7 @@ import { type GetSearchSchema } from "../validations"
 
 export async function getTransferBetweenFunds(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, amount, status, priority, operator, from, to } =
-    input
+  const { page, per_page, sort, status, priority, operator, from, to } = input
 
   try {
     // Offset to paginate the results
@@ -86,13 +80,16 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
       const data = await tx
         .select({
           id: transferBetweenFunds.id,
-
-          description: projectsTransactions.description,
-          isOfficial: projectsTransactions.isOfficial,
-          date: projectsTransactions.date,
-          updatedAt: projectsTransactions.updatedAt,
-          amount: sql<number>`${projectsTransactions.amount}/1000`,
-          createdAt: projectsTransactions.createdAt,
+          sender: transferBetweenFunds.sender,
+          receiver: transferBetweenFunds.receiver,
+          updatedAt: transferBetweenFunds.updatedAt,
+          createdAt: transferBetweenFunds.createdAt,
+          description: senderTransaction.description,
+          senderFundId: senderTransaction.fundId,
+          receiverFundId: recipientTransaction.fundId,
+          date: senderTransaction.date,
+          amount: sql<number>`ABS(${senderTransaction.amount})/1000`,
+          currencyId: senderTransaction.currencyId,
         })
         .from(transferBetweenFunds)
         .limit(per_page)

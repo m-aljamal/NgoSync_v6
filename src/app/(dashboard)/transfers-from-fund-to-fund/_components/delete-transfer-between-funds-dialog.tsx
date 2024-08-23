@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type TransferBetweenFunds } from "@/db/schemas/transfer"
+import { type TransferBetweenFundsWithRelations } from "@/db/schemas/transfer"
 import { type Row } from "@tanstack/react-table"
 import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"
@@ -12,7 +12,7 @@ import { deleteTransferBetweenFunds } from "@/app/_lib/actions/transfers"
 
 interface DeleteTransferBetweenFundsDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  transfer: Row<TransferBetweenFunds>["original"][]
+  transfer: Row<TransferBetweenFundsWithRelations>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }
@@ -38,7 +38,13 @@ export function DeleteTransferBetweenFundsDialog({
   })
 
   async function onDelete() {
-    await executeAsync({ ids: transfer.map((p) => p.id) })
+    const ids = transfer.reduce<string[]>((acc, p) => {
+      acc.push(p.id, p.receiver, p.sender)
+      return acc
+    }, [])
+
+    await executeAsync({ ids })
+
     toast.dismiss()
   }
 

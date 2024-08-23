@@ -1,8 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type ProjectTransaction } from "@/db/schemas"
-import { TransferBetweenFunds } from "@/db/schemas/transfer"
+import { type TransferBetweenFundsWithRelations } from "@/db/schemas/transfer"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
@@ -19,10 +18,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 
-import { DeleteExpensesDialog } from "./delete-transfer-between-funds-dialog"
-import { UpdateExpenseSheet } from "./update-transfer-between-funds-sheet"
+import { DeleteTransferBetweenFundsDialog } from "./delete-transfer-between-funds-dialog"
+import { UpdateTransferBetweenFundsSheet } from "./update-transfer-between-funds-sheet"
 
-export function getColumns(): ColumnDef<TransferBetweenFunds>[] {
+export function getColumns(): ColumnDef<TransferBetweenFundsWithRelations>[] {
   return [
     {
       id: "select",
@@ -57,6 +56,19 @@ export function getColumns(): ColumnDef<TransferBetweenFunds>[] {
       cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
     },
     {
+      accessorKey: "amount",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="القيمة" />
+      ),
+      cell: ({ row }) => (
+        <div>
+          {/* {formatCurrency(row.getValue("amount"), row.original.currencyCode)} */}
+          {row.original.amount}
+        </div>
+      ),
+    },
+
+    {
       id: "actions",
       cell: function Cell({ row }) {
         const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
@@ -66,15 +78,15 @@ export function getColumns(): ColumnDef<TransferBetweenFunds>[] {
 
         return (
           <>
-            <UpdateExpenseSheet
+            <UpdateTransferBetweenFundsSheet
               open={showUpdateTaskSheet}
               onOpenChange={setShowUpdateTaskSheet}
-              expense={row.original}
+              transfer={row.original}
             />
-            <DeleteExpensesDialog
+            <DeleteTransferBetweenFundsDialog
               open={showDeleteTaskDialog}
               onOpenChange={setShowDeleteTaskDialog}
-              expenses={[row.original]}
+              transfer={[row.original]}
               showTrigger={false}
               onSuccess={() => row.toggleSelected(false)}
             />
