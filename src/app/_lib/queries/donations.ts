@@ -2,9 +2,21 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
+import { fundTransactions } from "@/db/schemas"
 import { donations, doners, type Donation } from "@/db/schemas/donation"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, gte, lte, or, type SQL } from "drizzle-orm"
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  lte,
+  or,
+  sql,
+  type SQL,
+} from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -43,14 +55,32 @@ export async function getDonations(input: GetSearchSchema) {
     const where: DrizzleWhere<Donation> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
 
-    // Transaction is used to ensure both queries are executed in a single transaction
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
-        .select()
+        .select({
+          date: donations.date,
+          id: donations.id,
+          fundTransactionId: donations.fundTransactionId,
+          amount: sql<number>`${donations.amount}/1000`,
+          proposalId: donations.proposalId,
+          paymentType: donations.paymentType,
+          isOfficial: donations.isOfficial,
+          receiptDescription: donations.receiptDescription,
+          amountInText: donations.amountInText,
+          projectId: donations.projectId,
+          donerId: donations.donerId,
+          description: fundTransactions.description,
+          fundId: fundTransactions.fundId,
+          currencyId: fundTransactions.currencyId,
+        })
         .from(donations)
         .limit(per_page)
         .offset(offset)
         .where(where)
+        .innerJoin(
+          fundTransactions,
+          eq(donations.fundTransactionId, fundTransactions.id)
+        )
         .orderBy(
           column && column in donations
             ? order === "asc"

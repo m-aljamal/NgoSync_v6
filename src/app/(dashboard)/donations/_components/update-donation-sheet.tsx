@@ -1,86 +1,83 @@
 "use client"
 
 import * as React from "react"
-import { Donation } from "@/db/schemas"
-import { type Proposal } from "@/db/schemas/proposal"
+import { type DonationWithRelations } from "@/db/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQueryClient } from "@tanstack/react-query"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
-import { useGetProposalExpensesCategories } from "@/hooks/use-get-form-data"
 import { type Sheet } from "@/components/ui/sheet"
 import UpdateButtons from "@/components/form-components/update-buttons"
 import { UpdateSheet } from "@/components/form-components/update-sheet"
-import { updateProposal } from "@/app/_lib/actions/proposal"
+import { updateDonation } from "@/app/_lib/actions/donation"
 import {
   createDonationSchema,
-  CreateDonationSchema,
-  createProposalSchema,
-  type CreateProposalSchema,
+  type CreateDonationSchema,
 } from "@/app/_lib/validations"
+
+import { DonationForm } from "./donation-form"
 
 interface UpdateDonationSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
-  donation: Donation
+  donation: DonationWithRelations
 }
 
 export function UpdateDonationSheet({
   donation,
   ...props
 }: UpdateDonationSheetProps) {
-  const queryClient = useQueryClient()
-  const { data } = useGetProposalExpensesCategories(donation.id)
-
   const defaultValues: CreateDonationSchema = React.useMemo(() => {
     return {
-      id: donation.id,
-      date: donation.date,
-      fundId: donation.fundId ?? "",
+      date: new Date(donation.date),
+      donerId: donation.donerId,
+      fundId: donation.fundId,
       amount: donation.amount,
-      currencyId: donation.currencyId ?? "",
-
-      
+      currencyId: donation.currencyId,
+      id: donation.id,
+      fundTransactionId: donation.fundTransactionId ?? undefined,
+      proposalId: donation.proposalId ?? undefined,
+      paymentType: donation.paymentType,
+      isOfficial: donation.isOfficial ?? undefined,
+      receiptDescription: donation.receiptDescription ?? undefined,
+      amountInText: donation.amountInText ?? undefined,
+      projectId: donation.projectId ?? undefined,
+      description: donation.description ?? undefined,
     }
-  }, [proposal, proposalExpenseCategories])
+  }, [donation])
 
   const form = useForm<CreateDonationSchema>({
     resolver: zodResolver(createDonationSchema),
-    // defaultValues,
+    defaultValues,
   })
 
-  // React.useEffect(() => {
-  //   form.reset(defaultValues)
-  // }, [proposal, form, defaultValues, proposalExpenseCategories])
+  React.useEffect(() => {
+    form.reset(defaultValues)
+  }, [donation, form, defaultValues])
 
-  // const { executeAsync, isExecuting } = useAction(updateProposal, {
-  //   onSuccess: async () => {
-  //     await queryClient.invalidateQueries({
-  //       queryKey: ["proposalExpensesCategories"],
-  //     })
-  //     toast.success("تم تعديل التبرع")
-  //     props.onOpenChange?.(false)
-  //     form.reset()
-  //   },
-  //   onError: ({ error }) => {
-  //     toast.error(error.serverError)
-  //   },
-  //   onExecute: () => {
-  //     toast.loading("جاري تعديل التبرع")
-  //   },
-  // })
+  const { executeAsync, isExecuting } = useAction(updateDonation, {
+    onSuccess: async () => {
+      toast.success("تم تعديل التبرع")
+      props.onOpenChange?.(false)
+      form.reset()
+    },
+    onError: ({ error }) => {
+      toast.error(error.serverError)
+    },
+    onExecute: () => {
+      toast.loading("جاري تعديل التبرع")
+    },
+  })
 
-  // async function onSubmit(input: CreateDonationSchema) {
-  //   await executeAsync(input)
-  //   toast.dismiss()
-  // }
+  async function onSubmit(input: CreateDonationSchema) {
+    await executeAsync(input)
+    toast.dismiss()
+  }
   return (
     <UpdateSheet {...props}>
-      <div>fdf</div>
-      {/* <ProposalForm form={form} onSubmit={onSubmit} isUpdate>
+      <DonationForm form={form} onSubmit={onSubmit} isUpdate>
         <UpdateButtons isExecuting={isExecuting} />
-      </ProposalForm> */}
+      </DonationForm>
     </UpdateSheet>
   )
 }

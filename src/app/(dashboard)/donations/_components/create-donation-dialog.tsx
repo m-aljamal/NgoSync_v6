@@ -23,6 +23,9 @@ export function CreateDonationDialog() {
     resolver: zodResolver(createDonationSchema),
     defaultValues: {
       paymentType: "cash",
+      description: "",
+      receiptDescription: "",
+      amountInText: "",
     },
   })
 

@@ -1,13 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { Donation } from "@/db/schemas"
-import { type ProposalWithRelations } from "@/db/schemas/proposal"
+import { type DonationWithRelations } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
-import { formatCurrency } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -20,10 +18,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 
-import { DeleteProposalDialog } from "./delete-proposal-dialog"
-import { UpdateProposalSheet } from "./update-donation-sheet"
+import { DeleteDonationsDialog } from "./delete-donations-dialog"
+import { UpdateDonationSheet } from "./update-donation-sheet"
 
-export function getColumns(): ColumnDef<Donation>[] {
+export function getColumns(): ColumnDef<DonationWithRelations>[] {
   return [
     {
       id: "select",
@@ -80,18 +78,18 @@ export function getColumns(): ColumnDef<Donation>[] {
 
         return (
           <>
-            {/* <UpdateProposalSheet
+            <UpdateDonationSheet
               open={showUpdateTaskSheet}
               onOpenChange={setShowUpdateTaskSheet}
-              proposal={row.original}
+              donation={row.original}
             />
-            <DeleteProposalDialog
+            <DeleteDonationsDialog
               open={showDeleteTaskDialog}
               onOpenChange={setShowDeleteTaskDialog}
-              proposals={[row.original]}
+              donations={[row.original]}
               showTrigger={false}
               onSuccess={() => row.toggleSelected(false)}
-            /> */}
+            />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button

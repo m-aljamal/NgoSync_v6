@@ -65,9 +65,9 @@ export const donations = pgTable("donations", {
   proposalId: varchar("proposal_id", { length: 30 }).references(
     () => proposals.id
   ),
-  fundTransactionId: varchar("fund_transaction_id", { length: 30 }).references(
-    () => fundTransactions.id
-  ),
+  fundTransactionId: varchar("fund_transaction_id", { length: 30 })
+    .references(() => fundTransactions.id)
+    .notNull(),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
@@ -100,3 +100,5 @@ export const donationRelations = relations(donations, ({ one }) => ({
 
 export type Donation = typeof donations.$inferSelect
 export type NewDonation = typeof donations.$inferInsert
+export type DonationWithRelations = typeof donations.$inferSelect &
+  typeof fundTransactions.$inferSelect

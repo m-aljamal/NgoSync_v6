@@ -127,12 +127,13 @@ export const createDonationSchema = z.object({
   amount,
   currencyId,
   id: z.string().optional(),
-  proposalId: z.string().optional(),
+  fundTransactionId: z.string().optional(),
+  proposalId: z.string().nullable().optional(),
   paymentType: z.enum(donations.paymentType.enumValues),
   isOfficial: z.boolean().optional(),
   receiptDescription: z.string().optional(),
   amountInText: z.string().optional(),
-  projectId: z.string().optional(),
+  projectId: z.string().nullable().optional(),
   description: z.string().optional(),
 })
 
