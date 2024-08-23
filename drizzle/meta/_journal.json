@@ -50,6 +50,13 @@
       "when": 1724392746304,
       "tag": "0006_daffy_kylun",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1724395071479,
+      "tag": "0007_careful_rockslide",
+      "breakpoints": true
     }
   ]
 }

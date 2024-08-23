@@ -93,8 +93,12 @@ export const projectsTransactions = pgTable("projects_transactions", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())
     .primaryKey(),
-  projectId: varchar("project_id").notNull(),
-  currencyId: varchar("currency_id").notNull(),
+  projectId: varchar("project_id")
+    .references(() => projects.id)
+    .notNull(),
+  currencyId: varchar("currency_id")
+    .references(() => currencies.id)
+    .notNull(),
   amount: integer("amount").notNull(),
   amountInUSD: integer("amount_in_usd").notNull(),
   officialAmount: integer("official_amount"),
@@ -104,9 +108,13 @@ export const projectsTransactions = pgTable("projects_transactions", {
   transactionStatus: transactionStatus("transaction_status").notNull(),
   description: varchar("description", { length: 200 }),
   isOfficial: boolean("is_offical").notNull().default(false),
-  expensesCategoryId: varchar("expenses_category_id"),
-  date: timestamp("date").defaultNow().notNull(),
-  proposalId: varchar("proposal_id"),
+  expensesCategoryId: varchar("expenses_category_id").references(
+    () => expensesCategories.id
+  ),
+  date: timestamp("date", { mode: "string", withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  proposalId: varchar("proposal_id").references(() => proposals.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
@@ -124,10 +132,10 @@ export const projectsTransactionsRelations = relations(
       fields: [projectsTransactions.proposalId],
       references: [proposals.id],
     }),
-    // currency: one(currencies, {
-    //   fields: [projectsTransactions.currencyId],
-    //   references: [currencies.id],
-    // }),
+    currency: one(currencies, {
+      fields: [projectsTransactions.currencyId],
+      references: [currencies.id],
+    }),
     expensesCategory: one(expensesCategories, {
       fields: [projectsTransactions.expensesCategoryId],
       references: [expensesCategories.id],
@@ -164,6 +172,7 @@ export const expensesCategoriesRelations = relations(
       references: [projects.id],
     }),
     proposalsExpenses: many(proposalsExpenses),
+    projectsTransactions: many(projectsTransactions),
   })
 )
 
