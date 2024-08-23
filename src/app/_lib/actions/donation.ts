@@ -147,7 +147,6 @@ export const deleteDonations = actionClient
   })
   .action(async ({ parsedInput: { ids } }) => {
     noStore()
-    console.log("ids", ids)
 
     await db.transaction(async (ex) => {
       await ex.delete(fundTransactions).where(inArray(fundTransactions.id, ids))

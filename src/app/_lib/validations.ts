@@ -138,3 +138,17 @@ export const createDonationSchema = z.object({
 })
 
 export type CreateDonationSchema = z.infer<typeof createDonationSchema>
+
+export const createExpenseSchema = z.object({
+  id: z.string().optional(),
+  projectId: z.string().min(2),
+  currencyId,
+  amount,
+  description: z.string().optional(),
+  isOfficial: z.boolean().optional(),
+  expensesCategoryId: z.string().min(2),
+  date,
+  proposalId: z.string().nullable().optional(),
+})
+
+export type CreateExpenseSchema = z.infer<typeof createExpenseSchema>

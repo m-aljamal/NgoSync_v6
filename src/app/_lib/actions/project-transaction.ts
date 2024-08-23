@@ -2,14 +2,24 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { expensesCategories, type ExpensesCategory } from "@/db/schemas"
+import {
+  expensesCategories,
+  projectsTransactions,
+  type ExpensesCategory,
+} from "@/db/schemas"
+import { format } from "date-fns"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { generateId } from "@/lib/id"
+import { convertAmountToMiliunits } from "@/lib/utils"
 
 import { actionClient } from "../safe-action"
-import { createExpenseCategorySchema, deleteArraySchema } from "../validations"
+import {
+  createExpenseCategorySchema,
+  createExpenseSchema,
+  deleteArraySchema,
+} from "../validations"
 
 function generateExpenseCategory(): Omit<ExpensesCategory, "projectId"> {
   return {
@@ -84,4 +94,106 @@ export const updateExpenseCategory = actionClient
       .set(data)
       .where(eq(expensesCategories.id, data.id))
     revalidatePath("/expenses-categories")
+  })
+
+export const createExpense = actionClient
+  .schema(createExpenseSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(
+    async ({
+      parsedInput: {
+        projectId,
+        currencyId,
+        amount: expenseAmount,
+        description,
+        isOfficial,
+        expensesCategoryId,
+        date: expenseDate,
+        proposalId,
+      },
+    }) => {
+      noStore()
+      // todo add the amounts
+      const amount = convertAmountToMiliunits(expenseAmount)
+      const date = format(expenseDate, "yyyy-MM-dd")
+
+      await db.insert(projectsTransactions).values({
+        amount: -amount,
+        proposalAmount: 0,
+        amountInUSD: 0,
+        officialAmount: 0,
+        date,
+        type: "outcome",
+        category: "expense",
+        transactionStatus: "pending",
+        proposalId,
+        projectId,
+        currencyId,
+        description,
+        isOfficial,
+        expensesCategoryId,
+      })
+
+      revalidatePath("/expenses")
+    }
+  )
+
+export const updateExpense = actionClient
+  .schema(createExpenseSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(
+    async ({
+      parsedInput: {
+        projectId,
+        currencyId,
+        amount: expenseAmount,
+        description,
+        isOfficial,
+        expensesCategoryId,
+        date: expenseDate,
+        proposalId,
+        id,
+      },
+    }) => {
+      noStore()
+      if (!id) throw new Error("id is required")
+      const amount = convertAmountToMiliunits(expenseAmount)
+      const date = format(expenseDate, "yyyy-MM-dd")
+
+      await db
+        .update(projectsTransactions)
+        .set({
+          amount: -amount,
+          proposalAmount: 0,
+          amountInUSD: 0,
+          officialAmount: 0,
+          date,
+          projectId,
+          currencyId,
+          description,
+          isOfficial,
+          expensesCategoryId,
+          proposalId,
+        })
+        .where(eq(projectsTransactions.id, id))
+
+      revalidatePath("/expenses")
+    }
+  )
+
+export const deleteExpenses = actionClient
+  .schema(deleteArraySchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { ids } }) => {
+    noStore()
+    await db
+      .delete(projectsTransactions)
+      .where(inArray(projectsTransactions.id, ids))
+    revalidatePath("/expenses")
   })

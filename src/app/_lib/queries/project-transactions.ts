@@ -2,14 +2,100 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { expensesCategories, funds, type ExpensesCategory } from "@/db/schemas"
+import {
+  expensesCategories,
+  funds,
+  projectsTransactions,
+  ProjectTransaction,
+  type ExpensesCategory,
+} from "@/db/schemas"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, gte, lte, or, type SQL } from "drizzle-orm"
+import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
+
+export async function getExpenses(input: GetSearchSchema) {
+  noStore()
+  const { page, per_page, sort, name, operator, from, to, amount } = input
+
+  try {
+    const offset = calculateOffset(page, per_page)
+
+    const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+      "createdAt",
+      "desc",
+    ]) as [keyof ProjectTransaction | undefined, "asc" | "desc" | undefined]
+
+    const { fromDay, toDay } = convertToDate(from, to)
+
+    const expressions: (SQL<unknown> | undefined)[] = [
+      amount
+        ? filterColumn({
+            column: projectsTransactions.amount,
+            value: amount.toString(),
+          })
+        : undefined,
+
+      fromDay && toDay
+        ? and(
+            gte(projectsTransactions.createdAt, fromDay),
+            lte(projectsTransactions.createdAt, toDay)
+          )
+        : undefined,
+    ]
+
+    const where: DrizzleWhere<ProjectTransaction> =
+      !operator || operator === "and" ? and(...expressions) : or(...expressions)
+
+    const { data, total } = await db.transaction(async (tx) => {
+      const data = await tx
+        .select()
+        .from(projectsTransactions)
+        .limit(per_page)
+        .offset(offset)
+        .where(
+          or(
+            where,
+            and(
+              eq(projectsTransactions.type, "outcome"),
+              eq(projectsTransactions.category, "expense")
+            )
+          )
+        )
+
+        .orderBy(
+          column && column in projectsTransactions
+            ? order === "asc"
+              ? asc(projectsTransactions[column])
+              : desc(projectsTransactions[column])
+            : desc(projectsTransactions.id)
+        )
+
+      const total = await tx
+        .select({
+          count: count(),
+        })
+        .from(projectsTransactions)
+        .where(where)
+        .execute()
+        .then((res) => res[0]?.count ?? 0)
+
+      return {
+        data,
+        total,
+      }
+    })
+
+    const pageCount = calculatePageCount(total, per_page)
+
+    return { data, pageCount }
+  } catch (err) {
+    return { data: [], pageCount: 0 }
+  }
+}
 
 export async function getExpensesCategories(input: GetSearchSchema) {
   noStore()
