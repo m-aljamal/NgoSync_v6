@@ -1,0 +1,1 @@
+ALTER TABLE "ngosync_authenticator" DROP CONSTRAINT "ngosync_authenticator_userId_credentialID_pk";

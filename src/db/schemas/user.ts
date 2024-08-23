@@ -93,9 +93,9 @@ export const authenticators = pgTable(
     credentialBackedUp: boolean("credentialBackedUp").notNull(),
     transports: text("transports"),
   },
-  (authenticator) => ({
-    compositePK: primaryKey({
-      columns: [authenticator.userId, authenticator.credentialID],
-    }),
-  })
+  // (authenticator) => ({
+  //   compositePK: primaryKey({
+  //     columns: [authenticator.userId, authenticator.credentialID],
+  //   }),
+  // })
 )

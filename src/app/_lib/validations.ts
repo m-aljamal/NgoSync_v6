@@ -152,3 +152,17 @@ export const createExpenseSchema = z.object({
 })
 
 export type CreateExpenseSchema = z.infer<typeof createExpenseSchema>
+
+export const createTransferBetweenFundsSchema = z.object({
+  id: z.string().optional(),
+  senderId: z.string().min(2),
+  receiverId: z.string().min(2),
+  amount,
+  date,
+  description: z.string().optional(),
+  currencyId,
+})
+
+export type CreateTransferBetweenFundsSchema = z.infer<
+  typeof createTransferBetweenFundsSchema
+>

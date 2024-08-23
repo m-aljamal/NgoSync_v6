@@ -17,18 +17,22 @@ import { AppSelect } from "@/components/form-components/select"
 
 export default function FundInput<T extends FieldValues>({
   form,
+  name = "fundId",
+  label = "الصندوق",
 }: {
   form: UseFormReturn<T>
+  name?: string
+  label?: string
 }) {
   const { data: funds, isLoading: fundsLoading } = useGetFunds()
 
   return (
     <FormField
       control={form.control}
-      name={"fundId" as Path<T>}
+      name={name as Path<T>}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>الصندوق</FormLabel>
+          <FormLabel>{label}</FormLabel>
           <AppSelect
             isLoading={fundsLoading}
             onChange={field.onChange}
