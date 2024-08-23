@@ -10,7 +10,18 @@ import {
   type ExpensesCategory,
 } from "@/db/schemas"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  lte,
+  or,
+  sql,
+  type SQL,
+} from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -19,7 +30,7 @@ import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
 export async function getExpenses(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, name, operator, from, to, amount } = input
+  const { page, per_page, sort, operator, from, to, amount } = input
 
   try {
     const offset = calculateOffset(page, per_page)
@@ -52,7 +63,12 @@ export async function getExpenses(input: GetSearchSchema) {
 
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
-        .select()
+        .select({
+          id: projectsTransactions.id,
+          amount: sql<number>`ABS(${projectsTransactions.amount})/1000`,
+          date: projectsTransactions.date,
+          description: projectsTransactions.description,
+        })
         .from(projectsTransactions)
         .limit(per_page)
         .offset(offset)
