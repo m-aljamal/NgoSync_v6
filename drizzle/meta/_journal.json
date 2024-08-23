@@ -71,6 +71,13 @@
       "when": 1724413613501,
       "tag": "0009_round_katie_power",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1724429885212,
+      "tag": "0010_youthful_silverclaw",
+      "breakpoints": true
     }
   ]
 }

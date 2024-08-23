@@ -4,7 +4,7 @@ import { timestamp, varchar } from "drizzle-orm/pg-core"
 
 import { generateId } from "@/lib/id"
 
-import { fundTransactions } from "./transactions"
+import { fundTransactions, projectsTransactions } from "./transactions"
 
 export const transferBetweenFunds = pgTable("transfer_between_funds", {
   id: varchar("id", { length: 30 })
@@ -48,6 +48,55 @@ export type TransferBetweenFundsWithRelations =
     description?: string | null
     senderFundId: string
     receiverFundId: string
+    date: string
+    amount: number
+    currencyId: string
+  }
+
+export const transferBetweenProjects = pgTable("transfer_between_projects", {
+  id: varchar("id", { length: 30 })
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`current_timestamp`)
+    .$onUpdate(() => new Date()),
+
+  sender: varchar("sender")
+    .notNull()
+    .references(() => projectsTransactions.id),
+
+  receiver: varchar("receiver")
+    .notNull()
+    .references(() => projectsTransactions.id),
+})
+
+export const transferBetweenProjectsRelations = relations(
+  transferBetweenProjects,
+  ({ one }) => ({
+    sender: one(projectsTransactions, {
+      fields: [transferBetweenProjects.sender],
+      references: [projectsTransactions.id],
+      relationName: "sender",
+    }),
+    recipient: one(projectsTransactions, {
+      fields: [transferBetweenProjects.receiver],
+      references: [projectsTransactions.id],
+      relationName: "receiver",
+    }),
+  })
+)
+
+export type TransferBetweenProjects =
+  typeof transferBetweenProjects.$inferSelect
+export type NewTransferBetweenProjects =
+  typeof transferBetweenProjects.$inferInsert
+export type TransferBetweenProjectsWithRelations =
+  typeof transferBetweenProjects.$inferSelect & {
+    description?: string | null
+    senderProjectId: string
+    receiverProjectId: string
     date: string
     amount: number
     currencyId: string

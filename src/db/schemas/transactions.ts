@@ -15,7 +15,7 @@ import { donations } from "./donation"
 import { funds } from "./fund"
 import { projects } from "./project"
 import { proposals, proposalsExpenses } from "./proposal"
-import { transferBetweenFunds } from "./transfer"
+import { transferBetweenFunds, transferBetweenProjects } from "./transfer"
 
 export const transactionType = pgEnum("transaction_type", ["income", "outcome"])
 
@@ -143,7 +143,7 @@ export const projectsTransactionsRelations = relations(
     }),
     // transfersFromFundToProject: many(transfersFromFundToProject),
     // transfersFromProjectToFund: many(transfersFromProjectToFund),
-    // transferFromProjectToProject: many(transfersFromProjectToProject),
+    transferbetweenProject: many(transferBetweenProjects),
     // currencyExchangesBetweenProjects: many(currencyExchangesBetweenProjects),
     // salaryPayments: many(salaryPayments),
     // loans: many(loans),
