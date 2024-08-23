@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type DonationWithRelations } from "@/db/schemas"
+import { type ProjectTransaction } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
@@ -18,10 +18,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 
-import { DeleteDonationsDialog } from "./delete-expenses-dialog"
-import { UpdateDonationSheet } from "./update-donation-sheet"
+import { DeleteExpensesDialog } from "./delete-expenses-dialog"
+import { UpdateExpenseSheet } from "./update-expense-sheet"
 
-export function getColumns(): ColumnDef<DonationWithRelations>[] {
+export function getColumns(): ColumnDef<ProjectTransaction>[] {
   return [
     {
       id: "select",
@@ -78,15 +78,15 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
 
         return (
           <>
-            <UpdateDonationSheet
+            <UpdateExpenseSheet
               open={showUpdateTaskSheet}
               onOpenChange={setShowUpdateTaskSheet}
-              donation={row.original}
+              expense={row.original}
             />
-            <DeleteDonationsDialog
+            <DeleteExpensesDialog
               open={showDeleteTaskDialog}
               onOpenChange={setShowDeleteTaskDialog}
-              donations={[row.original]}
+              expenses={[row.original]}
               showTrigger={false}
               onSuccess={() => row.toggleSelected(false)}
             />

@@ -15,14 +15,17 @@ import {
 } from "@/components/ui/form"
 import { AppSelect } from "@/components/form-components/select"
 
+import ExpenseCategoriesInput from "./expense-categories-input"
 import ProposalInput from "./proposal-input"
 
 export default function ProjectInput<T extends FieldValues>({
   form,
   withProposals = false,
+  withExpensesCategories = false,
 }: {
   form: UseFormReturn<T>
   withProposals?: boolean
+  withExpensesCategories?: boolean
 }) {
   const { data: projects, isLoading: projectsLoading } = useGetProjects()
 
@@ -52,6 +55,12 @@ export default function ProjectInput<T extends FieldValues>({
       />
       {withProposals ? (
         <ProposalInput form={form} projectId={selectedProject || "null"} />
+      ) : null}
+      {withExpensesCategories ? (
+        <ExpenseCategoriesInput
+          form={form}
+          projectId={selectedProject || "null"}
+        />
       ) : null}
     </>
   )

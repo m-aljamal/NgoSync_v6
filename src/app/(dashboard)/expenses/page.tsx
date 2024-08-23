@@ -1,19 +1,19 @@
-import { type SearchParams } from "@/types"
 import React from "react"
+import { type SearchParams } from "@/types"
 
-import { getDonations } from "@/app/_lib/queries/donations"
-import { searchParamsSchema } from "@/app/_lib/validations"
+import { Skeleton } from "@/components/ui/skeleton"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { Skeleton } from "@/components/ui/skeleton"
-import { DonationTable } from "./_components/donation-table"
+import { getExpenses } from "@/app/_lib/queries/project-transactions"
+import { searchParamsSchema } from "@/app/_lib/validations"
 
- 
+import { ExpenseTable } from "./_components/expense-table"
+
 export default function Proposals({ searchParams }: SearchParams) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getDonations(search)
+  const promise = getExpenses(search)
 
   return (
     <div>
@@ -41,7 +41,7 @@ export default function Proposals({ searchParams }: SearchParams) {
             />
           }
         >
-          <DonationTable promise={promise} />
+          <ExpenseTable promise={promise} />
         </React.Suspense>
       </Shell>
     </div>

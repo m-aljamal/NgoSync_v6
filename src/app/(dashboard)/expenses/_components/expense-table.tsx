@@ -2,27 +2,27 @@
 "use memo"
 
 import * as React from "react"
-import { Donation } from "@/db/schemas"
+import { type ProjectTransaction } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { getDonations } from "@/app/_lib/queries/donations"
+import { type getExpenses } from "@/app/_lib/queries/project-transactions"
 
-import { getColumns } from "./donation-table-columns"
-import { DonationTableToolbarActions } from "./donation-table-toolbar-actions"
+import { getColumns } from "./expense-table-columns"
+import { ExpensesTableToolbarActions } from "./expenses-table-toolbar-actions"
 
-interface DonationTableProps {
-  promise: ReturnType<typeof getDonations>
+interface ExpenseTableProps {
+  promise: ReturnType<typeof getExpenses>
 }
 
-export function DonationTable({ promise }: DonationTableProps) {
+export function ExpenseTable({ promise }: ExpenseTableProps) {
   const { data, pageCount } = React.use(promise)
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<Donation>[] = [
+  const filterFields: DataTableFilterField<ProjectTransaction>[] = [
     {
       label: "Amount",
       value: "amount",
@@ -45,7 +45,7 @@ export function DonationTable({ promise }: DonationTableProps) {
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <DonationTableToolbarActions table={table} />
+        <ExpensesTableToolbarActions table={table} />
       </DataTableToolbar>
     </DataTable>
   )

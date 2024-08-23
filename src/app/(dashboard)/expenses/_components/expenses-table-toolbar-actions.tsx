@@ -1,33 +1,33 @@
 "use client"
 
-import { type Donation } from "@/db/schemas"
+import { type ProjectTransaction } from "@/db/schemas"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
 import { exportTableToCSV } from "@/lib/export"
 import { Button } from "@/components/ui/button"
 
-import { CreateDonationDialog } from "./create-expense-dialog"
-import { DeleteDonationsDialog } from "./delete-expenses-dialog"
+import { CreateExpenseDialog } from "./create-expense-dialog"
+import { DeleteExpensesDialog } from "./delete-expenses-dialog"
 
-interface DonationTableToolbarActionsProps {
-  table: Table<Donation>
+interface ExpensesTableToolbarActionsProps {
+  table: Table<ProjectTransaction>
 }
 
-export function DonationTableToolbarActions({
+export function ExpensesTableToolbarActions({
   table,
-}: DonationTableToolbarActionsProps) {
+}: ExpensesTableToolbarActionsProps) {
   return (
     <div className="flex items-center gap-2">
       {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-        <DeleteDonationsDialog
-          donations={table
+        <DeleteExpensesDialog
+          expenses={table
             .getFilteredSelectedRowModel()
             .rows.map((row) => row.original)}
           onSuccess={() => table.toggleAllRowsSelected(false)}
         />
       ) : null}
-      <CreateDonationDialog />
+      <CreateExpenseDialog />
       <Button
         variant="outline"
         size="sm"
