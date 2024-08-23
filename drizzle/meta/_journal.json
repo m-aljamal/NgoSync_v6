@@ -43,6 +43,13 @@
       "when": 1724348234623,
       "tag": "0005_chief_toxin",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1724392746304,
+      "tag": "0006_daffy_kylun",
+      "breakpoints": true
     }
   ]
 }

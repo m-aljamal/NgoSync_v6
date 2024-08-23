@@ -8,6 +8,7 @@ import { exportTableToCSV } from "@/lib/export"
 import { Button } from "@/components/ui/button"
 
 import { CreateDonationDialog } from "./create-donation-dialog"
+import { DeleteDonationsDialog } from "./delete-donations-dialog"
 
 interface DonationTableToolbarActionsProps {
   table: Table<Donation>
@@ -18,14 +19,14 @@ export function DonationTableToolbarActions({
 }: DonationTableToolbarActionsProps) {
   return (
     <div className="flex items-center gap-2">
-      {/* {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-        <DeleteProposalDialog
-          proposals={table
+      {table.getFilteredSelectedRowModel().rows.length > 0 ? (
+        <DeleteDonationsDialog
+          donations={table
             .getFilteredSelectedRowModel()
             .rows.map((row) => row.original)}
           onSuccess={() => table.toggleAllRowsSelected(false)}
         />
-      ) : null} */}
+      ) : null}
       <CreateDonationDialog />
       <Button
         variant="outline"

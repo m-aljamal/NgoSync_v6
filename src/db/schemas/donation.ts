@@ -66,7 +66,7 @@ export const donations = pgTable("donations", {
     () => proposals.id
   ),
   fundTransactionId: varchar("fund_transaction_id", { length: 30 })
-    .references(() => fundTransactions.id)
+    .references(() => fundTransactions.id, { onDelete: "cascade" })
     .notNull(),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
