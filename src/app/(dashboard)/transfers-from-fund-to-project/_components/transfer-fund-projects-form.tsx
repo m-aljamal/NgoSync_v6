@@ -38,7 +38,6 @@ export function TransferFundToProjectsForm({
           <FundInput form={form} name="senderId" label="الصندوق المرسل" />
           <ProjectInput form={form} name="receiverId" label="المشروع المستلم" />
           <IsOfficialInput form={form} />
-
           <DescriptionInput form={form} />
         </InputGroup>
         {children}
