@@ -366,7 +366,7 @@ export async function getTransferProjectToFund(input: GetSearchSchema) {
           senderProjectId: projectsTransactions.projectId,
           receiverFundId: fundTransactions.fundId,
           date: fundTransactions.date,
-          amount: sql<number>`${projectsTransactions.amount}/1000`,
+          amount: sql<number>`${fundTransactions.amount}/1000`,
           currencyId: projectsTransactions.currencyId,
           isOfficial: projectsTransactions.isOfficial,
         })

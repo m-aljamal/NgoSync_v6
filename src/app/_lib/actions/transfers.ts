@@ -501,6 +501,7 @@ export const createTransferProjectToFund = actionClient
     }) => {
       noStore()
       // todo add the amounts
+    
       const amount = convertAmountToMiliunits(transferAmount)
       const date = format(transferDate, "yyyy-MM-dd")
       await db.transaction(async (tx) => {
@@ -542,7 +543,7 @@ export const createTransferProjectToFund = actionClient
         if (!sender || !receiver)
           throw new Error("sender or receiver is not created")
 
-        await tx.insert(transferFundToProject).values({
+        await tx.insert(transferProjectToFund).values({
           sender: sender?.id,
           receiver: receiver?.id,
         })
