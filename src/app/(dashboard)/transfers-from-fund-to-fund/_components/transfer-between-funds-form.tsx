@@ -16,13 +16,13 @@ import CurrencyAmountInput from "@/components/form-components/currency-amount-in
 import { DatePicker } from "@/components/form-components/date-picker"
 import FundInput from "@/components/form-components/fund-input"
 import InputGroup from "@/components/form-components/InputGroup"
-import { type CreateTransferBetweenFundsSchema } from "@/app/_lib/validations"
+import { type CreateTransferSchema } from "@/app/_lib/validations"
 
 interface CreateTransferBetweenFundsFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode
-  form: UseFormReturn<CreateTransferBetweenFundsSchema>
-  onSubmit: (data: CreateTransferBetweenFundsSchema) => void
+  form: UseFormReturn<CreateTransferSchema>
+  onSubmit: (data: CreateTransferSchema) => void
   isUpdate?: boolean
 }
 

@@ -10,8 +10,8 @@ import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
 import { createTransferBetweenFunds } from "@/app/_lib/actions/transfers"
 import {
-  createTransferBetweenFundsSchema,
-  type CreateTransferBetweenFundsSchema,
+  createTransferSchema,
+  type CreateTransferSchema,
 } from "@/app/_lib/validations"
 
 import { TransferBetweenFundsForm } from "./transfer-between-funds-form"
@@ -19,8 +19,8 @@ import { TransferBetweenFundsForm } from "./transfer-between-funds-form"
 export function CreateTransferBetweenFundsDialog() {
   const { onClose } = useFormDialog()
 
-  const form = useForm<CreateTransferBetweenFundsSchema>({
-    resolver: zodResolver(createTransferBetweenFundsSchema),
+  const form = useForm<CreateTransferSchema>({
+    resolver: zodResolver(createTransferSchema),
     defaultValues: {
       description: "",
     },
@@ -38,7 +38,7 @@ export function CreateTransferBetweenFundsDialog() {
     },
   })
 
-  async function onSubmit(input: CreateTransferBetweenFundsSchema) {
+  async function onSubmit(input: CreateTransferSchema) {
     await executeAsync(input)
   }
 

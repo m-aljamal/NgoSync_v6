@@ -12,8 +12,8 @@ import UpdateButtons from "@/components/form-components/update-buttons"
 import { UpdateSheet } from "@/components/form-components/update-sheet"
 import { updateTransferBetweenFunds } from "@/app/_lib/actions/transfers"
 import {
-  createTransferBetweenFundsSchema,
-  type CreateTransferBetweenFundsSchema,
+  createTransferSchema,
+  type CreateTransferSchema,
 } from "@/app/_lib/validations"
 
 import { TransferBetweenFundsForm } from "./transfer-between-funds-form"
@@ -27,7 +27,7 @@ export function UpdateTransferBetweenFundsSheet({
   transfer,
   ...props
 }: UpdateTransferBetweenFundsSheetProps) {
-  const defaultValues: CreateTransferBetweenFundsSchema = React.useMemo(() => {
+  const defaultValues: CreateTransferSchema = React.useMemo(() => {
     return {
       date: new Date(transfer.date),
       id: transfer.id,
@@ -39,8 +39,8 @@ export function UpdateTransferBetweenFundsSheet({
     }
   }, [transfer])
 
-  const form = useForm<CreateTransferBetweenFundsSchema>({
-    resolver: zodResolver(createTransferBetweenFundsSchema),
+  const form = useForm<CreateTransferSchema>({
+    resolver: zodResolver(createTransferSchema),
     defaultValues,
   })
 
@@ -62,7 +62,7 @@ export function UpdateTransferBetweenFundsSheet({
     },
   })
 
-  async function onSubmit(input: CreateTransferBetweenFundsSchema) {
+  async function onSubmit(input: CreateTransferSchema) {
     await executeAsync(input)
     toast.dismiss()
   }
