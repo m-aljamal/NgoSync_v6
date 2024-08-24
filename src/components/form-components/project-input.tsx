@@ -22,10 +22,14 @@ export default function ProjectInput<T extends FieldValues>({
   form,
   withProposals = false,
   withExpensesCategories = false,
+  name = "projectId",
+  label = "الصندوق",
 }: {
   form: UseFormReturn<T>
   withProposals?: boolean
   withExpensesCategories?: boolean
+  name?: string
+  label?: string
 }) {
   const { data: projects, isLoading: projectsLoading } = useGetProjects()
 
@@ -35,10 +39,10 @@ export default function ProjectInput<T extends FieldValues>({
     <>
       <FormField
         control={form.control}
-        name={"projectId" as Path<T>}
+        name={name as Path<T>}
         render={({ field }) => (
           <FormItem>
-            <FormLabel>المشروع</FormLabel>
+            <FormLabel>{label}</FormLabel>
             <AppSelect
               isLoading={projectsLoading}
               onChange={field.onChange}

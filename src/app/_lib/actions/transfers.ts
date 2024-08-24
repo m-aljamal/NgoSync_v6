@@ -2,8 +2,11 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { fundTransactions } from "@/db/schemas"
-import { transferBetweenFunds } from "@/db/schemas/transfer"
+import { fundTransactions, projectsTransactions } from "@/db/schemas"
+import {
+  transferBetweenFunds,
+  transferBetweenProjects,
+} from "@/db/schemas/transfer"
 import { format } from "date-fns"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
@@ -184,50 +187,52 @@ export const createTransferBetweenProjects = actionClient
       const date = format(transferDate, "yyyy-MM-dd")
       await db.transaction(async (tx) => {
         const [sender] = await tx
-          .insert(fundTransactions)
+          .insert(projectsTransactions)
           .values({
-            fundId: senderId,
+            projectId: senderId,
             currencyId,
             amount: -amount,
             proposalAmount: 0,
             amountInUSD: 0,
+            transactionStatus: "approved",
             officialAmount: 0,
             date,
             type: "outcome",
             description,
-            category: "transfer_between_funds",
+            category: "transfer_between_projects",
           })
           .returning({ id: fundTransactions.id })
 
         const [receiver] = await tx
-          .insert(fundTransactions)
+          .insert(projectsTransactions)
           .values({
-            fundId: receiverId,
+            projectId: receiverId,
             currencyId,
             amount: amount,
             proposalAmount: 0,
             amountInUSD: 0,
             officialAmount: 0,
+            transactionStatus: "approved",
             date,
             type: "income",
             description,
-            category: "transfer_between_funds",
+            category: "transfer_between_projects",
           })
           .returning({ id: fundTransactions.id })
 
         if (!sender || !receiver)
           throw new Error("sender or receiver is not created")
 
-        await tx.insert(transferBetweenFunds).values({
+        await tx.insert(transferBetweenProjects).values({
           sender: sender?.id,
           receiver: receiver?.id,
         })
       })
-      revalidatePath("/transfers-from-fund-to-fund")
+      revalidatePath("/transfers-from-project-to-project")
     }
   )
 
-export const updateTransferBetweenProjectss = actionClient
+export const updateTransferBetweenProjects = actionClient
   .schema(createTransferSchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
@@ -250,21 +255,21 @@ export const updateTransferBetweenProjectss = actionClient
 
       const [transfer] = await db
         .select({
-          id: transferBetweenFunds.id,
-          senderId: transferBetweenFunds.sender,
-          receiverId: transferBetweenFunds.receiver,
+          id: transferBetweenProjects.id,
+          senderId: transferBetweenProjects.sender,
+          receiverId: transferBetweenProjects.receiver,
         })
-        .from(transferBetweenFunds)
-        .where(eq(transferBetweenFunds.id, id))
+        .from(transferBetweenProjects)
+        .where(eq(transferBetweenProjects.id, id))
 
       if (!transfer) throw new Error("transfer not found")
       const amount = convertAmountToMiliunits(transferAmount)
       const date = format(transferDate, "yyyy-MM-dd")
       await db.transaction(async (tx) => {
         await tx
-          .update(fundTransactions)
+          .update(projectsTransactions)
           .set({
-            fundId: senderId,
+            projectId: senderId,
             currencyId,
             amount: -amount,
             proposalAmount: 0,
@@ -273,12 +278,12 @@ export const updateTransferBetweenProjectss = actionClient
             date,
             description,
           })
-          .where(eq(fundTransactions.id, transfer?.senderId))
+          .where(eq(projectsTransactions.id, transfer?.senderId))
 
         await tx
-          .update(fundTransactions)
+          .update(projectsTransactions)
           .set({
-            fundId: receiverId,
+            projectId: receiverId,
             currencyId,
             amount: amount,
             proposalAmount: 0,
@@ -287,9 +292,9 @@ export const updateTransferBetweenProjectss = actionClient
             date,
             description,
           })
-          .where(eq(fundTransactions.id, transfer?.receiverId))
+          .where(eq(projectsTransactions.id, transfer?.receiverId))
       })
-      revalidatePath("/transfers-from-fund-to-fund")
+      revalidatePath("/transfers-from-project-to-project")
     }
   )
 
@@ -303,9 +308,11 @@ export const deleteTransferBetweenProjects = actionClient
 
     await db.transaction(async (ex) => {
       await ex
-        .delete(transferBetweenFunds)
-        .where(inArray(transferBetweenFunds.id, ids))
-      await ex.delete(fundTransactions).where(inArray(fundTransactions.id, ids))
+        .delete(transferBetweenProjects)
+        .where(inArray(transferBetweenProjects.id, ids))
+      await ex
+        .delete(projectsTransactions)
+        .where(inArray(projectsTransactions.id, ids))
     })
-    revalidatePath("/transfers-from-fund-to-fund")
+    revalidatePath("/transfers-from-project-to-project")
   })
