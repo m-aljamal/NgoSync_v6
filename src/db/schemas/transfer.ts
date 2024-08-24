@@ -101,3 +101,51 @@ export type TransferBetweenProjectsWithRelations =
     amount: number
     currencyId: string
   }
+
+export const transferFundToProject = pgTable("transfer_fund_to_project", {
+  id: varchar("id", { length: 30 })
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`current_timestamp`)
+    .$onUpdate(() => new Date()),
+
+  sender: varchar("sender")
+    .notNull()
+    .references(() => fundTransactions.id),
+
+  receiver: varchar("receiver")
+    .notNull()
+    .references(() => projectsTransactions.id),
+})
+
+export const transferFundToProjectRelations = relations(
+  transferFundToProject,
+  ({ one }) => ({
+    sender: one(fundTransactions, {
+      fields: [transferFundToProject.sender],
+      references: [fundTransactions.id],
+      relationName: "sender",
+    }),
+    recipient: one(projectsTransactions, {
+      fields: [transferFundToProject.receiver],
+      references: [projectsTransactions.id],
+      relationName: "receiver",
+    }),
+  })
+)
+
+export type TransferFundToProject = typeof transferFundToProject.$inferSelect
+export type NewTransferFundToProject = typeof transferFundToProject.$inferInsert
+export type TransferFundToProjectWithRelations =
+  typeof transferFundToProject.$inferSelect & {
+    description?: string | null
+    senderFundId: string
+    receiverProjectId: string
+    date: string
+    amount: number
+    currencyId: string
+    isOfficial: boolean
+  }

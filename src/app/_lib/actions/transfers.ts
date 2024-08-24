@@ -6,6 +6,7 @@ import { fundTransactions, projectsTransactions } from "@/db/schemas"
 import {
   transferBetweenFunds,
   transferBetweenProjects,
+  transferFundToProject,
 } from "@/db/schemas/transfer"
 import { format } from "date-fns"
 import { eq, inArray } from "drizzle-orm"
@@ -201,7 +202,7 @@ export const createTransferBetweenProjects = actionClient
             description,
             category: "transfer_between_projects",
           })
-          .returning({ id: fundTransactions.id })
+          .returning({ id: projectsTransactions.id })
 
         const [receiver] = await tx
           .insert(projectsTransactions)
@@ -218,7 +219,7 @@ export const createTransferBetweenProjects = actionClient
             description,
             category: "transfer_between_projects",
           })
-          .returning({ id: fundTransactions.id })
+          .returning({ id: projectsTransactions.id })
 
         if (!sender || !receiver)
           throw new Error("sender or receiver is not created")
@@ -247,6 +248,7 @@ export const updateTransferBetweenProjects = actionClient
         date: transferDate,
         currencyId,
         description,
+        isOfficial,
       },
     }) => {
       noStore()
@@ -277,6 +279,7 @@ export const updateTransferBetweenProjects = actionClient
             officialAmount: 0,
             date,
             description,
+            isOfficial,
           })
           .where(eq(projectsTransactions.id, transfer?.senderId))
 
@@ -291,6 +294,7 @@ export const updateTransferBetweenProjects = actionClient
             officialAmount: 0,
             date,
             description,
+            isOfficial,
           })
           .where(eq(projectsTransactions.id, transfer?.receiverId))
       })
@@ -315,4 +319,163 @@ export const deleteTransferBetweenProjects = actionClient
         .where(inArray(projectsTransactions.id, ids))
     })
     revalidatePath("/transfers-from-project-to-project")
+  })
+
+// Transfer From Fund To Project
+
+export const createTransferFundToProject = actionClient
+  .schema(createTransferSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(
+    async ({
+      parsedInput: {
+        senderId,
+        receiverId,
+        amount: transferAmount,
+        date: transferDate,
+        currencyId,
+        description,
+        isOfficial,
+      },
+    }) => {
+      noStore()
+      // todo add the amounts
+      const amount = convertAmountToMiliunits(transferAmount)
+      const date = format(transferDate, "yyyy-MM-dd")
+      await db.transaction(async (tx) => {
+        const [sender] = await tx
+          .insert(fundTransactions)
+          .values({
+            fundId: senderId,
+            currencyId,
+            amount: -amount,
+            proposalAmount: 0,
+            amountInUSD: 0,
+            officialAmount: 0,
+            date,
+            type: "outcome",
+            description,
+            category: "transfer_to_project",
+          })
+          .returning({ id: fundTransactions.id })
+
+        const [receiver] = await tx
+          .insert(projectsTransactions)
+          .values({
+            projectId: receiverId,
+            currencyId,
+            amount: amount,
+            proposalAmount: 0,
+            amountInUSD: 0,
+            officialAmount: 0,
+            transactionStatus: "approved",
+            date,
+            type: "income",
+            description,
+            category: "transfer_from_fund",
+            isOfficial,
+          })
+          .returning({ id: projectsTransactions.id })
+
+        if (!sender || !receiver)
+          throw new Error("sender or receiver is not created")
+
+        await tx.insert(transferFundToProject).values({
+          sender: sender?.id,
+          receiver: receiver?.id,
+        })
+      })
+      revalidatePath("/transfers-from-fund-to-project")
+    }
+  )
+
+export const updateTransferFundToProject = actionClient
+  .schema(createTransferSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(
+    async ({
+      parsedInput: {
+        id,
+        senderId,
+        receiverId,
+        amount: transferAmount,
+        date: transferDate,
+        currencyId,
+        description,
+        isOfficial,
+      },
+    }) => {
+      noStore()
+      // todo add the amounts
+      if (!id) throw new Error("id is required")
+
+      const [transfer] = await db
+        .select({
+          id: transferFundToProject.id,
+          senderId: transferFundToProject.sender,
+          receiverId: transferFundToProject.receiver,
+        })
+        .from(transferFundToProject)
+        .where(eq(transferFundToProject.id, id))
+
+      if (!transfer) throw new Error("transfer not found")
+      const amount = convertAmountToMiliunits(transferAmount)
+      const date = format(transferDate, "yyyy-MM-dd")
+      await db.transaction(async (tx) => {
+        await tx
+          .update(fundTransactions)
+          .set({
+            fundId: senderId,
+            currencyId,
+            amount: -amount,
+            proposalAmount: 0,
+            amountInUSD: 0,
+            officialAmount: 0,
+            date,
+            description,
+            isOfficial,
+          })
+          .where(eq(fundTransactions.id, transfer?.senderId))
+
+        await tx
+          .update(projectsTransactions)
+          .set({
+            projectId: receiverId,
+            currencyId,
+            amount: amount,
+            proposalAmount: 0,
+            amountInUSD: 0,
+            officialAmount: 0,
+            date,
+            description,
+            isOfficial,
+          })
+          .where(eq(projectsTransactions.id, transfer?.receiverId))
+      })
+      revalidatePath("/transfers-from-fund-to-project")
+    }
+  )
+
+export const deleteTransferFundToProject = actionClient
+  .schema(deleteArraySchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { ids } }) => {
+    noStore()
+
+    await db.transaction(async (ex) => {
+      await ex
+        .delete(transferFundToProject)
+        .where(inArray(transferFundToProject.id, ids))
+      await ex
+        .delete(projectsTransactions)
+        .where(inArray(projectsTransactions.id, ids))
+      await ex.delete(fundTransactions).where(inArray(fundTransactions.id, ids))
+    })
+    revalidatePath("/transfers-from-fund-to-project")
   })

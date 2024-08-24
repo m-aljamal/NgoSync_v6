@@ -7,6 +7,8 @@ import {
   transferBetweenFunds,
   transferBetweenProjects,
   TransferBetweenProjects,
+  transferFundToProject,
+  TransferFundToProject,
   type TransferBetweenFunds,
 } from "@/db/schemas/transfer"
 import { type DrizzleWhere } from "@/types"
@@ -228,6 +230,107 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
           count: count(),
         })
         .from(transferBetweenProjects)
+        .where(where)
+        .execute()
+        .then((res) => res[0]?.count ?? 0)
+
+      return {
+        data,
+        total,
+      }
+    })
+
+    const pageCount = Math.ceil(total / per_page)
+    return { data, pageCount }
+  } catch (err) {
+    return { data: [], pageCount: 0 }
+  }
+}
+
+// Transfer fund to project
+export async function getTransferFundToProject(input: GetSearchSchema) {
+  noStore()
+  const { page, per_page, sort, operator, from, to } = input
+
+  try {
+    // Offset to paginate the results
+    const offset = (page - 1) * per_page
+    // Column and order to sort by
+    // Spliting the sort string by "." to get the column and order
+    // Example: "title.desc" => ["title", "desc"]
+    const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+      "createdAt",
+      "desc",
+    ]) as [keyof TransferFundToProject | undefined, "asc" | "desc" | undefined]
+
+    const fromDay = from
+      ? sql`${transferFundToProject.createdAt} >= ${from}`
+      : undefined
+    const toDay = to
+      ? sql`${transferFundToProject.createdAt} <= ${to}`
+      : undefined
+
+    const expressions: (SQL<unknown> | undefined)[] = [
+      //   amount
+      //     ? filterColumn({
+      //         column: transferBetweenFunds.amount,
+      //         value: amount.toString(),
+      //       })
+      //     : undefined,
+      // Filter tasks by status
+
+      fromDay && toDay
+        ? and(
+            sql`${transferFundToProject.createdAt} >= ${from}`,
+            sql`${transferFundToProject.createdAt} <= ${to}`
+          )
+        : undefined,
+      fromDay ? fromDay : undefined,
+    ]
+
+    const where: DrizzleWhere<TransferFundToProject> =
+      !operator || operator === "and" ? and(...expressions) : or(...expressions)
+
+    const { data, total } = await db.transaction(async (tx) => {
+      const data = await tx
+        .select({
+          id: transferFundToProject.id,
+          sender: transferFundToProject.sender,
+          receiver: transferFundToProject.receiver,
+          updatedAt: transferFundToProject.updatedAt,
+          createdAt: transferFundToProject.createdAt,
+          description: fundTransactions.description,
+          senderFundId: fundTransactions.fundId,
+          receiverProjectId: projectsTransactions.projectId,
+          date: fundTransactions.date,
+          amount: sql<number>`${projectsTransactions.amount}/1000`,
+          currencyId: projectsTransactions.currencyId,
+        })
+        .from(transferFundToProject)
+        .limit(per_page)
+        .offset(offset)
+        .where(where)
+        .innerJoin(
+          fundTransactions,
+          eq(transferFundToProject.sender, fundTransactions.id)
+        )
+        .innerJoin(
+          projectsTransactions,
+          eq(transferFundToProject.receiver, projectsTransactions.id)
+        )
+        .orderBy(
+          column && column in transferFundToProject
+            ? order === "asc"
+              ? asc(transferFundToProject[column])
+              : desc(transferFundToProject[column])
+            : desc(transferFundToProject.id)
+        )
+
+      const total = await tx
+        .select({
+          count: count(),
+        })
+        .from(transferFundToProject)
         .where(where)
         .execute()
         .then((res) => res[0]?.count ?? 0)

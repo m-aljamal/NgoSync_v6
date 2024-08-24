@@ -161,8 +161,7 @@ export const createTransferSchema = z.object({
   date,
   description: z.string().optional(),
   currencyId,
+  isOfficial: z.boolean().optional(),
 })
 
-export type CreateTransferSchema = z.infer<
-  typeof createTransferSchema
->
+export type CreateTransferSchema = z.infer<typeof createTransferSchema>
