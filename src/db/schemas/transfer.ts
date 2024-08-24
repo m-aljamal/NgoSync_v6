@@ -149,3 +149,52 @@ export type TransferFundToProjectWithRelations =
     currencyId: string
     isOfficial?: boolean
   }
+
+
+export const transferProjectToFund = pgTable("transfer_project_to_fund", {
+  id: varchar("id", { length: 30 })
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`current_timestamp`)
+    .$onUpdate(() => new Date()),
+
+  sender: varchar("sender")
+    .notNull()
+    .references(() => projectsTransactions.id),
+
+  receiver: varchar("receiver")
+    .notNull()
+    .references(() => fundTransactions.id),
+})
+
+export const transferProjectToFundRelations = relations(
+  transferProjectToFund,
+  ({ one }) => ({
+    sender: one(projectsTransactions, {
+      fields: [transferProjectToFund.sender],
+      references: [projectsTransactions.id],
+      relationName: "sender",
+    }),
+    recipient: one(fundTransactions, {
+      fields: [transferProjectToFund.receiver],
+      references: [fundTransactions.id],
+      relationName: "receiver",
+    }),
+  })
+)
+
+export type TransferProjectToFund = typeof transferProjectToFund.$inferSelect
+export type NewTransferProjectToFund = typeof transferProjectToFund.$inferInsert
+export type TransferProjectToFundWithRelations =
+  typeof transferProjectToFund.$inferSelect & {
+    description?: string | null
+    senderProjectId: string
+    receiverFundId: string
+    date: string
+    amount: number
+    currencyId: string
+    isOfficial?: boolean
+  }
