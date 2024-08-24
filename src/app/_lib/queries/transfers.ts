@@ -305,6 +305,7 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
           date: fundTransactions.date,
           amount: sql<number>`${projectsTransactions.amount}/1000`,
           currencyId: projectsTransactions.currencyId,
+          isOfficial: projectsTransactions.isOfficial,
         })
         .from(transferFundToProject)
         .limit(per_page)

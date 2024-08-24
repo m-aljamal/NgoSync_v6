@@ -147,5 +147,5 @@ export type TransferFundToProjectWithRelations =
     date: string
     amount: number
     currencyId: string
-    isOfficial: boolean
+    isOfficial?: boolean
   }
