@@ -102,6 +102,7 @@ export type TransferBetweenProjectsWithRelations =
     currencyId: string
   }
 
+// transfer fund to project
 export const transferFundToProject = pgTable("transfer_fund_to_project", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())
@@ -149,8 +150,7 @@ export type TransferFundToProjectWithRelations =
     currencyId: string
     isOfficial?: boolean
   }
-
-
+// transfer project to fund
 export const transferProjectToFund = pgTable("transfer_project_to_fund", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())

@@ -6,10 +6,14 @@ import { fundTransactions, projectsTransactions, tasks } from "@/db/schemas"
 import {
   transferBetweenFunds,
   transferBetweenProjects,
-  TransferBetweenProjects,
   transferFundToProject,
+  transferProjectToFund,
+} from "@/db/schemas/transfer"
+import type {
+  TransferBetweenFunds,
+  TransferBetweenProjects,
   TransferFundToProject,
-  type TransferBetweenFunds,
+  TransferProjectToFund,
 } from "@/db/schemas/transfer"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, eq, or, sql, type SQL } from "drizzle-orm"
@@ -24,11 +28,8 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
   const { page, per_page, sort, status, priority, operator, from, to } = input
 
   try {
-    // Offset to paginate the results
     const offset = (page - 1) * per_page
-    // Column and order to sort by
-    // Spliting the sort string by "." to get the column and order
-    // Example: "title.desc" => ["title", "desc"]
+
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
       "createdAt",
       "desc",
@@ -42,13 +43,6 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
       : undefined
 
     const expressions: (SQL<unknown> | undefined)[] = [
-      //   amount
-      //     ? filterColumn({
-      //         column: transferBetweenFunds.amount,
-      //         value: amount.toString(),
-      //       })
-      //     : undefined,
-      // Filter tasks by status
       !!status
         ? filterColumn({
             column: tasks.status,
@@ -140,14 +134,11 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
 // Transfer between projects
 export async function getTransferBetweenProjects(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, status, priority, operator, from, to } = input
+  const { page, per_page, sort, operator, from, to } = input
 
   try {
-    // Offset to paginate the results
     const offset = (page - 1) * per_page
-    // Column and order to sort by
-    // Spliting the sort string by "." to get the column and order
-    // Example: "title.desc" => ["title", "desc"]
+
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
       "createdAt",
       "desc",
@@ -164,14 +155,6 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
       : undefined
 
     const expressions: (SQL<unknown> | undefined)[] = [
-      //   amount
-      //     ? filterColumn({
-      //         column: transferBetweenFunds.amount,
-      //         value: amount.toString(),
-      //       })
-      //     : undefined,
-      // Filter tasks by status
-
       fromDay && toDay
         ? and(
             sql`${transferBetweenProjects.createdAt} >= ${from}`,
@@ -253,11 +236,8 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
   const { page, per_page, sort, operator, from, to } = input
 
   try {
-    // Offset to paginate the results
     const offset = (page - 1) * per_page
-    // Column and order to sort by
-    // Spliting the sort string by "." to get the column and order
-    // Example: "title.desc" => ["title", "desc"]
+
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
       "createdAt",
       "desc",
@@ -271,14 +251,6 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
       : undefined
 
     const expressions: (SQL<unknown> | undefined)[] = [
-      //   amount
-      //     ? filterColumn({
-      //         column: transferBetweenFunds.amount,
-      //         value: amount.toString(),
-      //       })
-      //     : undefined,
-      // Filter tasks by status
-
       fromDay && toDay
         ? and(
             sql`${transferFundToProject.createdAt} >= ${from}`,
@@ -332,6 +304,97 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
           count: count(),
         })
         .from(transferFundToProject)
+        .where(where)
+        .execute()
+        .then((res) => res[0]?.count ?? 0)
+
+      return {
+        data,
+        total,
+      }
+    })
+
+    const pageCount = Math.ceil(total / per_page)
+    return { data, pageCount }
+  } catch (err) {
+    return { data: [], pageCount: 0 }
+  }
+}
+
+// Transfer project to fund
+export async function getTransferProjectToFund(input: GetSearchSchema) {
+  noStore()
+  const { page, per_page, sort, operator, from, to } = input
+
+  try {
+    const offset = (page - 1) * per_page
+
+    const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+      "createdAt",
+      "desc",
+    ]) as [keyof TransferProjectToFund | undefined, "asc" | "desc" | undefined]
+
+    const fromDay = from
+      ? sql`${transferProjectToFund.createdAt} >= ${from}`
+      : undefined
+    const toDay = to
+      ? sql`${transferProjectToFund.createdAt} <= ${to}`
+      : undefined
+
+    const expressions: (SQL<unknown> | undefined)[] = [
+      fromDay && toDay
+        ? and(
+            sql`${transferProjectToFund.createdAt} >= ${from}`,
+            sql`${transferProjectToFund.createdAt} <= ${to}`
+          )
+        : undefined,
+      fromDay ? fromDay : undefined,
+    ]
+
+    const where: DrizzleWhere<TransferProjectToFund> =
+      !operator || operator === "and" ? and(...expressions) : or(...expressions)
+
+    const { data, total } = await db.transaction(async (tx) => {
+      const data = await tx
+        .select({
+          id: transferProjectToFund.id,
+          sender: transferProjectToFund.sender,
+          receiver: transferProjectToFund.receiver,
+          updatedAt: transferProjectToFund.updatedAt,
+          createdAt: transferProjectToFund.createdAt,
+          description: fundTransactions.description,
+          senderProjectId: projectsTransactions.projectId,
+          receiverFundId: fundTransactions.fundId,
+          date: fundTransactions.date,
+          amount: sql<number>`${projectsTransactions.amount}/1000`,
+          currencyId: projectsTransactions.currencyId,
+          isOfficial: projectsTransactions.isOfficial,
+        })
+        .from(transferProjectToFund)
+        .limit(per_page)
+        .offset(offset)
+        .where(where)
+        .innerJoin(
+          projectsTransactions,
+          eq(transferProjectToFund.sender, projectsTransactions.id)
+        )
+        .innerJoin(
+          fundTransactions,
+          eq(transferProjectToFund.receiver, fundTransactions.id)
+        )
+        .orderBy(
+          column && column in transferProjectToFund
+            ? order === "asc"
+              ? asc(transferProjectToFund[column])
+              : desc(transferProjectToFund[column])
+            : desc(transferProjectToFund.id)
+        )
+
+      const total = await tx
+        .select({
+          count: count(),
+        })
+        .from(transferProjectToFund)
         .where(where)
         .execute()
         .then((res) => res[0]?.count ?? 0)
