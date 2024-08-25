@@ -174,4 +174,4 @@ export const createExchangeRateSchema = z.object({
   date,
 })
 
-export type CreateCurrencyRateSchema = z.infer<typeof createExchangeRateSchema>
+export type CreateExchangeRateSchema = z.infer<typeof createExchangeRateSchema>

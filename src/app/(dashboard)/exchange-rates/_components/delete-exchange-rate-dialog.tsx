@@ -1,30 +1,30 @@
 "use client"
 
-import * as React from "react"
-import { type TransferBetweenProjectsWithRelations } from "@/db/schemas/transfer"
 import { type Row } from "@tanstack/react-table"
 import { useAction } from "next-safe-action/hooks"
+import * as React from "react"
 import { toast } from "sonner"
 
-import { type Dialog } from "@/components/ui/dialog"
+import { deleteExchangeRates } from "@/app/_lib/actions/currency"
 import DeleteDialog from "@/components/delete-dialog"
-import { deleteTransferBetweenProjects } from "@/app/_lib/actions/transfers"
+import { type Dialog } from "@/components/ui/dialog"
+import { ExchangeRate } from "@/db/schemas"
 
-interface DeleteTransferBetweenProjectsDialogProps
+interface DeleteExchangeRateDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  transfer: Row<TransferBetweenProjectsWithRelations>["original"][]
+  exchange: Row<ExchangeRate>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }
 
-export function DeleteTransferBetweenProjectsDialog({
-  transfer,
+export function DeleteExchangeRateDialog({
+  exchange,
   showTrigger = true,
   onSuccess,
   ...props
-}: DeleteTransferBetweenProjectsDialogProps) {
+}: DeleteExchangeRateDialogProps) {
   const { executeAsync, isExecuting } = useAction(
-    deleteTransferBetweenProjects,
+    deleteExchangeRates,
     {
       onSuccess: () => {
         toast.success("تم الحذف بنجاح")
@@ -41,13 +41,7 @@ export function DeleteTransferBetweenProjectsDialog({
   )
 
   async function onDelete() {
-    const ids = transfer.reduce<string[]>((acc, p) => {
-      acc.push(p.id, p.receiver, p.sender)
-      return acc
-    }, [])
-
-    await executeAsync({ ids })
-
+    await executeAsync({ ids: exchange.map((p) => p.id) })
     toast.dismiss()
   }
 
@@ -55,7 +49,7 @@ export function DeleteTransferBetweenProjectsDialog({
     <DeleteDialog
       {...props}
       showTrigger={showTrigger}
-      length={transfer.length}
+      length={exchange.length}
       onDelete={onDelete}
       isExecuting={isExecuting}
     />

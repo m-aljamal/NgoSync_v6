@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 
-import { DeleteTransferBetweenProjectsDialog } from "./delete-transfer-between-projects-dialog"
-import { UpdateTransferBetweenProjectsSheet } from "./update-transfer-between-projects-sheet"
+import { DeleteTransferBetweenProjectsDialog } from "./delete-exchange-rate-dialog"
+import { UpdateTransferBetweenProjectsSheet } from "./update-exchange-rate-sheet"
 
 export function getColumns(): ColumnDef<TransferBetweenProjectsWithRelations>[] {
   return [

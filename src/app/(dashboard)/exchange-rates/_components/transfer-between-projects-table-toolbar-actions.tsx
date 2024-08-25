@@ -7,8 +7,8 @@ import { type Table } from "@tanstack/react-table"
 import { exportTableToCSV } from "@/lib/export"
 import { Button } from "@/components/ui/button"
 
-import { CreateTransferBetweenProjectsDialog } from "./create-transfer-between-projects-dialog"
-import { DeleteTransferBetweenProjectsDialog } from "./delete-transfer-between-projects-dialog"
+import { CreateTransferBetweenProjectsDialog } from "./create-exchange-rate-dialog"
+import { DeleteTransferBetweenProjectsDialog } from "./delete-exchange-rate-dialog"
 
 interface TransferBetweenProjectsTableToolbarActionsProps {
   table: Table<TransferBetweenProjectsWithRelations>

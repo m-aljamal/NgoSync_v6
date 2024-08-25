@@ -3,24 +3,21 @@
 import * as React from "react"
 import { type UseFormReturn } from "react-hook-form"
 
-import { Form } from "@/components/ui/form"
+import {
+  CreateExchangeRateSchema
+} from "@/app/_lib/validations"
 import {
   CurrencyAmountInput,
   DateInput,
-  DescriptionInput,
-  InputGroup,
-  ProjectInput,
+  InputGroup
 } from "@/components/form-components"
-import {
-  CreateExpenseSchema,
-  type CreateTransferSchema,
-} from "@/app/_lib/validations"
+import { Form } from "@/components/ui/form"
 
 interface ExchangeRateFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode
-  form: UseFormReturn<CreateExpenseSchema>
-  onSubmit: (data: CreateExpenseSchema) => void
+  form: UseFormReturn<CreateExchangeRateSchema>
+  onSubmit: (data: CreateExchangeRateSchema) => void
   isUpdate?: boolean
 }
 
@@ -39,13 +36,16 @@ export function ExchangeRateForm({
             form={form}
             currencyName="fromCurrencyId"
             currencyLabel="من العملة"
+            amountLabel="سعر الصرف"
+            amountName="rate"
           />
-
-          <ProjectInput form={form} name="senderId" label="المشروع المرسل" />
-          <ProjectInput form={form} name="receiverId" label="المشروع المستلم" />
-
-          <DescriptionInput form={form} />
-        </InputGroup>
+          <CurrencyAmountInput
+            form={form}
+            currencyName="toCurrencyId"
+            currencyLabel="الى العملة"
+            withAmount={false}
+          />
+         </InputGroup>
         {children}
       </form>
     </Form>
