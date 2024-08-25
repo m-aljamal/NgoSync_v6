@@ -11,7 +11,10 @@ import {
   InputGroup,
   ProjectInput,
 } from "@/components/form-components"
-import { CreateExpenseSchema, type CreateTransferSchema } from "@/app/_lib/validations"
+import {
+  CreateExpenseSchema,
+  type CreateTransferSchema,
+} from "@/app/_lib/validations"
 
 interface ExchangeRateFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -31,8 +34,12 @@ export function ExchangeRateForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <InputGroup isUpdate={isUpdate}>
-          <CurrencyAmountInput form={form} />
           <DateInput form={form} />
+          <CurrencyAmountInput
+            form={form}
+            currencyName="fromCurrencyId"
+            currencyLabel="من العملة"
+          />
 
           <ProjectInput form={form} name="senderId" label="المشروع المرسل" />
           <ProjectInput form={form} name="receiverId" label="المشروع المستلم" />

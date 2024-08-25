@@ -23,10 +23,16 @@ export default function CurrencyAmountInput<T extends FieldValues>({
   form,
   currencyName = "currencyId",
   currencyLabel = "العملة",
+  amountName = "amount",
+  amountLabel = "المبلغ",
+  withAmount = true,
 }: {
   form: UseFormReturn<T>
   currencyName?: string
   currencyLabel?: string
+  amountName?: string
+  amountLabel?: string
+  withAmount?: boolean
 }) {
   const { data: currencies, isLoading: currenciesLoading } = useGetCurrencies()
 
@@ -61,29 +67,31 @@ export default function CurrencyAmountInput<T extends FieldValues>({
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name={"amount" as Path<T>}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>المبلغ</FormLabel>
-              <FormControl>
-                <AmountInput
-                  intlConfig={
-                    selectedCurrency && {
-                      locale: selectedCurrency.locale,
-                      currency: selectedCurrency.code,
+        {withAmount ? (
+          <FormField
+            control={form.control}
+            name={amountName as Path<T>}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>{amountLabel}</FormLabel>
+                <FormControl>
+                  <AmountInput
+                    intlConfig={
+                      selectedCurrency && {
+                        locale: selectedCurrency.locale,
+                        currency: selectedCurrency.code,
+                      }
                     }
-                  }
-                  placeholder="0.00"
-                  value={field.value}
-                  onChange={field.onChange}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                    placeholder="0.00"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : null}
       </div>
     </div>
   )
