@@ -2,14 +2,20 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { currencies, doners } from "@/db/schemas"
+import { currencies, doners, exchangeRates } from "@/db/schemas"
+import { format } from "date-fns"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
+import { convertAmountToMiliunits } from "@/lib/utils"
 import { currencyList } from "@/app/(dashboard)/currencies/_components/currency-list"
 
 import { actionClient } from "../safe-action"
-import { createCurrencySchema, deleteArraySchema } from "../validations"
+import {
+  createCurrencySchema,
+  createExchangeRateSchema,
+  deleteArraySchema,
+} from "../validations"
 
 export const createCurrency = actionClient
   .schema(createCurrencySchema, {
@@ -50,8 +56,8 @@ export const updateCurrency = actionClient
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput: data }) => {
-    console.log(data);
-    
+    console.log(data)
+
     noStore()
     if (!data.id) throw new Error("id is required")
     const currencyToAdd = currencyList.find(
@@ -75,4 +81,87 @@ export const updateCurrency = actionClient
 
     await db.update(doners).set(data).where(eq(doners.id, data.id))
     revalidatePath("/currencies")
+  })
+
+// exchange Rates
+
+export const createExchangeRate = actionClient
+  .schema(createExchangeRateSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(
+    async ({
+      parsedInput: {
+        toCurrencyId,
+        fromCurrencyId,
+        rate: rateAmount,
+        date: rateDate,
+      },
+    }) => {
+      noStore()
+      const rate = convertAmountToMiliunits(rateAmount)
+      const reverseRate = 1 / rate
+      const date = format(rateDate, "yyyy-MM-dd")
+      await db.transaction(async (tx) => {
+        await tx.insert(exchangeRates).values({
+          toCurrencyId,
+          fromCurrencyId,
+          rate,
+          date,
+        })
+        await tx.insert(exchangeRates).values({
+          toCurrencyId,
+          fromCurrencyId,
+          rate: reverseRate,
+          date,
+        })
+      })
+      revalidatePath("/exchange-rates")
+    }
+  )
+
+export const updateExchangeRate = actionClient
+  .schema(createExchangeRateSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(
+    async ({
+      parsedInput: {
+        toCurrencyId,
+        fromCurrencyId,
+        rate: rateAmount,
+        date: rateDate,
+        id,
+      },
+    }) => {
+      if (!id) throw new Error("id is required")
+      noStore()
+      const rate = convertAmountToMiliunits(rateAmount)
+      const date = format(rateDate, "yyyy-MM-dd")
+
+      await db
+        .update(exchangeRates)
+        .set({
+          toCurrencyId,
+          fromCurrencyId,
+          rate,
+          date,
+        })
+        .where(eq(exchangeRates.id, id))
+
+      revalidatePath("/exchange-rates")
+    }
+  )
+
+export const deleteExchangeRates = actionClient
+  .schema(deleteArraySchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { ids } }) => {
+    noStore()
+    await db.delete(exchangeRates).where(inArray(exchangeRates.id, ids))
+    revalidatePath("/exchange-rates")
   })

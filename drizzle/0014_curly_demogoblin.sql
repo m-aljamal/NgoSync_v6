@@ -1,0 +1,2 @@
+ALTER TABLE "ngosync_currency_rates" ALTER COLUMN "from_currency_id" SET DATA TYPE varchar;--> statement-breakpoint
+ALTER TABLE "ngosync_currency_rates" ALTER COLUMN "to_currency_id" SET DATA TYPE varchar;

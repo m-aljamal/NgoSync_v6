@@ -165,3 +165,13 @@ export const createTransferSchema = z.object({
 })
 
 export type CreateTransferSchema = z.infer<typeof createTransferSchema>
+
+export const createExchangeRateSchema = z.object({
+  id: z.string().optional(),
+  fromCurrencyId: z.string().min(2),
+  toCurrencyId: z.string().min(2),
+  rate: amount,
+  date,
+})
+
+export type CreateCurrencyRateSchema = z.infer<typeof createExchangeRateSchema>
