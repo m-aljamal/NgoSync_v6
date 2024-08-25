@@ -21,8 +21,12 @@ import { AppSelect } from "@/components/form-components/select"
 
 export default function CurrencyAmountInput<T extends FieldValues>({
   form,
+  currencyName = "currencyId",
+  currencyLabel = "العملة",
 }: {
   form: UseFormReturn<T>
+  currencyName?: string
+  currencyLabel?: string
 }) {
   const { data: currencies, isLoading: currenciesLoading } = useGetCurrencies()
 
@@ -39,10 +43,10 @@ export default function CurrencyAmountInput<T extends FieldValues>({
       <div className="grid grid-cols-2 gap-x-2">
         <FormField
           control={form.control}
-          name={"currencyId" as Path<T>}
+          name={currencyName as Path<T>}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>العملة</FormLabel>
+              <FormLabel>{currencyLabel}</FormLabel>
               <AppSelect
                 isLoading={currenciesLoading}
                 onChange={field.onChange}
