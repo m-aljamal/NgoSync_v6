@@ -2,7 +2,7 @@ import { donations, doners, projects, tasks } from "@/db/schemas"
 import * as z from "zod"
 
 const currencyId = z.string().min(2)
-const amount = z.coerce.number().min(1)
+const amount = z.coerce.number().positive()
 const date = z.date()
 export const searchParamsSchema = z.object({
   page: z.coerce.number().default(1),
