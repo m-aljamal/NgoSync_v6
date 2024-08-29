@@ -6,22 +6,20 @@ import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getTransferBetweenProjects } from "@/app/_lib/queries/transfers"
+import { getExchangeRates } from "@/app/_lib/queries/currency"
 import { searchParamsSchema } from "@/app/_lib/validations"
 
-import { TransferBetweenProjectsTable } from "./_components/transfer-between-projects-table"
+import { ExchangeRateTable } from "./_components/exchange-rate-table"
 
-export default function TransferBetweenFundsToFunds({
-  searchParams,
-}: SearchParams) {
+export default function ExchangeRate({ searchParams }: SearchParams) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getTransferBetweenProjects(search)
+  const promise = getExchangeRates(search)
 
   return (
     <div>
       <Heading
-        title="حوالات بين المشاريع"
-        description="تحويل مالي من مشروع إلى مشروع."
+        title="أسعار الصرف"
+        description="أسعار صرف العملات"
         icon="ArrowLeftRight"
       />
       <Shell className="gap-2">
@@ -43,7 +41,7 @@ export default function TransferBetweenFundsToFunds({
             />
           }
         >
-          <TransferBetweenProjectsTable promise={promise} />
+          <ExchangeRateTable promise={promise} />
         </React.Suspense>
       </Shell>
     </div>

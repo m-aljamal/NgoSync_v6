@@ -3,15 +3,13 @@
 import * as React from "react"
 import { type UseFormReturn } from "react-hook-form"
 
-import {
-  CreateExchangeRateSchema
-} from "@/app/_lib/validations"
+import { Form } from "@/components/ui/form"
 import {
   CurrencyAmountInput,
   DateInput,
-  InputGroup
+  InputGroup,
 } from "@/components/form-components"
-import { Form } from "@/components/ui/form"
+import { type CreateExchangeRateSchema } from "@/app/_lib/validations"
 
 interface ExchangeRateFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -45,7 +43,7 @@ export function ExchangeRateForm({
             currencyLabel="الى العملة"
             withAmount={false}
           />
-         </InputGroup>
+        </InputGroup>
         {children}
       </form>
     </Form>

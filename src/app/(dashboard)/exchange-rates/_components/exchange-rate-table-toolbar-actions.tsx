@@ -1,33 +1,33 @@
 "use client"
 
-import { type TransferBetweenProjectsWithRelations } from "@/db/schemas/transfer"
+import { type ExchangeRate } from "@/db/schemas"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
 import { exportTableToCSV } from "@/lib/export"
 import { Button } from "@/components/ui/button"
 
-import { CreateTransferBetweenProjectsDialog } from "./create-exchange-rate-dialog"
-import { DeleteTransferBetweenProjectsDialog } from "./delete-exchange-rate-dialog"
+import { CreateExchangeRateDialog } from "./create-exchange-rate-dialog"
+import { DeleteExchangeRateDialog } from "./delete-exchange-rate-dialog"
 
-interface TransferBetweenProjectsTableToolbarActionsProps {
-  table: Table<TransferBetweenProjectsWithRelations>
+interface ExchangeRateTableToolbarActionsProps {
+  table: Table<ExchangeRate>
 }
 
-export function TransferBetweenProjectsTableToolbarActions({
+export function ExchangeRateTableToolbarActions({
   table,
-}: TransferBetweenProjectsTableToolbarActionsProps) {
+}: ExchangeRateTableToolbarActionsProps) {
   return (
     <div className="flex items-center gap-2">
       {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-        <DeleteTransferBetweenProjectsDialog
-          transfer={table
+        <DeleteExchangeRateDialog
+          exchange={table
             .getFilteredSelectedRowModel()
             .rows.map((row) => row.original)}
           onSuccess={() => table.toggleAllRowsSelected(false)}
         />
       ) : null}
-      <CreateTransferBetweenProjectsDialog />
+      <CreateExchangeRateDialog />
       <Button
         variant="outline"
         size="sm"

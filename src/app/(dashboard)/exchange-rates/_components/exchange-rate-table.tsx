@@ -2,36 +2,33 @@
 "use memo"
 
 import * as React from "react"
-import { type TransferBetweenProjectsWithRelations } from "@/db/schemas/transfer"
+import { type ExchangeRate } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { type getTransferBetweenProjects } from "@/app/_lib/queries/transfers"
+import { type getExchangeRates } from "@/app/_lib/queries/currency"
 
-import { getColumns } from "./transfer-between-projects-table-columns"
-import { TransferBetweenProjectsTableToolbarActions } from "./transfer-between-projects-table-toolbar-actions"
+import { getColumns } from "./exchange-rate-columns"
+import { ExchangeRateTableToolbarActions } from "./exchange-rate-table-toolbar-actions"
 
-interface TransferBetweenProjectsTableProps {
-  promise: ReturnType<typeof getTransferBetweenProjects>
+interface ExchangeRateTableProps {
+  promise: ReturnType<typeof getExchangeRates>
 }
 
-export function TransferBetweenProjectsTable({
-  promise,
-}: TransferBetweenProjectsTableProps) {
+export function ExchangeRateTable({ promise }: ExchangeRateTableProps) {
   const { data, pageCount } = React.use(promise)
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<TransferBetweenProjectsWithRelations>[] =
-    [
-      {
-        label: "Amount",
-        value: "amount",
-        placeholder: "بحث عن مبلغ",
-      },
-    ]
+  const filterFields: DataTableFilterField<ExchangeRate>[] = [
+    {
+      label: "Amount",
+      value: "rate",
+      placeholder: "بحث عن مبلغ",
+    },
+  ]
 
   const { table } = useDataTable({
     data,
@@ -48,7 +45,7 @@ export function TransferBetweenProjectsTable({
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <TransferBetweenProjectsTableToolbarActions table={table} />
+        <ExchangeRateTableToolbarActions table={table} />
       </DataTableToolbar>
     </DataTable>
   )

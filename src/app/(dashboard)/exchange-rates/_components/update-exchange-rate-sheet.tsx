@@ -1,21 +1,21 @@
 "use client"
 
+import * as React from "react"
+import { type ExchangeRate } from "@/db/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useAction } from "next-safe-action/hooks"
-import * as React from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
-import {
-  createExchangeRateSchema,
-  CreateExchangeRateSchema
-} from "@/app/_lib/validations"
+import { type Sheet } from "@/components/ui/sheet"
 import UpdateButtons from "@/components/form-components/update-buttons"
 import { UpdateSheet } from "@/components/form-components/update-sheet"
-import { type Sheet } from "@/components/ui/sheet"
-
 import { updateExchangeRate } from "@/app/_lib/actions/currency"
-import { ExchangeRate } from "@/db/schemas"
+import {
+  createExchangeRateSchema,
+  type CreateExchangeRateSchema,
+} from "@/app/_lib/validations"
+
 import { ExchangeRateForm } from "./exchange-form"
 
 interface UpdateExchangeRateSheetProps
@@ -23,7 +23,7 @@ interface UpdateExchangeRateSheetProps
   exchange: ExchangeRate
 }
 
-export function UpdateTransferBetweenProjectsSheet({
+export function UpdateExchangeRateSheet({
   exchange,
   ...props
 }: UpdateExchangeRateSheetProps) {
@@ -46,22 +46,19 @@ export function UpdateTransferBetweenProjectsSheet({
     form.reset(defaultValues)
   }, [exchange, form, defaultValues])
 
-  const { executeAsync, isExecuting } = useAction(
-    updateExchangeRate,
-    {
-      onSuccess: async () => {
-        toast.success("تم تعديل سعر الصرف")
-        props.onOpenChange?.(false)
-        form.reset()
-      },
-      onError: ({ error }) => {
-        toast.error(error.serverError)
-      },
-      onExecute: () => {
-        toast.loading("جاري تعديل سعر الصرف")
-      },
-    }
-  )
+  const { executeAsync, isExecuting } = useAction(updateExchangeRate, {
+    onSuccess: async () => {
+      toast.success("تم تعديل سعر الصرف")
+      props.onOpenChange?.(false)
+      form.reset()
+    },
+    onError: ({ error }) => {
+      toast.error(error.serverError)
+    },
+    onExecute: () => {
+      toast.loading("جاري تعديل سعر الصرف")
+    },
+  })
 
   async function onSubmit(input: CreateExchangeRateSchema) {
     await executeAsync(input)

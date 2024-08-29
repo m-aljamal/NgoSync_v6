@@ -124,6 +124,8 @@ export async function getExchangeRates(input: GetSearchSchema) {
           date: exchangeRates.date,
           fromCurrencyId: exchangeRates.fromCurrencyId,
           toCurrencyId: exchangeRates.toCurrencyId,
+          createdAt: exchangeRates.createdAt,
+          updatedAt: exchangeRates.updatedAt,
         })
         .from(exchangeRates)
         .limit(per_page)

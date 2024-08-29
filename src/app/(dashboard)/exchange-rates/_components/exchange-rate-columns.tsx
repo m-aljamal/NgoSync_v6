@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type TransferBetweenProjectsWithRelations } from "@/db/schemas/transfer"
+import { type ExchangeRate } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
@@ -18,10 +18,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 
-import { DeleteTransferBetweenProjectsDialog } from "./delete-exchange-rate-dialog"
-import { UpdateTransferBetweenProjectsSheet } from "./update-exchange-rate-sheet"
+import { DeleteExchangeRateDialog } from "./delete-exchange-rate-dialog"
+import { UpdateExchangeRateSheet } from "./update-exchange-rate-sheet"
 
-export function getColumns(): ColumnDef<TransferBetweenProjectsWithRelations>[] {
+export function getColumns(): ColumnDef<ExchangeRate>[] {
   return [
     {
       id: "select",
@@ -56,14 +56,14 @@ export function getColumns(): ColumnDef<TransferBetweenProjectsWithRelations>[] 
       cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
     },
     {
-      accessorKey: "amount",
+      accessorKey: "rate",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="القيمة" />
       ),
       cell: ({ row }) => (
         <div>
           {/* {formatCurrency(row.getValue("amount"), row.original.currencyCode)} */}
-          {row.original.amount}
+          {row.original.rate}
         </div>
       ),
     },
@@ -78,15 +78,15 @@ export function getColumns(): ColumnDef<TransferBetweenProjectsWithRelations>[] 
 
         return (
           <>
-            <UpdateTransferBetweenProjectsSheet
+            <UpdateExchangeRateSheet
               open={showUpdateTaskSheet}
               onOpenChange={setShowUpdateTaskSheet}
-              transfer={row.original}
+              exchange={row.original}
             />
-            <DeleteTransferBetweenProjectsDialog
+            <DeleteExchangeRateDialog
               open={showDeleteTaskDialog}
               onOpenChange={setShowDeleteTaskDialog}
-              transfer={[row.original]}
+              exchange={[row.original]}
               showTrigger={false}
               onSuccess={() => row.toggleSelected(false)}
             />

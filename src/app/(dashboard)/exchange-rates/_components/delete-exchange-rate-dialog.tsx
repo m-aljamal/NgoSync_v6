@@ -1,14 +1,14 @@
 "use client"
 
+import * as React from "react"
+import { type ExchangeRate } from "@/db/schemas"
 import { type Row } from "@tanstack/react-table"
 import { useAction } from "next-safe-action/hooks"
-import * as React from "react"
 import { toast } from "sonner"
 
-import { deleteExchangeRates } from "@/app/_lib/actions/currency"
-import DeleteDialog from "@/components/delete-dialog"
 import { type Dialog } from "@/components/ui/dialog"
-import { ExchangeRate } from "@/db/schemas"
+import DeleteDialog from "@/components/delete-dialog"
+import { deleteExchangeRates } from "@/app/_lib/actions/currency"
 
 interface DeleteExchangeRateDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
@@ -23,22 +23,19 @@ export function DeleteExchangeRateDialog({
   onSuccess,
   ...props
 }: DeleteExchangeRateDialogProps) {
-  const { executeAsync, isExecuting } = useAction(
-    deleteExchangeRates,
-    {
-      onSuccess: () => {
-        toast.success("تم الحذف بنجاح")
-        props.onOpenChange?.(false)
-        onSuccess?.()
-      },
-      onError: ({ error }) => {
-        toast.error(error.serverError)
-      },
-      onExecute: () => {
-        toast.loading("جاري الحذف")
-      },
-    }
-  )
+  const { executeAsync, isExecuting } = useAction(deleteExchangeRates, {
+    onSuccess: () => {
+      toast.success("تم الحذف بنجاح")
+      props.onOpenChange?.(false)
+      onSuccess?.()
+    },
+    onError: ({ error }) => {
+      toast.error(error.serverError)
+    },
+    onExecute: () => {
+      toast.loading("جاري الحذف")
+    },
+  })
 
   async function onDelete() {
     await executeAsync({ ids: exchange.map((p) => p.id) })

@@ -1,9 +1,7 @@
 import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
 import { boolean, integer, timestamp, varchar } from "drizzle-orm/pg-core"
-
 import { generateId } from "@/lib/id"
-
 import { proposals, proposalsExpenses } from "./proposal"
 import { fundTransactions, projectsTransactions } from "./transactions"
 

@@ -100,9 +100,11 @@ export const createExchangeRate = actionClient
       },
     }) => {
       noStore()
-      const rate = convertAmountToMiliunits(rateAmount)
-      const reverseRate = 1 / rate
+      const rate = rateAmount * 1000
+      const reverseRate = 1 / rateAmount
+
       const date = format(rateDate, "yyyy-MM-dd")
+
       await db.transaction(async (tx) => {
         await tx.insert(exchangeRates).values({
           toCurrencyId,
@@ -113,7 +115,7 @@ export const createExchangeRate = actionClient
         await tx.insert(exchangeRates).values({
           toCurrencyId,
           fromCurrencyId,
-          rate: reverseRate,
+          rate: Math.round(reverseRate * 1000),
           date,
         })
       })
