@@ -2,31 +2,33 @@
 "use memo"
 
 import * as React from "react"
-import { type TransferBetweenFundsWithRelations } from "@/db/schemas/transfer"
+import { type ExchangeBetweenFundsWithRelations } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { type getTransferBetweenFunds } from "@/app/_lib/queries/transfers"
+import { type getExchangeBetweenFunds } from "@/app/_lib/queries/currency"
 
-import { getColumns } from "./transfer-between-funds-table-columns"
-import { TransferBetweenFundsTableToolbarActions } from "./transfer-between-funds-table-toolbar-actions"
+import { getColumns } from "./exchange-between-funds-table-columns"
+import { ExchangeBetweenFundsTableToolbarActions } from "./exchange-between-funds-table-toolbar-actions"
 
-interface TransferBetweenFundsTableProps {
-  promise: ReturnType<typeof getTransferBetweenFunds>
+interface ExchangeBetweenFundsTableProps {
+  promise: ReturnType<typeof getExchangeBetweenFunds>
 }
 
-export function TransferBetweenFundsTable({ promise }: TransferBetweenFundsTableProps) {
+export function ExchangeBetweenFundsTable({
+  promise,
+}: ExchangeBetweenFundsTableProps) {
   const { data, pageCount } = React.use(promise)
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<TransferBetweenFundsWithRelations>[] =
+  const filterFields: DataTableFilterField<ExchangeBetweenFundsWithRelations>[] =
     [
       {
         label: "Amount",
-        value: "amount",
+        value: "toAmount",
         placeholder: "بحث عن مبلغ",
       },
     ]
@@ -46,7 +48,7 @@ export function TransferBetweenFundsTable({ promise }: TransferBetweenFundsTable
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <TransferBetweenFundsTableToolbarActions table={table} />
+        <ExchangeBetweenFundsTableToolbarActions table={table} />
       </DataTableToolbar>
     </DataTable>
   )

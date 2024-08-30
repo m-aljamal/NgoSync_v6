@@ -115,6 +115,8 @@ export type ExchangeBetweenFundsWithRelations =
     senderFundId: string
     receiverFundId: string
     date: string
-    amount: number
-    currencyId: string
+    fromCurrencyId: string
+    toCurrencyId: string
+    fromAmount: number
+    toAmount: number
   }

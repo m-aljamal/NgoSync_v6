@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type TransferBetweenFundsWithRelations } from "@/db/schemas/transfer"
+import { type ExchangeBetweenFundsWithRelations } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
@@ -18,10 +18,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 
-import { DeleteTransferBetweenFundsDialog } from "./delete-transfer-between-funds-dialog"
-import { UpdateTransferBetweenFundsSheet } from "./update-exchange-between-funds-sheet"
+import { DeleteExchangeBetweenFundsDialog } from "./delete-exchange-between-funds-dialog"
+import { UpdateExchangeBetweenFundsSheet } from "./update-exchange-between-funds-sheet"
 
-export function getColumns(): ColumnDef<TransferBetweenFundsWithRelations>[] {
+export function getColumns(): ColumnDef<ExchangeBetweenFundsWithRelations>[] {
   return [
     {
       id: "select",
@@ -56,14 +56,14 @@ export function getColumns(): ColumnDef<TransferBetweenFundsWithRelations>[] {
       cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
     },
     {
-      accessorKey: "amount",
+      accessorKey: "fromAmount",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="القيمة" />
+        <DataTableColumnHeader column={column} title="قيمة المرسل" />
       ),
       cell: ({ row }) => (
         <div>
           {/* {formatCurrency(row.getValue("amount"), row.original.currencyCode)} */}
-          {row.original.amount}
+          {row.original.fromAmount}
         </div>
       ),
     },
@@ -78,12 +78,12 @@ export function getColumns(): ColumnDef<TransferBetweenFundsWithRelations>[] {
 
         return (
           <>
-            <UpdateTransferBetweenFundsSheet
+            <UpdateExchangeBetweenFundsSheet
               open={showUpdateTaskSheet}
               onOpenChange={setShowUpdateTaskSheet}
               transfer={row.original}
             />
-            <DeleteTransferBetweenFundsDialog
+            <DeleteExchangeBetweenFundsDialog
               open={showDeleteTaskDialog}
               onOpenChange={setShowDeleteTaskDialog}
               transfer={[row.original]}

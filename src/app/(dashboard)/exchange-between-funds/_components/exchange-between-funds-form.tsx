@@ -30,7 +30,8 @@ export function ExchangeBetweenFundsForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup isUpdate={isUpdate}>
+        <InputGroup isUpdate={isUpdate} cols="grid-cols-3">
+          <FundInput form={form} name="senderId" label="الصندوق المرسل" />
           <CurrencyAmountInput
             form={form}
             amountName="fromAmount"
@@ -38,7 +39,7 @@ export function ExchangeBetweenFundsForm({
             currencyName="fromCurrencyId"
             currencyLabel="من العملة"
           />
-          <FundInput form={form} name="senderId" label="الصندوق المرسل" />
+          <FundInput form={form} name="receiverId" label="الصندوق المستلم" />
           <CurrencyAmountInput
             form={form}
             amountName="toAmount"
@@ -46,7 +47,6 @@ export function ExchangeBetweenFundsForm({
             currencyName="toCurrencyId"
             currencyLabel="إلى العملة"
           />
-          <FundInput form={form} name="receiverId" label="الصندوق المستلم" />
           <DateInput form={form} />
           <DescriptionInput form={form} />
         </InputGroup>

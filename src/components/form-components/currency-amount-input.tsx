@@ -38,7 +38,7 @@ export default function CurrencyAmountInput<T extends FieldValues>({
 
   const selectedCurrencyId = useWatch({
     control: form.control,
-    name: "currencyId" as Path<T>,
+    name: currencyName as Path<T>,
   })
   const selectedCurrency = useMemo(() => {
     return currencies?.find((currency) => currency.id === selectedCurrencyId)

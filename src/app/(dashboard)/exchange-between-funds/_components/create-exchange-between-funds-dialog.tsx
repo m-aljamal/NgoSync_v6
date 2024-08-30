@@ -8,27 +8,27 @@ import { toast } from "sonner"
 import { useFormDialog } from "@/hooks/use-form-dialog"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
-import { createTransferBetweenFunds } from "@/app/_lib/actions/transfers"
+import { createExchangeBetweenFunds } from "@/app/_lib/actions/currency"
 import {
-  createTransferSchema,
-  type CreateTransferSchema,
+  createExchangeBetweenFundsSchema,
+  type CreateExchangeBetweenFundsSchema,
 } from "@/app/_lib/validations"
 
-import { TransferBetweenFundsForm } from "./exchange-between-funds-form"
+import { ExchangeBetweenFundsForm } from "./exchange-between-funds-form"
 
-export function CreateTransferBetweenFundsDialog() {
+export function CreateExchangeBetweenFundsDialog() {
   const { onClose } = useFormDialog()
 
-  const form = useForm<CreateTransferSchema>({
-    resolver: zodResolver(createTransferSchema),
+  const form = useForm<CreateExchangeBetweenFundsSchema>({
+    resolver: zodResolver(createExchangeBetweenFundsSchema),
     defaultValues: {
       description: "",
     },
   })
 
-  const { executeAsync, isExecuting } = useAction(createTransferBetweenFunds, {
+  const { executeAsync, isExecuting } = useAction(createExchangeBetweenFunds, {
     onSuccess: () => {
-      toast.success("تم إنشاء الحوالة")
+      toast.success("تم إنشاء الصرف")
       form.reset()
       toast.dismiss()
       onClose()
@@ -38,15 +38,15 @@ export function CreateTransferBetweenFundsDialog() {
     },
   })
 
-  async function onSubmit(input: CreateTransferSchema) {
+  async function onSubmit(input: CreateExchangeBetweenFundsSchema) {
     await executeAsync(input)
   }
 
   return (
     <FormDialog>
-      <TransferBetweenFundsForm form={form} onSubmit={onSubmit}>
+      <ExchangeBetweenFundsForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
-      </TransferBetweenFundsForm>
+      </ExchangeBetweenFundsForm>
     </FormDialog>
   )
 }

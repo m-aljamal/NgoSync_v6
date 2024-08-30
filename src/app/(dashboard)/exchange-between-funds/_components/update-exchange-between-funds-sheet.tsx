@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type TransferBetweenFundsWithRelations } from "@/db/schemas/transfer"
+import { type ExchangeBetweenFundsWithRelations } from "@/db/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
@@ -10,15 +10,13 @@ import { toast } from "sonner"
 import { type Sheet } from "@/components/ui/sheet"
 import UpdateButtons from "@/components/form-components/update-buttons"
 import { UpdateSheet } from "@/components/form-components/update-sheet"
-import { updateTransferBetweenFunds } from "@/app/_lib/actions/transfers"
+import { updateExchangeBetweenFunds } from "@/app/_lib/actions/currency"
 import {
-  CreateExchangeBetweenFundsSchema,
-  createTransferSchema,
-  type CreateTransferSchema,
+  createExchangeBetweenFundsSchema,
+  type CreateExchangeBetweenFundsSchema,
 } from "@/app/_lib/validations"
 
-import { TransferBetweenFundsForm } from "./exchange-between-funds-form"
-import { ExchangeBetweenFundsWithRelations } from "@/db/schemas"
+import { ExchangeBetweenFundsForm } from "./exchange-between-funds-form"
 
 interface UpdateExchangeBetweenFundsSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
@@ -35,16 +33,17 @@ export function UpdateExchangeBetweenFundsSheet({
       id: transfer.id,
       senderId: transfer.senderFundId,
       receiverId: transfer.receiverFundId,
-      fromAmount: transfer,
-
-      amount: transfer.amount,
+      fromAmount: transfer.fromAmount,
+      toAmount: transfer.toAmount,
+      fromCurrencyId: transfer.fromCurrencyId,
+      toCurrencyId: transfer.toCurrencyId,
       description: transfer.description ?? "",
-      currencyId: transfer.currencyId,
+      rate: transfer.rate,
     }
   }, [transfer])
 
-  const form = useForm<CreateTransferSchema>({
-    resolver: zodResolver(createTransferSchema),
+  const form = useForm<CreateExchangeBetweenFundsSchema>({
+    resolver: zodResolver(createExchangeBetweenFundsSchema),
     defaultValues,
   })
 
@@ -52,9 +51,9 @@ export function UpdateExchangeBetweenFundsSheet({
     form.reset(defaultValues)
   }, [transfer, form, defaultValues])
 
-  const { executeAsync, isExecuting } = useAction(updateTransferBetweenFunds, {
+  const { executeAsync, isExecuting } = useAction(updateExchangeBetweenFunds, {
     onSuccess: async () => {
-      toast.success("تم تعديل الحوالة")
+      toast.success("تم تعديل الصرف")
       props.onOpenChange?.(false)
       form.reset()
     },
@@ -62,19 +61,19 @@ export function UpdateExchangeBetweenFundsSheet({
       toast.error(error.serverError)
     },
     onExecute: () => {
-      toast.loading("جاري تعديل الحوالة")
+      toast.loading("جاري تعديل الصرف")
     },
   })
 
-  async function onSubmit(input: CreateTransferSchema) {
+  async function onSubmit(input: CreateExchangeBetweenFundsSchema) {
     await executeAsync(input)
     toast.dismiss()
   }
   return (
     <UpdateSheet {...props}>
-      <TransferBetweenFundsForm form={form} onSubmit={onSubmit} isUpdate>
+      <ExchangeBetweenFundsForm form={form} onSubmit={onSubmit} isUpdate>
         <UpdateButtons isExecuting={isExecuting} />
-      </TransferBetweenFundsForm>
+      </ExchangeBetweenFundsForm>
     </UpdateSheet>
   )
 }

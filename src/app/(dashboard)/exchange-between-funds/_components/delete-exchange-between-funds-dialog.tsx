@@ -1,29 +1,29 @@
 "use client"
 
 import * as React from "react"
-import { type TransferBetweenFundsWithRelations } from "@/db/schemas/transfer"
+import { type ExchangeBetweenFundsWithRelations } from "@/db/schemas"
 import { type Row } from "@tanstack/react-table"
 import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"
 
 import { type Dialog } from "@/components/ui/dialog"
 import DeleteDialog from "@/components/delete-dialog"
-import { deleteTransferBetweenFunds } from "@/app/_lib/actions/transfers"
+import { deleteExchangeBetweenFunds } from "@/app/_lib/actions/currency"
 
-interface DeleteTransferBetweenFundsDialogProps
+interface DeleteExchangeBetweenFundsDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  transfer: Row<TransferBetweenFundsWithRelations>["original"][]
+  transfer: Row<ExchangeBetweenFundsWithRelations>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }
 
-export function DeleteTransferBetweenFundsDialog({
+export function DeleteExchangeBetweenFundsDialog({
   transfer,
   showTrigger = true,
   onSuccess,
   ...props
-}: DeleteTransferBetweenFundsDialogProps) {
-  const { executeAsync, isExecuting } = useAction(deleteTransferBetweenFunds, {
+}: DeleteExchangeBetweenFundsDialogProps) {
+  const { executeAsync, isExecuting } = useAction(deleteExchangeBetweenFunds, {
     onSuccess: () => {
       toast.success("تم الحذف بنجاح")
       props.onOpenChange?.(false)

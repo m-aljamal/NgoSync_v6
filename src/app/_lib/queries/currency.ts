@@ -229,6 +229,7 @@ export async function getExchangeBetweenFunds(input: GetSearchSchema) {
           toAmount: sql<number>`ABS(${recipientTransaction.amount})/1000`,
           fromCurrencyId: senderTransaction.currencyId,
           toCurrencyId: recipientTransaction.currencyId,
+          rate: exchnageBetweenFunds.rate,
         })
         .from(exchnageBetweenFunds)
         .limit(per_page)

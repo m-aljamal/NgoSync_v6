@@ -1,30 +1,28 @@
-import { type SearchParams } from "@/types"
 import React from "react"
+import { type SearchParams } from "@/types"
 
-import { getTransferBetweenFunds } from "@/app/_lib/queries/transfers"
-import { searchParamsSchema } from "@/app/_lib/validations"
+import { Skeleton } from "@/components/ui/skeleton"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { Skeleton } from "@/components/ui/skeleton"
+import { getExchangeBetweenFunds } from "@/app/_lib/queries/currency"
+import { searchParamsSchema } from "@/app/_lib/validations"
 
-import {
-  TransferBetweenFundsTable
-} from "./_components/transfer-between-funds-table"
+import { ExchangeBetweenFundsTable } from "./_components/exchange-between-funds-table"
 
-export default function TransferBetweenFundsToFunds({
+export default function ExchangeBetweenFundsToFunds({
   searchParams,
 }: SearchParams) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getTransferBetweenFunds(search)
+  const promise = getExchangeBetweenFunds(search)
 
   return (
     <div>
       <Heading
-        title="حوالات بين الصناديق"
-        description="تحويل مالي من صندوق إلى صندق."
-        icon="ArrowLeftRight"
+        title="صرف عملات بين الصناديق"
+        description="صرف عملات من صندوق إلى صندق."
+        icon="Boxes"
       />
       <Shell className="gap-2">
         <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
@@ -45,7 +43,7 @@ export default function TransferBetweenFundsToFunds({
             />
           }
         >
-          <TransferBetweenFundsTable promise={promise} />
+          <ExchangeBetweenFundsTable promise={promise} />
         </React.Suspense>
       </Shell>
     </div>

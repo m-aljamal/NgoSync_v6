@@ -177,7 +177,7 @@ export const deleteExchangeRates = actionClient
 
 // exchange between funds
 
-export const createTransferBetweenFunds = actionClient
+export const createExchangeBetweenFunds = actionClient
   .schema(createExchangeBetweenFundsSchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
