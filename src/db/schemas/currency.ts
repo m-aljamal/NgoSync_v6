@@ -1,7 +1,9 @@
 import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
 import { boolean, integer, timestamp, varchar } from "drizzle-orm/pg-core"
+
 import { generateId } from "@/lib/id"
+
 import { proposals, proposalsExpenses } from "./proposal"
 import { fundTransactions, projectsTransactions } from "./transactions"
 
@@ -68,3 +70,51 @@ export const exchangeRatesRelations = relations(exchangeRates, ({ one }) => ({
     relationName: "toCurrency",
   }),
 }))
+
+export const exchnageBetweenFunds = pgTable("exchnage_between_funds", {
+  id: varchar("id", { length: 30 })
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`current_timestamp`)
+    .$onUpdate(() => new Date()),
+
+  sender: varchar("sender")
+    .notNull()
+    .references(() => fundTransactions.id),
+
+  receiver: varchar("receiver")
+    .notNull()
+    .references(() => fundTransactions.id),
+  rate: integer("rate").notNull(),
+})
+
+export const exchnageBetweenFundsRelations = relations(
+  exchnageBetweenFunds,
+  ({ one }) => ({
+    sender: one(fundTransactions, {
+      fields: [exchnageBetweenFunds.sender],
+      references: [fundTransactions.id],
+      relationName: "sender",
+    }),
+    recipient: one(fundTransactions, {
+      fields: [exchnageBetweenFunds.receiver],
+      references: [fundTransactions.id],
+      relationName: "receiver",
+    }),
+  })
+)
+
+export type ExchangeBetweenFunds = typeof exchnageBetweenFunds.$inferSelect
+export type NewExchangeBetweenFunds = typeof exchnageBetweenFunds.$inferInsert
+export type ExchangeBetweenFundsWithRelations =
+  typeof exchnageBetweenFunds.$inferSelect & {
+    description?: string | null
+    senderFundId: string
+    receiverFundId: string
+    date: string
+    amount: number
+    currencyId: string
+  }

@@ -2,14 +2,28 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
+import { fundTransactions } from "@/db/schemas"
 import {
   currencies,
   exchangeRates,
+  exchnageBetweenFunds,
   type Currency,
+  type ExchangeBetweenFunds,
   type ExchangeRate,
 } from "@/db/schemas/currency"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, gte, lte, or, sql, type SQL } from "drizzle-orm"
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  lte,
+  or,
+  sql,
+  type SQL,
+} from "drizzle-orm"
 import { alias } from "drizzle-orm/pg-core"
 
 import { filterColumn } from "@/lib/filter-column"
@@ -156,6 +170,102 @@ export async function getExchangeRates(input: GetSearchSchema) {
 
     const pageCount = calculatePageCount(total, per_page)
 
+    return { data, pageCount }
+  } catch (err) {
+    return { data: [], pageCount: 0 }
+  }
+}
+
+// exchange between funds
+
+export async function getExchangeBetweenFunds(input: GetSearchSchema) {
+  noStore()
+  const { page, per_page, sort, operator, from, to } = input
+
+  try {
+    const offset = (page - 1) * per_page
+
+    const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+      "createdAt",
+      "desc",
+    ]) as [keyof ExchangeBetweenFunds | undefined, "asc" | "desc" | undefined]
+
+    const fromDay = from
+      ? sql`${exchnageBetweenFunds.createdAt} >= ${from}`
+      : undefined
+    const toDay = to
+      ? sql`${exchnageBetweenFunds.createdAt} <= ${to}`
+      : undefined
+
+    const expressions: (SQL<unknown> | undefined)[] = [
+      fromDay && toDay
+        ? and(
+            sql`${exchnageBetweenFunds.createdAt} >= ${from}`,
+            sql`${exchnageBetweenFunds.createdAt} <= ${to}`
+          )
+        : undefined,
+      fromDay ? fromDay : undefined,
+    ]
+
+    const where: DrizzleWhere<ExchangeBetweenFunds> =
+      !operator || operator === "and" ? and(...expressions) : or(...expressions)
+
+    const senderTransaction = alias(fundTransactions, "senderTransaction")
+    const recipientTransaction = alias(fundTransactions, "recipientTransaction")
+
+    const { data, total } = await db.transaction(async (tx) => {
+      const data = await tx
+        .select({
+          id: exchnageBetweenFunds.id,
+          sender: exchnageBetweenFunds.sender,
+          receiver: exchnageBetweenFunds.receiver,
+          updatedAt: exchnageBetweenFunds.updatedAt,
+          createdAt: exchnageBetweenFunds.createdAt,
+          description: senderTransaction.description,
+          senderFundId: senderTransaction.fundId,
+          receiverFundId: recipientTransaction.fundId,
+          date: senderTransaction.date,
+          fromAmount: sql<number>`ABS(${senderTransaction.amount})/1000`,
+          toAmount: sql<number>`ABS(${recipientTransaction.amount})/1000`,
+          fromCurrencyId: senderTransaction.currencyId,
+          toCurrencyId: recipientTransaction.currencyId,
+        })
+        .from(exchnageBetweenFunds)
+        .limit(per_page)
+        .offset(offset)
+        .where(where)
+        .innerJoin(
+          senderTransaction,
+          eq(exchnageBetweenFunds.sender, senderTransaction.id)
+        )
+        .innerJoin(
+          recipientTransaction,
+          eq(exchnageBetweenFunds.receiver, recipientTransaction.id)
+        )
+        .orderBy(
+          column && column in exchnageBetweenFunds
+            ? order === "asc"
+              ? asc(exchnageBetweenFunds[column])
+              : desc(exchnageBetweenFunds[column])
+            : desc(exchnageBetweenFunds.id)
+        )
+
+      const total = await tx
+        .select({
+          count: count(),
+        })
+        .from(exchnageBetweenFunds)
+        .where(where)
+        .execute()
+        .then((res) => res[0]?.count ?? 0)
+
+      return {
+        data,
+        total,
+      }
+    })
+
+    const pageCount = Math.ceil(total / per_page)
     return { data, pageCount }
   } catch (err) {
     return { data: [], pageCount: 0 }

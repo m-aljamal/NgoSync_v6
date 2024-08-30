@@ -2,7 +2,13 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { currencies, doners, exchangeRates } from "@/db/schemas"
+import {
+  currencies,
+  doners,
+  exchangeRates,
+  exchnageBetweenFunds,
+  fundTransactions,
+} from "@/db/schemas"
 import { format } from "date-fns"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
@@ -13,6 +19,7 @@ import { currencyList } from "@/app/(dashboard)/currencies/_components/currency-
 import { actionClient } from "../safe-action"
 import {
   createCurrencySchema,
+  createExchangeBetweenFundsSchema,
   createExchangeRateSchema,
   deleteArraySchema,
 } from "../validations"
@@ -166,4 +173,165 @@ export const deleteExchangeRates = actionClient
     noStore()
     await db.delete(exchangeRates).where(inArray(exchangeRates.id, ids))
     revalidatePath("/exchange-rates")
+  })
+
+// exchange between funds
+
+export const createTransferBetweenFunds = actionClient
+  .schema(createExchangeBetweenFundsSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(
+    async ({
+      parsedInput: {
+        senderId,
+        receiverId,
+        fromAmount,
+        toAmount,
+        rate,
+        date: transferDate,
+        description,
+        fromCurrencyId,
+        toCurrencyId,
+      },
+    }) => {
+      noStore()
+      // todo add the amounts
+      const exchangeFromAmount = convertAmountToMiliunits(fromAmount)
+      const exchangeToAmount = convertAmountToMiliunits(toAmount)
+      const exchangeRate = convertAmountToMiliunits(rate)
+      const date = format(transferDate, "yyyy-MM-dd")
+      await db.transaction(async (tx) => {
+        const [sender] = await tx
+          .insert(fundTransactions)
+          .values({
+            fundId: senderId,
+            currencyId: fromCurrencyId,
+            amount: -exchangeFromAmount,
+            amountInUSD: 0,
+            date,
+            type: "outcome",
+            description,
+            category: "currency_exchange",
+          })
+          .returning({ id: fundTransactions.id })
+
+        const [receiver] = await tx
+          .insert(fundTransactions)
+          .values({
+            fundId: receiverId,
+            currencyId: toCurrencyId,
+            amount: exchangeToAmount,
+            amountInUSD: 0,
+            date,
+            type: "income",
+            description,
+            category: "currency_exchange",
+          })
+          .returning({ id: fundTransactions.id })
+
+        if (!sender || !receiver)
+          throw new Error("sender or receiver is not created")
+
+        await tx.insert(exchnageBetweenFunds).values({
+          sender: sender?.id,
+          receiver: receiver?.id,
+          rate: exchangeRate,
+        })
+      })
+      revalidatePath("/exchange-between-funds")
+    }
+  )
+
+export const updateExchangeBetweenFunds = actionClient
+  .schema(createExchangeBetweenFundsSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(
+    async ({
+      parsedInput: {
+        senderId,
+        receiverId,
+        fromAmount,
+        toAmount,
+        rate,
+        date: transferDate,
+        description,
+        fromCurrencyId,
+        toCurrencyId,
+        id,
+      },
+    }) => {
+      noStore()
+      // todo add the amounts
+      if (!id) throw new Error("id is required")
+
+      const [transfer] = await db
+        .select({
+          id: exchnageBetweenFunds.id,
+          senderId: exchnageBetweenFunds.sender,
+          receiverId: exchnageBetweenFunds.receiver,
+          rate: exchnageBetweenFunds.rate,
+        })
+        .from(exchnageBetweenFunds)
+        .where(eq(exchnageBetweenFunds.id, id))
+
+      if (!transfer) throw new Error("transfer not found")
+      const exchangeFromAmount = convertAmountToMiliunits(fromAmount)
+      const exchangeToAmount = convertAmountToMiliunits(toAmount)
+      const exchangeRate = convertAmountToMiliunits(rate)
+      const date = format(transferDate, "yyyy-MM-dd")
+      await db.transaction(async (tx) => {
+        await tx
+          .update(fundTransactions)
+          .set({
+            fundId: senderId,
+            currencyId: fromCurrencyId,
+            amount: -exchangeFromAmount,
+            amountInUSD: 0,
+            date,
+            description,
+          })
+          .where(eq(fundTransactions.id, transfer?.senderId))
+
+        await tx
+          .update(fundTransactions)
+          .set({
+            fundId: receiverId,
+            currencyId: toCurrencyId,
+            amount: exchangeToAmount,
+            amountInUSD: 0,
+            date,
+            description,
+          })
+          .where(eq(fundTransactions.id, transfer?.receiverId))
+
+        await tx
+          .update(exchnageBetweenFunds)
+          .set({
+            rate: exchangeRate,
+          })
+          .where(eq(exchnageBetweenFunds.id, id))
+      })
+      revalidatePath("/exchange-between-funds")
+    }
+  )
+
+export const deleteExchangeBetweenFunds = actionClient
+  .schema(deleteArraySchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { ids } }) => {
+    noStore()
+
+    await db.transaction(async (ex) => {
+      await ex
+        .delete(exchnageBetweenFunds)
+        .where(inArray(exchnageBetweenFunds.id, ids))
+      await ex.delete(fundTransactions).where(inArray(fundTransactions.id, ids))
+    })
+    revalidatePath("/exchange-between-funds")
   })
