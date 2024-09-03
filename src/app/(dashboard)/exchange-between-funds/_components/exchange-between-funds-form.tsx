@@ -3,8 +3,16 @@
 import * as React from "react"
 import { type UseFormReturn } from "react-hook-form"
 
-import { Form } from "@/components/ui/form"
 import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import {
+  AmountInput,
   CurrencyAmountInput,
   DateInput,
   DescriptionInput,
@@ -27,10 +35,35 @@ export function ExchangeBetweenFundsForm({
   children,
   isUpdate,
 }: CreateExchangeBetweenFundsFormProps) {
+
+  
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <InputGroup isUpdate={isUpdate} cols="grid-cols-3">
+          <FormField
+            control={form.control}
+            name="rate"
+            render={({ field }) => (
+              <FormItem className="sm:col-span-3">
+                <FormLabel>سعر الصرف</FormLabel>
+                <FormControl>
+                  <AmountInput
+                    intlConfig={
+                      selectedToCurrency && {
+                        locale: selectedToCurrency.locale,
+                        currency: selectedToCurrency.code,
+                      }
+                    }
+                    placeholder="0.00"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <FundInput form={form} name="senderId" label="الصندوق المرسل" />
           <CurrencyAmountInput
             form={form}
