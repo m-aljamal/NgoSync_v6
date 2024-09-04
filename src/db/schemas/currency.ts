@@ -4,6 +4,7 @@ import { boolean, integer, timestamp, varchar } from "drizzle-orm/pg-core"
 
 import { generateId } from "@/lib/id"
 
+import { employees } from "./employee"
 import { proposals, proposalsExpenses } from "./proposal"
 import { fundTransactions, projectsTransactions } from "./transactions"
 
@@ -29,7 +30,7 @@ export const currencyRelations = relations(currencies, ({ many }) => ({
   proposals: many(proposals),
   proposalsExpenses: many(proposalsExpenses),
   projectsTransactions: many(projectsTransactions),
-  // employees: many(employees),
+  employees: many(employees),
   // currencyExchageRate: many(currencyExchageRate),
 }))
 
@@ -157,8 +158,10 @@ export const exchnageBetweenProjectsRelations = relations(
   })
 )
 
-export type ExchangeBetweenProjects = typeof exchnageBetweenProjects.$inferSelect
-export type NewExchangeBetweenProjects = typeof exchnageBetweenProjects.$inferInsert
+export type ExchangeBetweenProjects =
+  typeof exchnageBetweenProjects.$inferSelect
+export type NewExchangeBetweenProjects =
+  typeof exchnageBetweenProjects.$inferInsert
 export type ExchangeBetweenProjectsWithRelations =
   typeof exchnageBetweenProjects.$inferSelect & {
     description?: string | null

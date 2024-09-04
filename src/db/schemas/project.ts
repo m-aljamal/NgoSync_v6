@@ -8,6 +8,7 @@ import { donations } from "./donation"
 import { proposals } from "./proposal"
 import { expensesCategories, projectsTransactions } from "./transactions"
 import { users } from "./user"
+import { employees } from "./employee"
 
 export const statusEnum = pgEnum("status_enum", [
   "in-progress",
@@ -51,7 +52,7 @@ export const projectRelations = relations(projects, ({ one, many }) => ({
   }),
   proposals: many(proposals),
   expensesCategories: many(expensesCategories),
-  // employees: many(employees),
+  employees: many(employees),
   // courses: many(courses),
   // students: many(students),
 }))

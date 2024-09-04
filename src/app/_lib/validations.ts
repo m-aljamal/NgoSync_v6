@@ -1,4 +1,5 @@
 import { donations, doners, projects, tasks } from "@/db/schemas"
+import { employees } from "@/db/schemas/employee"
 import * as z from "zod"
 
 const currencyId = z.string().min(2)
@@ -189,6 +190,21 @@ export const createExchangeSchema = z.object({
   toCurrencyId: currencyId,
 })
 
-export type CreateExchangeSchema = z.infer<
-  typeof createExchangeSchema
->
+export type CreateExchangeSchema = z.infer<typeof createExchangeSchema>
+
+export const createEmployeeSchema = z.object({
+  name: z.string().min(2).max(120),
+  gender: z.enum(employees.gender.enumValues),
+  status: z.enum(employees.status.enumValues),
+  email: z.string().email().optional(),
+  phone: z.string().optional(),
+  description: z.string().optional(),
+  address: z.string().optional(),
+  id: z.string().optional(),
+  projectId: z.string().min(2),
+  salary: amount,
+  currencyId,
+  
+})
+
+export type CreateEmployeeSchema = z.infer<typeof createEmployeeSchema>
