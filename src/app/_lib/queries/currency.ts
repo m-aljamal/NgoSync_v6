@@ -2,13 +2,15 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { fundTransactions } from "@/db/schemas"
+import { fundTransactions, projectsTransactions } from "@/db/schemas"
 import {
   currencies,
   exchangeRates,
   exchnageBetweenFunds,
+  exchnageBetweenProjects,
   type Currency,
   type ExchangeBetweenFunds,
+  type ExchangeBetweenProjects,
   type ExchangeRate,
 } from "@/db/schemas/currency"
 import { type DrizzleWhere } from "@/types"
@@ -256,6 +258,109 @@ export async function getExchangeBetweenFunds(input: GetSearchSchema) {
           count: count(),
         })
         .from(exchnageBetweenFunds)
+        .where(where)
+        .execute()
+        .then((res) => res[0]?.count ?? 0)
+
+      return {
+        data,
+        total,
+      }
+    })
+
+    const pageCount = Math.ceil(total / per_page)
+    return { data, pageCount }
+  } catch (err) {
+    return { data: [], pageCount: 0 }
+  }
+}
+
+// exchange between projects
+
+export async function getExchangeBetweenProjects(input: GetSearchSchema) {
+  noStore()
+  const { page, per_page, sort, operator, from, to } = input
+
+  try {
+    const offset = (page - 1) * per_page
+
+    const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+      "createdAt",
+      "desc",
+    ]) as [
+      keyof ExchangeBetweenProjects | undefined,
+      "asc" | "desc" | undefined,
+    ]
+
+    const fromDay = from
+      ? sql`${exchnageBetweenProjects.createdAt} >= ${from}`
+      : undefined
+    const toDay = to
+      ? sql`${exchnageBetweenProjects.createdAt} <= ${to}`
+      : undefined
+
+    const expressions: (SQL<unknown> | undefined)[] = [
+      fromDay && toDay
+        ? and(
+            sql`${exchnageBetweenProjects.createdAt} >= ${from}`,
+            sql`${exchnageBetweenProjects.createdAt} <= ${to}`
+          )
+        : undefined,
+      fromDay ? fromDay : undefined,
+    ]
+
+    const where: DrizzleWhere<ExchangeBetweenProjects> =
+      !operator || operator === "and" ? and(...expressions) : or(...expressions)
+
+    const senderTransaction = alias(projectsTransactions, "senderTransaction")
+    const recipientTransaction = alias(
+      projectsTransactions,
+      "recipientTransaction"
+    )
+
+    const { data, total } = await db.transaction(async (tx) => {
+      const data = await tx
+        .select({
+          id: exchnageBetweenProjects.id,
+          sender: exchnageBetweenProjects.sender,
+          receiver: exchnageBetweenProjects.receiver,
+          updatedAt: exchnageBetweenProjects.updatedAt,
+          createdAt: exchnageBetweenProjects.createdAt,
+          description: senderTransaction.description,
+          senderProjectId: senderTransaction.projectId,
+          receiverProjectId: recipientTransaction.projectId,
+          date: senderTransaction.date,
+          fromAmount: sql<number>`ABS(${senderTransaction.amount})/1000`,
+          toAmount: sql<number>`ABS(${recipientTransaction.amount})/1000`,
+          fromCurrencyId: senderTransaction.currencyId,
+          toCurrencyId: recipientTransaction.currencyId,
+          rate: exchnageBetweenProjects.rate,
+        })
+        .from(exchnageBetweenProjects)
+        .limit(per_page)
+        .offset(offset)
+        .where(where)
+        .innerJoin(
+          senderTransaction,
+          eq(exchnageBetweenProjects.sender, senderTransaction.id)
+        )
+        .innerJoin(
+          recipientTransaction,
+          eq(exchnageBetweenProjects.receiver, recipientTransaction.id)
+        )
+        .orderBy(
+          column && column in exchnageBetweenProjects
+            ? order === "asc"
+              ? asc(exchnageBetweenProjects[column])
+              : desc(exchnageBetweenProjects[column])
+            : desc(exchnageBetweenProjects.id)
+        )
+
+      const total = await tx
+        .select({
+          count: count(),
+        })
+        .from(exchnageBetweenProjects)
         .where(where)
         .execute()
         .then((res) => res[0]?.count ?? 0)

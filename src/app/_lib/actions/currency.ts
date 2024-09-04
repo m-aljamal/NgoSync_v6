@@ -7,7 +7,9 @@ import {
   doners,
   exchangeRates,
   exchnageBetweenFunds,
+  exchnageBetweenProjects,
   fundTransactions,
+  projectsTransactions,
 } from "@/db/schemas"
 import { format } from "date-fns"
 import { eq, inArray } from "drizzle-orm"
@@ -19,8 +21,8 @@ import { currencyList } from "@/app/(dashboard)/currencies/_components/currency-
 import { actionClient } from "../safe-action"
 import {
   createCurrencySchema,
-  createExchangeBetweenFundsSchema,
   createExchangeRateSchema,
+  createExchangeSchema,
   deleteArraySchema,
 } from "../validations"
 
@@ -178,7 +180,7 @@ export const deleteExchangeRates = actionClient
 // exchange between funds
 
 export const createExchangeBetweenFunds = actionClient
-  .schema(createExchangeBetweenFundsSchema, {
+  .schema(createExchangeSchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
@@ -245,7 +247,7 @@ export const createExchangeBetweenFunds = actionClient
   )
 
 export const updateExchangeBetweenFunds = actionClient
-  .schema(createExchangeBetweenFundsSchema, {
+  .schema(createExchangeSchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
@@ -334,4 +336,169 @@ export const deleteExchangeBetweenFunds = actionClient
       await ex.delete(fundTransactions).where(inArray(fundTransactions.id, ids))
     })
     revalidatePath("/exchange-between-funds")
+  })
+
+// exchange between projects
+
+export const createExchangeBetweenProjects = actionClient
+  .schema(createExchangeSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(
+    async ({
+      parsedInput: {
+        senderId,
+        receiverId,
+        fromAmount,
+        toAmount,
+        rate,
+        date: transferDate,
+        description,
+        fromCurrencyId,
+        toCurrencyId,
+      },
+    }) => {
+      noStore()
+      // todo add the amounts
+      const exchangeFromAmount = convertAmountToMiliunits(fromAmount)
+      const exchangeToAmount = convertAmountToMiliunits(toAmount)
+      const exchangeRate = convertAmountToMiliunits(rate)
+      const date = format(transferDate, "yyyy-MM-dd")
+      await db.transaction(async (tx) => {
+        const [sender] = await tx
+          .insert(projectsTransactions)
+          .values({
+            projectId: senderId,
+            currencyId: fromCurrencyId,
+            amount: -exchangeFromAmount,
+            amountInUSD: 0,
+            date,
+            type: "outcome",
+            description,
+            category: "currency_exchange",
+            transactionStatus: "approved",
+          })
+          .returning({ id: projectsTransactions.id })
+
+        const [receiver] = await tx
+          .insert(projectsTransactions)
+          .values({
+            projectId: receiverId,
+            currencyId: toCurrencyId,
+            amount: exchangeToAmount,
+            amountInUSD: 0,
+            date,
+            type: "income",
+            description,
+            category: "currency_exchange",
+            transactionStatus: "approved",
+          })
+          .returning({ id: projectsTransactions.id })
+
+        if (!sender || !receiver)
+          throw new Error("sender or receiver is not created")
+
+        await tx.insert(exchnageBetweenProjects).values({
+          sender: sender?.id,
+          receiver: receiver?.id,
+          rate: exchangeRate,
+        })
+      })
+      revalidatePath("/exchange-between-projects")
+    }
+  )
+
+export const updateExchangeBetweenProjects = actionClient
+  .schema(createExchangeSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(
+    async ({
+      parsedInput: {
+        senderId,
+        receiverId,
+        fromAmount,
+        toAmount,
+        rate,
+        date: transferDate,
+        description,
+        fromCurrencyId,
+        toCurrencyId,
+        id,
+      },
+    }) => {
+      noStore()
+      // todo add the amounts
+      if (!id) throw new Error("id is required")
+
+      const [transfer] = await db
+        .select({
+          id: exchnageBetweenProjects.id,
+          senderId: exchnageBetweenProjects.sender,
+          receiverId: exchnageBetweenProjects.receiver,
+          rate: exchnageBetweenProjects.rate,
+        })
+        .from(exchnageBetweenProjects)
+        .where(eq(exchnageBetweenProjects.id, id))
+
+      if (!transfer) throw new Error("transfer not found")
+      const exchangeFromAmount = convertAmountToMiliunits(fromAmount)
+      const exchangeToAmount = convertAmountToMiliunits(toAmount)
+      const exchangeRate = convertAmountToMiliunits(rate)
+      const date = format(transferDate, "yyyy-MM-dd")
+      await db.transaction(async (tx) => {
+        await tx
+          .update(projectsTransactions)
+          .set({
+            projectId: senderId,
+            currencyId: fromCurrencyId,
+            amount: -exchangeFromAmount,
+            amountInUSD: 0,
+            date,
+            description,
+          })
+          .where(eq(projectsTransactions.id, transfer?.senderId))
+
+        await tx
+          .update(projectsTransactions)
+          .set({
+            projectId: receiverId,
+            currencyId: toCurrencyId,
+            amount: exchangeToAmount,
+            amountInUSD: 0,
+            date,
+            description,
+          })
+          .where(eq(projectsTransactions.id, transfer?.receiverId))
+
+        await tx
+          .update(exchnageBetweenProjects)
+          .set({
+            rate: exchangeRate,
+          })
+          .where(eq(exchnageBetweenProjects.id, id))
+      })
+      revalidatePath("/exchange-between-projects")
+    }
+  )
+
+export const deleteExchangeBetweenProjects = actionClient
+  .schema(deleteArraySchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { ids } }) => {
+    noStore()
+
+    await db.transaction(async (ex) => {
+      await ex
+        .delete(exchnageBetweenProjects)
+        .where(inArray(exchnageBetweenProjects.id, ids))
+      await ex
+        .delete(projectsTransactions)
+        .where(inArray(projectsTransactions.id, ids))
+    })
+    revalidatePath("/exchange-between-projects")
   })

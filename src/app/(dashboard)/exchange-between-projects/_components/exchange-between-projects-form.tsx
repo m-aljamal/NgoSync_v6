@@ -4,7 +4,7 @@ import * as React from "react"
 import { useEffect, useMemo } from "react"
 import { useWatch, type UseFormReturn } from "react-hook-form"
 
-import { useGetCurrencies, useGetFunds } from "@/hooks/use-get-form-data"
+import { useGetCurrencies, useGetProjects } from "@/hooks/use-get-form-data"
 import {
   Form,
   FormControl,
@@ -22,7 +22,7 @@ import {
 import { AppSelect } from "@/components/form-components/select"
 import { type CreateExchangeSchema } from "@/app/_lib/validations"
 
-interface CreateExchangeBetweenFundsFormProps
+interface CreateExchangeBetweenProjectsFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode
   form: UseFormReturn<CreateExchangeSchema>
@@ -30,14 +30,14 @@ interface CreateExchangeBetweenFundsFormProps
   isUpdate?: boolean
 }
 
-export function ExchangeBetweenFundsForm({
+export function ExchangeBetweenProjectsForm({
   form,
   onSubmit,
   children,
   isUpdate,
-}: CreateExchangeBetweenFundsFormProps) {
+}: CreateExchangeBetweenProjectsFormProps) {
   const { data: currencies, isLoading: currenciesLoading } = useGetCurrencies()
-  const { data: funds, isLoading: fundsLoading } = useGetFunds()
+  const { data: projects, isLoading: projectsLoading } = useGetProjects()
 
   const selectedFromCurrencyId = useWatch({
     control: form.control,
@@ -91,7 +91,7 @@ export function ExchangeBetweenFundsForm({
             control={form.control}
             name="rate"
             render={({ field }) => (
-              <FormItem  className="sm:col-span-2">
+              <FormItem className="sm:col-span-2">
                 <FormLabel>سعر الصرف</FormLabel>
                 <FormControl>
                   <AmountInput
@@ -159,16 +159,16 @@ export function ExchangeBetweenFundsForm({
             name="senderId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>من الصندوق</FormLabel>
+                <FormLabel>من المشروع</FormLabel>
                 <AppSelect
-                  isLoading={fundsLoading}
+                  isLoading={projectsLoading}
                   onChange={field.onChange}
                   value={field.value?.toString()}
-                  options={funds?.map((fund) => ({
-                    value: fund.id.toString(),
-                    label: fund.name,
+                  options={projects?.map((project) => ({
+                    value: project.id.toString(),
+                    label: project.name,
                   }))}
-                  placeholder="أختر الصندوق"
+                  placeholder="أختر المشروع"
                 />
                 <FormMessage />
               </FormItem>
@@ -222,16 +222,16 @@ export function ExchangeBetweenFundsForm({
             name="receiverId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>الى الصندوق</FormLabel>
+                <FormLabel>الى المشروع</FormLabel>
                 <AppSelect
-                  isLoading={fundsLoading}
+                  isLoading={projectsLoading}
                   onChange={field.onChange}
                   value={field.value?.toString()}
-                  options={funds?.map((fund) => ({
-                    value: fund.id.toString(),
-                    label: fund.name,
+                  options={projects?.map((project) => ({
+                    value: project.id.toString(),
+                    label: project.name,
                   }))}
-                  placeholder="أختر الصندوق"
+                  placeholder="أختر المشروع"
                 />
                 <FormMessage />
               </FormItem>

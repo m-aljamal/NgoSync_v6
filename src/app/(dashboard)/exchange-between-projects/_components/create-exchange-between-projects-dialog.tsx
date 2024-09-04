@@ -8,15 +8,15 @@ import { toast } from "sonner"
 import { useFormDialog } from "@/hooks/use-form-dialog"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
-import { createExchangeBetweenFunds } from "@/app/_lib/actions/currency"
+import { createExchangeBetweenProjects } from "@/app/_lib/actions/currency"
 import {
   createExchangeSchema,
   type CreateExchangeSchema,
 } from "@/app/_lib/validations"
 
-import { ExchangeBetweenFundsForm } from "./exchange-between-funds-form"
+import { ExchangeBetweenProjectsForm } from "./exchange-between-projects-form"
 
-export function CreateExchangeBetweenFundsDialog() {
+export function CreateExchangeBetweenProjectsDialog() {
   const { onClose } = useFormDialog()
 
   const form = useForm<CreateExchangeSchema>({
@@ -26,17 +26,20 @@ export function CreateExchangeBetweenFundsDialog() {
     },
   })
 
-  const { executeAsync, isExecuting } = useAction(createExchangeBetweenFunds, {
-    onSuccess: () => {
-      toast.success("تم إنشاء الصرف")
-      form.reset()
-      toast.dismiss()
-      onClose()
-    },
-    onError: ({ error }) => {
-      toast.error(error.serverError)
-    },
-  })
+  const { executeAsync, isExecuting } = useAction(
+    createExchangeBetweenProjects,
+    {
+      onSuccess: () => {
+        toast.success("تم إنشاء الصرف")
+        form.reset()
+        toast.dismiss()
+        onClose()
+      },
+      onError: ({ error }) => {
+        toast.error(error.serverError)
+      },
+    }
+  )
 
   async function onSubmit(input: CreateExchangeSchema) {
     await executeAsync(input)
@@ -44,9 +47,9 @@ export function CreateExchangeBetweenFundsDialog() {
 
   return (
     <FormDialog>
-      <ExchangeBetweenFundsForm form={form} onSubmit={onSubmit}>
+      <ExchangeBetweenProjectsForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
-      </ExchangeBetweenFundsForm>
+      </ExchangeBetweenProjectsForm>
     </FormDialog>
   )
 }

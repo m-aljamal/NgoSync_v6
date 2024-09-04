@@ -120,3 +120,53 @@ export type ExchangeBetweenFundsWithRelations =
     fromAmount: number
     toAmount: number
   }
+
+export const exchnageBetweenProjects = pgTable("exchnage_between_projects", {
+  id: varchar("id", { length: 30 })
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`current_timestamp`)
+    .$onUpdate(() => new Date()),
+
+  sender: varchar("sender")
+    .notNull()
+    .references(() => projectsTransactions.id),
+
+  receiver: varchar("receiver")
+    .notNull()
+    .references(() => projectsTransactions.id),
+  rate: integer("rate").notNull(),
+})
+
+export const exchnageBetweenProjectsRelations = relations(
+  exchnageBetweenProjects,
+  ({ one }) => ({
+    sender: one(projectsTransactions, {
+      fields: [exchnageBetweenProjects.sender],
+      references: [projectsTransactions.id],
+      relationName: "sender",
+    }),
+    recipient: one(projectsTransactions, {
+      fields: [exchnageBetweenProjects.receiver],
+      references: [projectsTransactions.id],
+      relationName: "receiver",
+    }),
+  })
+)
+
+export type ExchangeBetweenProjects = typeof exchnageBetweenProjects.$inferSelect
+export type NewExchangeBetweenProjects = typeof exchnageBetweenProjects.$inferInsert
+export type ExchangeBetweenProjectsWithRelations =
+  typeof exchnageBetweenProjects.$inferSelect & {
+    description?: string | null
+    senderProjectId: string
+    receiverProjectId: string
+    date: string
+    fromCurrencyId: string
+    toCurrencyId: string
+    fromAmount: number
+    toAmount: number
+  }
