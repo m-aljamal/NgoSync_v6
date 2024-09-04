@@ -15,10 +15,8 @@ import {
 } from "@/components/ui/form"
 import {
   AmountInput,
-  CurrencyAmountInput,
   DateInput,
   DescriptionInput,
-  FundInput,
   InputGroup,
 } from "@/components/form-components"
 import { AppSelect } from "@/components/form-components/select"
@@ -93,7 +91,7 @@ export function ExchangeBetweenFundsForm({
             control={form.control}
             name="rate"
             render={({ field }) => (
-              <FormItem className="sm:col-span-3">
+              <FormItem  className="sm:col-span-2">
                 <FormLabel>سعر الصرف</FormLabel>
                 <FormControl>
                   <AmountInput
@@ -112,12 +110,12 @@ export function ExchangeBetweenFundsForm({
               </FormItem>
             )}
           />
-          <DescriptionInput form={form} />
+
           <FormField
             control={form.control}
             name="fromCurrencyId"
             render={({ field }) => (
-              <FormItem className="sm:col-span-2">
+              <FormItem>
                 <FormLabel>من العملة</FormLabel>
                 <AppSelect
                   isLoading={currenciesLoading}
@@ -137,7 +135,7 @@ export function ExchangeBetweenFundsForm({
             control={form.control}
             name="fromAmount"
             render={({ field }) => (
-              <FormItem className="sm:col-span-2">
+              <FormItem>
                 <FormLabel>من المبلغ</FormLabel>
                 <FormControl>
                   <AmountInput
@@ -160,7 +158,7 @@ export function ExchangeBetweenFundsForm({
             control={form.control}
             name="senderId"
             render={({ field }) => (
-              <FormItem className="sm:col-span-2">
+              <FormItem>
                 <FormLabel>من الصندوق</FormLabel>
                 <AppSelect
                   isLoading={fundsLoading}
@@ -180,7 +178,7 @@ export function ExchangeBetweenFundsForm({
             control={form.control}
             name="toCurrencyId"
             render={({ field }) => (
-              <FormItem className="sm:col-span-2">
+              <FormItem>
                 <FormLabel>الى العملة</FormLabel>
                 <AppSelect
                   isLoading={currenciesLoading}
@@ -200,7 +198,7 @@ export function ExchangeBetweenFundsForm({
             control={form.control}
             name="toAmount"
             render={({ field }) => (
-              <FormItem className="sm:col-span-2">
+              <FormItem>
                 <FormLabel>الى المبلغ</FormLabel>
                 <FormControl>
                   <AmountInput
@@ -223,7 +221,7 @@ export function ExchangeBetweenFundsForm({
             control={form.control}
             name="receiverId"
             render={({ field }) => (
-              <FormItem className="sm:col-span-2">
+              <FormItem>
                 <FormLabel>الى الصندوق</FormLabel>
                 <AppSelect
                   isLoading={fundsLoading}
@@ -239,24 +237,7 @@ export function ExchangeBetweenFundsForm({
               </FormItem>
             )}
           />
-          {/* <FundInput form={form} name="senderId" label="الصندوق المرسل" />
-          <CurrencyAmountInput
-            form={form}
-            amountName="fromAmount"
-            amountLabel="من المبلغ"
-            currencyName="fromCurrencyId"
-            currencyLabel="من العملة"
-          />
-          <FundInput form={form} name="receiverId" label="الصندوق المستلم" />
-          <CurrencyAmountInput
-            form={form}
-            amountName="toAmount"
-            amountLabel="إلى المبلغ"
-            currencyName="toCurrencyId"
-            currencyLabel="إلى العملة"
-          />
-          <DateInput form={form} />
-          <DescriptionInput form={form} /> */}
+          <DescriptionInput form={form} />
         </InputGroup>
         {children}
       </form>
