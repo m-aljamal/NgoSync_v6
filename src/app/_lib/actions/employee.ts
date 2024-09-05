@@ -2,17 +2,20 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { doners, type Doner } from "@/db/schemas"
+import { employees } from "@/db/schemas/employee"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
-import { generateId } from "@/lib/id"
-
 import { actionClient } from "../safe-action"
-import { createDonerSchema, deleteArraySchema } from "../validations"
+import {
+  createEmployeeSchema,
+  createJobTitleSchema,
+  deleteArraySchema,
+} from "../validations"
+import { employeesJobTitles } from "./../../../db/schemas/employee"
 
 export const createEmployee = actionClient
-  .schema(createDonerSchema, {
+  .schema(createEmployeeSchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
@@ -20,49 +23,72 @@ export const createEmployee = actionClient
     async ({
       parsedInput: {
         name,
+        projectId,
+        salary,
+        currencyId,
+        birthDate,
+        position,
+        jobTitleId,
         status,
         gender,
         email,
         phone,
-        type,
         description,
         address,
       },
     }) => {
       noStore()
-      await db.insert(doners).values({
+      await db.insert(employees).values({
         name,
+        projectId,
+        salary,
+        currencyId,
+        birthDate,
+        position,
+        jobTitleId,
+        status,
         gender,
         email,
         phone,
-        type,
         description,
         address,
-        status,
       })
-      revalidatePath("/doners")
+      revalidatePath("/employees")
     }
   )
 
-export const deleteDoners = actionClient
+export const deleteEmployee = actionClient
   .schema(deleteArraySchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput: { ids } }) => {
     noStore()
-    await db.delete(doners).where(inArray(doners.id, ids))
-    revalidatePath("/doners")
+    await db.delete(employees).where(inArray(employees.id, ids))
+    revalidatePath("/employees")
   })
 
-export const updateDoner = actionClient
-  .schema(createDonerSchema, {
+export const updateEmployee = actionClient
+  .schema(createEmployeeSchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput: data }) => {
     noStore()
     if (!data.id) throw new Error("id is required")
-    await db.update(doners).set(data).where(eq(doners.id, data.id))
-    revalidatePath("/doners")
+    await db.update(employees).set(data).where(eq(employees.id, data.id))
+    revalidatePath("/employees")
+  })
+
+export const createEmployeeJobTitle = actionClient
+  .schema(createJobTitleSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { name } }) => {
+    noStore()
+    await db.insert(employeesJobTitles).values({
+      name,
+    })
+    revalidatePath("/employees")
   })

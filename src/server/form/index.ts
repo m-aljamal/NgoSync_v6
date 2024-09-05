@@ -4,6 +4,7 @@ import currencies from "./currencies"
 import doners from "./doners"
 import expensesCategories from "./expense-categories"
 import funds from "./funds"
+import jobTitles from "./job-titles"
 import projects from "./projects"
 import proposalsExpenses from "./proposal-expenses"
 import proposals from "./proposals"
@@ -20,4 +21,5 @@ const routes = app
   .route("/funds", funds)
   .route("/doners", doners)
   .route("/proposals", proposals)
+  .route("/job-titles", jobTitles)
 export default routes

@@ -10,11 +10,11 @@ import {
 
 import { generateId } from "@/lib/id"
 
+import { genders } from "./enums"
 import { projects } from "./project"
 import { proposals } from "./proposal"
 import { fundTransactions } from "./transactions"
 
-export const genders = pgEnum("genders", ["male", "female"])
 export const donerTypes = pgEnum("doner_types", ["individual", "orgnization"])
 export const donerStatus = pgEnum("doner_status", ["active", "inactive"])
 

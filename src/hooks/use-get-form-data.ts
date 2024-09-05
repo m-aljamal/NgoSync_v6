@@ -129,3 +129,18 @@ export const useGetProposals = (projectId: string) => {
   })
   return query
 }
+
+export const useGetjobTitle = () => {
+  const query = useQuery({
+    queryKey: ["jobTtile"],
+    queryFn: async () => {
+      const response = await client.api.form["job-titles"].$get()
+      if (!response.ok) {
+        throw new Error("Failed to fetch job titles")
+      }
+      const { data } = await response.json()
+      return data
+    },
+  })
+  return query
+}

@@ -1,23 +1,16 @@
 import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
-import {
-  boolean,
-  integer,
-  pgEnum,
-  timestamp,
-  varchar,
-} from "drizzle-orm/pg-core"
+import { integer, pgEnum, timestamp, varchar } from "drizzle-orm/pg-core"
 
 import { generateId } from "@/lib/id"
 
 import { currencies } from "./currency"
+import { genders } from "./enums"
 import { projects } from "./project"
 
-export const genders = pgEnum("genders", ["male", "female"])
 export const employeeStatus = pgEnum("doner_status", ["active", "inactive"])
 export const positions = pgEnum("positions", [
   "manager",
-  "employee",
   "teacher",
   "volunteer",
 ])
@@ -74,7 +67,7 @@ export const employeesJobTitles = pgTable("employees_job_titles", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())
     .primaryKey(),
-  name: varchar("name", { length: 120 }).notNull(),
+  name: varchar("name", { length: 120 }).unique().notNull(),
 })
 
 export const employeesJobTitlesRelations = relations(

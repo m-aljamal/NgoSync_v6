@@ -18,16 +18,20 @@ import { DatePicker } from "./date-picker"
 
 export default function DateInput<T extends FieldValues>({
   form,
+  name = "date",
+  labelName = "التاريخ",
 }: {
   form: UseFormReturn<T>
+  name?: string
+  labelName?: string
 }) {
   return (
     <FormField
       control={form.control}
-      name={"date" as Path<T>}
+      name={name as Path<T>}
       render={({ field }) => (
         <FormItem>
-          <FormLabel>التاريخ</FormLabel>
+          <FormLabel>{labelName}</FormLabel>
           <FormControl>
             <DatePicker onChange={field.onChange} value={field.value} />
           </FormControl>

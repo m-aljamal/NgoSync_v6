@@ -194,17 +194,27 @@ export type CreateExchangeSchema = z.infer<typeof createExchangeSchema>
 
 export const createEmployeeSchema = z.object({
   name: z.string().min(2).max(120),
+  projectId: z.string().min(2),
   gender: z.enum(employees.gender.enumValues),
-  status: z.enum(employees.status.enumValues),
+  position: z.enum(employees.position.enumValues),
+  jobTitleId: z.string().min(2),
   email: z.string().email().optional(),
   phone: z.string().optional(),
-  description: z.string().optional(),
   address: z.string().optional(),
-  id: z.string().optional(),
-  projectId: z.string().min(2),
   salary: amount,
   currencyId,
-  
-})
+  status: z.enum(employees.status.enumValues),
+  description: z.string().optional(),
+  birthDate: date,
+  id: z.string().optional(),
+ })
 
 export type CreateEmployeeSchema = z.infer<typeof createEmployeeSchema>
+
+
+export const createJobTitleSchema = z.object({
+  name: z.string().min(2).max(120),
+  id: z.string().optional(),
+})
+
+export type CreateJobTitleSchema = z.infer<typeof createJobTitleSchema>

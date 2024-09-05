@@ -6,4 +6,6 @@ export * from './proposal'
 export * from './task'
 export * from './transactions'
 export * from './user'
+export * from './employee'
+export * from './transfer'
 

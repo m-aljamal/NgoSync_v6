@@ -23,7 +23,7 @@ export default function ProjectInput<T extends FieldValues>({
   withProposals = false,
   withExpensesCategories = false,
   name = "projectId",
-  label = "الصندوق",
+  label = "المشروع",
 }: {
   form: UseFormReturn<T>
   withProposals?: boolean
