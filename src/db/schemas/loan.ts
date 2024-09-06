@@ -39,3 +39,9 @@ export const loansRelations = relations(loans, ({ one }) => ({
 
 export type Loan = typeof loans.$inferSelect
 export type NewLoan = typeof loans.$inferInsert
+export type LoanWithRelations = typeof loans.$inferSelect & {
+  date: string
+  amount: number
+  currencyId: string
+  description: string
+}

@@ -128,7 +128,7 @@ export const deleteLoans = actionClient
       await ex
         .delete(projectsTransactions)
         .where(inArray(projectsTransactions.id, ids))
-      await ex.delete(loans).where(inArray(loans.id, ids))
+      await ex.delete(loans).where(inArray(loans.projectTransactionId, ids))
     })
     revalidatePath("/loans")
   })

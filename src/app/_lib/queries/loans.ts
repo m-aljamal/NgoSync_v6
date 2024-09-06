@@ -2,9 +2,8 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { fundTransactions } from "@/db/schemas"
-import { donations, doners, type Donation } from "@/db/schemas/donation"
-import { Loan, loans } from "@/db/schemas/loan"
+import { projectsTransactions } from "@/db/schemas"
+import { loans, type Loan } from "@/db/schemas/loan"
 import { type DrizzleWhere } from "@/types"
 import {
   and,
@@ -19,14 +18,12 @@ import {
   type SQL,
 } from "drizzle-orm"
 
-import { filterColumn } from "@/lib/filter-column"
-
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
 export async function getLoans(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, name, operator, from, to } = input
+  const { page, per_page, sort, operator, from, to } = input
 
   try {
     const offset = calculateOffset(page, per_page)
@@ -53,48 +50,44 @@ export async function getLoans(input: GetSearchSchema) {
         : undefined,
     ]
 
-    const where: DrizzleWhere<Donation> =
+    const where: DrizzleWhere<Loan> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
 
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
         .select({
-          date: donations.date,
-          id: donations.id,
-          fundTransactionId: donations.fundTransactionId,
-          amount: sql<number>`${donations.amount}/1000`,
-          proposalId: donations.proposalId,
-          paymentType: donations.paymentType,
-          isOfficial: donations.isOfficial,
-          receiptDescription: donations.receiptDescription,
-          amountInText: donations.amountInText,
-          projectId: donations.projectId,
-          donerId: donations.donerId,
-          description: fundTransactions.description,
-          fundId: fundTransactions.fundId,
-          currencyId: fundTransactions.currencyId,
+          date: projectsTransactions.date,
+          id: loans.id,
+          projectTransactionId: loans.projectTransactionId,
+          amount: sql<number>`${projectsTransactions.amount}/1000`,
+          projectId: projectsTransactions.projectId,
+          description: projectsTransactions.description,
+          currencyId: projectsTransactions.currencyId,
+          employeeId: loans.employeeId,
+          createdAt: loans.createdAt,
+          updatedAt: loans.updatedAt,
         })
-        .from(donations)
+        .from(loans)
         .limit(per_page)
         .offset(offset)
         .where(where)
         .innerJoin(
-          fundTransactions,
-          eq(donations.fundTransactionId, fundTransactions.id)
+          projectsTransactions,
+          eq(loans.projectTransactionId, projectsTransactions.id)
         )
         .orderBy(
-          column && column in donations
+          column && column in loans
             ? order === "asc"
-              ? asc(donations[column])
-              : desc(donations[column])
-            : desc(donations.id)
+              ? asc(loans[column])
+              : desc(loans[column])
+            : desc(loans.id)
         )
 
       const total = await tx
         .select({
           count: count(),
         })
-        .from(donations)
+        .from(loans)
         .where(where)
         .execute()
         .then((res) => res[0]?.count ?? 0)

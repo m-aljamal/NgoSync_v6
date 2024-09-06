@@ -2,6 +2,7 @@ import { Hono } from "hono"
 
 import currencies from "./currencies"
 import doners from "./doners"
+import employees from "./employees"
 import expensesCategories from "./expense-categories"
 import funds from "./funds"
 import jobTitles from "./job-titles"
@@ -22,4 +23,5 @@ const routes = app
   .route("/doners", doners)
   .route("/proposals", proposals)
   .route("/job-titles", jobTitles)
+  .route("/employees", employees)
 export default routes
