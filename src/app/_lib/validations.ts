@@ -1,5 +1,6 @@
 import { donations, doners, projects, tasks } from "@/db/schemas"
 import { employees } from "@/db/schemas/employee"
+import { loans } from "@/db/schemas/loan"
 import * as z from "zod"
 
 const currencyId = z.string().min(2)
@@ -207,10 +208,9 @@ export const createEmployeeSchema = z.object({
   description: z.string().optional(),
   birthDate: date,
   id: z.string().optional(),
- })
+})
 
 export type CreateEmployeeSchema = z.infer<typeof createEmployeeSchema>
-
 
 export const createJobTitleSchema = z.object({
   name: z.string().min(2).max(120),
@@ -218,3 +218,16 @@ export const createJobTitleSchema = z.object({
 })
 
 export type CreateJobTitleSchema = z.infer<typeof createJobTitleSchema>
+
+export const createLoanSchema = z.object({
+  projectId: z.string().min(2),
+  employeeId: z.string().min(2),
+  amount,
+  currencyId,
+  type: z.enum(loans.type.enumValues),
+  date,
+  description: z.string().optional(),
+  id: z.string().optional(),
+})
+
+export type CreateLoanSchema = z.infer<typeof createLoanSchema>

@@ -13,6 +13,7 @@ import { generateId } from "@/lib/id"
 import { currencies, exchnageBetweenProjects } from "./currency"
 import { donations } from "./donation"
 import { funds } from "./fund"
+import { loans } from "./loan"
 import { projects } from "./project"
 import { proposals, proposalsExpenses } from "./proposal"
 import {
@@ -150,6 +151,7 @@ export const projectsTransactionsRelations = relations(
     transferProjectToFund: many(transferProjectToFund),
     transferbetweenProject: many(transferBetweenProjects),
     exchnageBetweenProjects: many(exchnageBetweenProjects),
+    loans: many(loans),
     // salaryPayments: many(salaryPayments),
     // loans: many(loans),
   })

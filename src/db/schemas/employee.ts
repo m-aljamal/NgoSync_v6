@@ -6,6 +6,7 @@ import { generateId } from "@/lib/id"
 
 import { currencies } from "./currency"
 import { genders } from "./enums"
+import { loans } from "./loan"
 import { projects } from "./project"
 
 export const employeeStatus = pgEnum("doner_status", ["active", "inactive"])
@@ -56,7 +57,7 @@ export const employeesRelations = relations(employees, ({ one, many }) => ({
     references: [employeesJobTitles.id],
   }),
   //   salaryPayments: many(salaryPayments),
-  //   loans: many(loans),
+  loans: many(loans),
   //   teachersToCourses: many(teachersToCourses),
 }))
 
