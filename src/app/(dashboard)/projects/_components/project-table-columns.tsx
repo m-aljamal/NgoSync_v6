@@ -25,6 +25,7 @@ import { getStatusIcon } from "@/app/_lib/utils"
 
 import { DeleteProjectsDialog } from "./delete-project-dialog"
 import { UpdateProjectSheet } from "./update-project-sheet"
+import Link from "next/link"
 
 export function getColumns(): ColumnDef<Project>[] {
   return [
@@ -59,7 +60,9 @@ export function getColumns(): ColumnDef<Project>[] {
       ),
       cell: ({ row }) => (
         <div className="max-w-[31.25rem] truncate font-medium">
+          <Link className="hover:underline hover:font-bold" href={`/projects/${row.original.id}/overview`}>
           {row.getValue("name")}
+          </Link>
         </div>
       ),
       enableSorting: false,
