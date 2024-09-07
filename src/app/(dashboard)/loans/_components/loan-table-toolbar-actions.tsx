@@ -1,33 +1,33 @@
 "use client"
 
-import { type Donation } from "@/db/schemas"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
-import { exportTableToCSV } from "@/lib/export"
 import { Button } from "@/components/ui/button"
+import { exportTableToCSV } from "@/lib/export"
 
-import { CreateDonationDialog } from "./create-loan-dialog"
-import { DeleteDonationsDialog } from "./delete-loan-dialog"
+import { type LoanWithRelations } from "@/db/schemas/loan"
+import { CreateLoanDialog } from "./create-loan-dialog"
+import { DeleteLoanDialog } from "./delete-loan-dialog"
 
-interface DonationTableToolbarActionsProps {
-  table: Table<Donation>
+interface LoanTableToolbarActionsProps {
+  table: Table<LoanWithRelations>
 }
 
-export function DonationTableToolbarActions({
+export function LoanTableToolbarActions({
   table,
-}: DonationTableToolbarActionsProps) {
+}: LoanTableToolbarActionsProps) {
   return (
     <div className="flex items-center gap-2">
       {table.getFilteredSelectedRowModel().rows.length > 0 ? (
-        <DeleteDonationsDialog
-          donations={table
+        <DeleteLoanDialog
+          loans={table
             .getFilteredSelectedRowModel()
             .rows.map((row) => row.original)}
           onSuccess={() => table.toggleAllRowsSelected(false)}
         />
       ) : null}
-      <CreateDonationDialog />
+      <CreateLoanDialog />
       <Button
         variant="outline"
         size="sm"

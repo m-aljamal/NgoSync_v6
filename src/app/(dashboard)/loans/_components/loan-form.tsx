@@ -1,44 +1,28 @@
 "use client"
 
 import * as React from "react"
-import { useMemo } from "react"
-import { donations } from "@/db/schemas/donation"
-import { Plus, X } from "lucide-react"
-import { useFieldArray, useWatch, type UseFormReturn } from "react-hook-form"
+import { type UseFormReturn } from "react-hook-form"
 
-import { formatCurrency } from "@/lib/utils"
+import { loanTypeTranslation } from "@/app/_lib/translate"
 import {
-  useGetCurrencies,
-  useGetDoners,
-  useGetExpensesCategoriesByProjectId,
-} from "@/hooks/use-get-form-data"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
-import AmountInput from "@/components/form-components/amount-input"
+  type CreateLoanSchema
+} from "@/app/_lib/validations"
+import { DateInput } from "@/components/form-components"
 import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
-import { DatePicker } from "@/components/form-components/date-picker"
 import FundInput from "@/components/form-components/fund-input"
 import InputGroup from "@/components/form-components/InputGroup"
 import ProjectInput from "@/components/form-components/project-input"
 import { AppSelect } from "@/components/form-components/select"
-import { donationPaymentTypeTranslation } from "@/app/_lib/translate"
 import {
-  CreateDonationSchema,
-  CreateLoanSchema,
-  type CreateProposalSchema,
-} from "@/app/_lib/validations"
-import { DateInput } from "@/components/form-components"
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { loans } from "@/db/schemas/loan"
 
 interface CreateLoanFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -59,31 +43,31 @@ export function LoanForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <InputGroup isUpdate={isUpdate}>
-          <DateInput form={form} />
 
-
-
-          <CurrencyAmountInput form={form} />
-          <FundInput form={form} />
-          {/* <FormField
+          <FormField
             control={form.control}
-            name="paymentType"
+            name="type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>طريقة الدفع</FormLabel>
+                <FormLabel>نوع الحركة</FormLabel>
                 <AppSelect
+
                   onChange={field.onChange}
                   value={field.value?.toString()}
-                  options={donations.paymentType.enumValues?.map((type) => ({
-                    value: type,
-                    label: donationPaymentTypeTranslation[type],
+                  options={loans.type.enumValues?.map((loan) => ({
+                    value: loan,
+                    label: loanTypeTranslation[loan],
                   }))}
-                  placeholder="أختر طريقة الدفع"
+                  placeholder="إختر الحركة"
                 />
                 <FormMessage />
               </FormItem>
             )}
-          /> */}
+          />
+          <DateInput form={form} />
+          <CurrencyAmountInput form={form} />
+          <FundInput form={form} />
+          <ProjectInput form={form} withProposals withEmployees />
 
           <FormField
             control={form.control}
@@ -102,11 +86,6 @@ export function LoanForm({
               </FormItem>
             )}
           />
-
-          <ProjectInput form={form} withProposals />
-
-
-
         </InputGroup>
         {children}
       </form>

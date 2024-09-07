@@ -62,7 +62,7 @@ export const createLoan = actionClient
     }
   )
 
-export const updateLoans = actionClient
+export const updateLoan = actionClient
   .schema(createLoanSchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,

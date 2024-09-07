@@ -1,14 +1,27 @@
 "use client"
 
-import * as React from "react"
-import { useTransition } from "react"
 import { employees } from "@/db/schemas/employee"
 import { useQueryClient } from "@tanstack/react-query"
 import { useAction } from "next-safe-action/hooks"
+import * as React from "react"
 import { type UseFormReturn } from "react-hook-form"
 import { toast } from "sonner"
 
-import { useGetjobTitle } from "@/hooks/use-get-form-data"
+import { createEmployeeJobTitle } from "@/app/_lib/actions/employee"
+import {
+  employeePosisionTranslation,
+  employeeStatusTranslation,
+  genderTranslation,
+} from "@/app/_lib/translate"
+import { type CreateEmployeeSchema } from "@/app/_lib/validations"
+import {
+  CurrencyAmountInput,
+  DateInput,
+  DescriptionInput,
+  ProjectInput,
+} from "@/components/form-components"
+import InputGroup from "@/components/form-components/InputGroup"
+import { AppSelect } from "@/components/form-components/select"
 import {
   Form,
   FormControl,
@@ -18,21 +31,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import {
-  CurrencyAmountInput,
-  DateInput,
-  DescriptionInput,
-  ProjectInput,
-} from "@/components/form-components"
-import InputGroup from "@/components/form-components/InputGroup"
-import { AppSelect } from "@/components/form-components/select"
-import { createEmployeeJobTitle } from "@/app/_lib/actions/employee"
-import {
-  employeePosisionTranslation,
-  employeeStatusTranslation,
-  genderTranslation,
-} from "@/app/_lib/translate"
-import { type CreateEmployeeSchema } from "@/app/_lib/validations"
+import { useGetjobTitle } from "@/hooks/use-get-form-data"
 
 interface CreateEmployeeFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -222,7 +221,7 @@ export function EmployeeForm({
               </FormItem>
             )}
           />
-          <DateInput form={form} name="birthDate"  labelName="تاريخ الولادة"/>
+          <DateInput form={form} name="birthDate" labelName="تاريخ الولادة" />
           <DescriptionInput form={form} />
         </InputGroup>
         {children}

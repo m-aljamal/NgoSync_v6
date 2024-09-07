@@ -17,17 +17,20 @@ import { AppSelect } from "@/components/form-components/select"
 
 import ExpenseCategoriesInput from "./expense-categories-input"
 import ProposalInput from "./proposal-input"
+import EmployeeInput from "./employee-input"
 
 export default function ProjectInput<T extends FieldValues>({
   form,
   withProposals = false,
   withExpensesCategories = false,
+  withEmployees = false,
   name = "projectId",
   label = "المشروع",
 }: {
   form: UseFormReturn<T>
   withProposals?: boolean
   withExpensesCategories?: boolean
+  withEmployees?: boolean
   name?: string
   label?: string
 }) {
@@ -66,6 +69,11 @@ export default function ProjectInput<T extends FieldValues>({
           projectId={selectedProject || "null"}
         />
       ) : null}
+      {
+        withEmployees ? (
+          <EmployeeInput form={form} projectId={selectedProject || "null"} />
+        ) : null
+      }
     </>
   )
 }

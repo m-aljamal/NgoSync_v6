@@ -17,13 +17,13 @@ import { useGetEmployees } from "@/hooks/use-get-form-data"
 
 export default function EmployeeInput<T extends FieldValues>({
     form,
-
+    projectId = "",
 }: {
     form: UseFormReturn<T>
-
+    projectId?: string | undefined
 }) {
     const { data: employees, isLoading: employeesLoading } =
-        useGetEmployees()
+        useGetEmployees(projectId)
 
     return (
         <FormField

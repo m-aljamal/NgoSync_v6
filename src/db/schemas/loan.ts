@@ -43,5 +43,6 @@ export type LoanWithRelations = typeof loans.$inferSelect & {
   date: string
   amount: number
   currencyId: string
-  description: string
+  description?: string | null
+  projectId: string
 }

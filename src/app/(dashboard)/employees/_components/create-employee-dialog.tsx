@@ -15,9 +15,12 @@ import {
 } from "@/app/_lib/validations"
 
 import { EmployeeForm } from "./employee-form"
+import { useQueryClient } from "@tanstack/react-query"
 
 export function CreateEmployeeDialog() {
   const { onClose } = useFormDialog()
+
+  const queryClient = useQueryClient()
 
   const form = useForm<CreateEmployeeSchema>({
     resolver: zodResolver(createEmployeeSchema),
@@ -28,8 +31,11 @@ export function CreateEmployeeDialog() {
   })
 
   const { executeAsync, isExecuting } = useAction(createEmployee, {
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success("تم إنشاء الموظف")
+      await queryClient.invalidateQueries({
+        queryKey: ["employees"],
+      })
       form.reset()
       toast.dismiss()
       onClose()

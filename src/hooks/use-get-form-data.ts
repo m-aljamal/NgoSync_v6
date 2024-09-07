@@ -145,11 +145,13 @@ export const useGetjobTitle = () => {
   return query
 }
 
-export const useGetEmployees = () => {
+export const useGetEmployees = (projectId: string) => {
   const query = useQuery({
-    queryKey: ["employees"],
+    queryKey: ["employees", projectId],
     queryFn: async () => {
-      const response = await client.api.form.employees.$get()
+      const response = await client.api.form.employees[":projectId"].$get({
+        param: { projectId },
+      })
       if (!response.ok) {
         throw new Error("Failed to fetch employees")
       }

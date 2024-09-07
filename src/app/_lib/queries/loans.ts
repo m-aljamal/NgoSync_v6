@@ -66,6 +66,7 @@ export async function getLoans(input: GetSearchSchema) {
           employeeId: loans.employeeId,
           createdAt: loans.createdAt,
           updatedAt: loans.updatedAt,
+          type: loans.type,
         })
         .from(loans)
         .limit(per_page)

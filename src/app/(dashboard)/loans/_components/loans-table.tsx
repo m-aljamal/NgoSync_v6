@@ -1,32 +1,32 @@
 "use client"
 "use memo"
 
-import * as React from "react"
-import { Donation } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
+import * as React from "react"
 
-import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { getDonations } from "@/app/_lib/queries/donations"
+import { useDataTable } from "@/hooks/use-data-table"
 
+import { type getLoans } from "@/app/_lib/queries/loans"
+import { type Loan } from "@/db/schemas/loan"
 import { getColumns } from "./loan-table-columns"
-import { DonationTableToolbarActions } from "./donation-table-toolbar-actions"
+import { LoanTableToolbarActions } from "./loan-table-toolbar-actions"
 
-interface DonationTableProps {
-  promise: ReturnType<typeof getDonations>
+interface LoansTableProps {
+  promise: ReturnType<typeof getLoans>
 }
 
-export function DonationTable({ promise }: DonationTableProps) {
+export function LoanTable({ promise }: LoansTableProps) {
   const { data, pageCount } = React.use(promise)
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<Donation>[] = [
+  const filterFields: DataTableFilterField<Loan>[] = [
     {
-      label: "Amount",
-      value: "amount",
-      placeholder: "بحث عن مبلغ",
+      label: "Name",
+      value: "employeeId",
+      placeholder: "بحث عن ",
     },
   ]
 
@@ -45,7 +45,7 @@ export function DonationTable({ promise }: DonationTableProps) {
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <DonationTableToolbarActions table={table} />
+        <LoanTableToolbarActions table={table} />
       </DataTableToolbar>
     </DataTable>
   )

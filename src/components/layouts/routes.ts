@@ -119,7 +119,7 @@ export const routes: Route[] = [
         icon: "NotepadText",
         title: "القروض",
         description: "القروض المالية للموظفين",
-        href: "/loans/overview",
+        href: "/loans",
         roles: ["admin"],
       },
     ],

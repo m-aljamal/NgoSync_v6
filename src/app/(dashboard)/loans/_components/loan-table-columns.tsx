@@ -1,11 +1,11 @@
 "use client"
 
-import * as React from "react"
-import { type DonationWithRelations } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
+import * as React from "react"
 
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -16,11 +16,10 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 
-import { DeleteDonationsDialog } from "./delete-loan-dialog"
-import { UpdateDonationSheet } from "./update-loan-sheet"
-import { LoanWithRelations } from "@/db/schemas/loan"
+import { type LoanWithRelations } from "@/db/schemas/loan"
+import { DeleteLoanDialog } from "./delete-loan-dialog"
+import { UpdateLoanSheet } from "./update-loan-sheet"
 
 export function getColumns(): ColumnDef<LoanWithRelations>[] {
   return [
@@ -79,15 +78,15 @@ export function getColumns(): ColumnDef<LoanWithRelations>[] {
 
         return (
           <>
-            <UpdateDonationSheet
+            <UpdateLoanSheet
               open={showUpdateTaskSheet}
               onOpenChange={setShowUpdateTaskSheet}
-              donation={row.original}
+              loan={row.original}
             />
-            <DeleteDonationsDialog
+            <DeleteLoanDialog
               open={showDeleteTaskDialog}
               onOpenChange={setShowDeleteTaskDialog}
-              donations={[row.original]}
+              loans={[row.original]}
               showTrigger={false}
               onSuccess={() => row.toggleSelected(false)}
             />
