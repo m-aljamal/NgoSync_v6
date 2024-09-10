@@ -67,12 +67,26 @@ export function ProjectsTable({ promise }: ProjectTableProps) {
     },
   })
   const router = useRouter()
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      router.refresh()
-    }, 5000)
 
-    return () => clearInterval(interval)
+  React.useEffect(() => {
+    const protocol = window.location.protocol
+    const host = window.location.host
+    const eventSource = new EventSource(`${protocol}//${host}/api/sse`)
+    
+    eventSource.onmessage = (event) => {
+      if (event.data === 'update') {
+        router.refresh()
+      }
+    }
+
+    eventSource.onerror = (error) => {
+      console.error('SSE error:', error)
+      eventSource.close()
+    }
+
+    return () => {
+      eventSource.close()
+    }
   }, [router])
 
   return (

@@ -1,6 +1,10 @@
 "use server"
 
-import { unstable_noStore as noStore, revalidatePath, revalidateTag } from "next/cache"
+import {
+  unstable_noStore as noStore,
+  revalidatePath,
+  revalidateTag,
+} from "next/cache"
 import { db } from "@/db"
 import { projects, type Project } from "@/db/schemas"
 import { eq, inArray } from "drizzle-orm"
@@ -59,6 +63,9 @@ export const createProject = actionClient
     })
     revalidatePath("/projects")
     revalidateTag("projects")
+    const protocol = process.env.NODE_ENV === "production" ? "https:" : "http:"
+    const host = process.env.VERCEL_URL || "localhost:3000"
+    await fetch(`${protocol}//${host}/api/sse`, { method: "POST" })
   })
 
 export const updateProject = actionClient
