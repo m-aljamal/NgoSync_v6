@@ -2,6 +2,7 @@
 "use memo"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import { projects, type Project } from "@/db/schemas/project"
 import { type DataTableFilterField } from "@/types"
 
@@ -24,7 +25,7 @@ interface ProjectTableProps {
 
 export function ProjectsTable({ promise }: ProjectTableProps) {
   const { data, pageCount } = React.use(promise)
- 
+
   const columns = React.useMemo(() => getColumns(), [])
 
   const filterFields: DataTableFilterField<Project>[] = [
@@ -65,6 +66,14 @@ export function ProjectsTable({ promise }: ProjectTableProps) {
       columnPinning: { right: ["actions"] },
     },
   })
+  const router = useRouter()
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      router.refresh()
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [router])
 
   return (
     <DataTable table={table}>

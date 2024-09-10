@@ -1,6 +1,6 @@
 "use server"
 
-import { unstable_noStore as noStore, revalidatePath } from "next/cache"
+import { unstable_noStore as noStore, revalidatePath, revalidateTag } from "next/cache"
 import { db } from "@/db"
 import { projects, type Project } from "@/db/schemas"
 import { eq, inArray } from "drizzle-orm"
@@ -58,6 +58,7 @@ export const createProject = actionClient
       userId,
     })
     revalidatePath("/projects")
+    revalidateTag("projects")
   })
 
 export const updateProject = actionClient
