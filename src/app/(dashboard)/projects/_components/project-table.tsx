@@ -2,7 +2,6 @@
 "use memo"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
 import { projects, type Project } from "@/db/schemas/project"
 import { type DataTableFilterField } from "@/types"
 
@@ -66,28 +65,6 @@ export function ProjectsTable({ promise }: ProjectTableProps) {
       columnPinning: { right: ["actions"] },
     },
   })
-  const router = useRouter()
-
-  React.useEffect(() => {
-    const protocol = window.location.protocol
-    const host = window.location.host
-    const eventSource = new EventSource(`${protocol}//${host}/api/sse`)
-    
-    eventSource.onmessage = (event) => {
-      if (event.data === 'update') {
-        router.refresh()
-      }
-    }
-
-    eventSource.onerror = (error) => {
-      console.error('SSE error:', error)
-      eventSource.close()
-    }
-
-    return () => {
-      eventSource.close()
-    }
-  }, [router])
 
   return (
     <DataTable table={table}>
