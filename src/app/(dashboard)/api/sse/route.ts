@@ -4,27 +4,46 @@ export const dynamic = "force-dynamic";
 export const runtime = 'edge'
 const clients: Set<ReadableStreamDefaultController> = new Set()
 
+// export async function GET(request: NextRequest) {
+//   const response = new NextResponse(
+//     new ReadableStream({
+//       start(controller) {
+//         clients.add(controller)
+//         request.signal.addEventListener("abort", () => {
+//           clients.delete(controller)
+//         })
+//       },
+//     }),
+//     {
+//       headers: {
+//         "Content-Type": "text/event-stream",
+//         "Cache-Control": "no-cache",
+//         Connection: "keep-alive",
+//       },
+//     }
+//   )
+
+//   return response
+// }
+
 export async function GET(request: NextRequest) {
-  const response = new NextResponse(
-    new ReadableStream({
-      start(controller) {
-        clients.add(controller)
-        request.signal.addEventListener("abort", () => {
-          clients.delete(controller)
-        })
-      },
-    }),
-    {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-      },
-    }
-  )
+  const stream = new ReadableStream({
+    start(controller) {
+      clients.add(controller)
+      request.signal.addEventListener("abort", () => {
+        clients.delete(controller)
+      })
+    },
+  })
+
+  const response = new NextResponse(stream)
+  response.headers.set("Content-Type", "text/event-stream")
+  response.headers.set("Cache-Control", "no-cache")
+  response.headers.set("Connection", "keep-alive")
 
   return response
 }
+
 
 export async function POST() {
   clients.forEach((client) => {
