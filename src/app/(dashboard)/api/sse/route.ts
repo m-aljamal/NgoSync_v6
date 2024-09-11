@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 
 // export const dynamic = "force-dynamic";
-// export const runtime = 'edge'
+export const runtime = 'edge'
 const clients: Set<ReadableStreamDefaultController> = new Set()
 
 // export async function GET(request: NextRequest) {
