@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 
-export const dynamic = "force-dynamic";
-export const runtime = 'edge'
+// export const dynamic = "force-dynamic";
+// export const runtime = 'edge'
 const clients: Set<ReadableStreamDefaultController> = new Set()
 
 // export async function GET(request: NextRequest) {
@@ -31,6 +31,16 @@ export async function GET(request: NextRequest) {
     start(controller) {
       clients.add(controller)
       request.signal.addEventListener("abort", () => {
+        clients.delete(controller)
+      })
+
+      // Send heartbeat every 15 seconds to keep the connection alive
+      const keepAlive = setInterval(() => {
+        controller.enqueue(`: keep-alive\n\n`) // Comment line, won't be processed as data
+      }, 15000)
+
+      request.signal.addEventListener("abort", () => {
+        clearInterval(keepAlive) // Clean up interval on abort
         clients.delete(controller)
       })
     },
