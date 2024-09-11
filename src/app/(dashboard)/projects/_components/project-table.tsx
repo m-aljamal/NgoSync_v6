@@ -69,35 +69,26 @@ export function ProjectsTable({ promise }: ProjectTableProps) {
   const router = useRouter()
 
   React.useEffect(() => {
-    let eventSource: EventSource | null = null
-
-    const connectSSE = () => {
-      eventSource = new EventSource('/api/sse')
-      
-      eventSource.onmessage = (event) => {
-        if (event.data === 'update') {
-          router.refresh()
-        }
-      }
-
-      eventSource.onerror = (error) => {
-        console.error('SSE error:', error)
-        eventSource?.close()
-        // Attempt to reconnect after 5 seconds
-        setTimeout(connectSSE, 5000)
-      }
-
-      eventSource.onopen = () => {
-        console.log('SSE connection opened')
+    const protocol = window.location.protocol
+    const host = window.location.host
+    const eventSource = new EventSource(`${protocol}//${host}/api/sse`)
+    
+    eventSource.onmessage = (event) => {
+      if (event.data === 'update') {
+        router.refresh()
       }
     }
 
-    connectSSE()
+    eventSource.onerror = (error) => {
+      console.error('SSE error:', error)
+      eventSource.close()
+    }
 
     return () => {
-      eventSource?.close()
+      eventSource.close()
     }
   }, [router])
+
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
