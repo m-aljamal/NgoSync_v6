@@ -64,7 +64,7 @@ export const createProject = actionClient
     revalidatePath("/projects")
     revalidateTag("projects")
     const protocol = process.env.NODE_ENV === "production" ? "https:" : "http:"
-    const host = process.env.VERCEL_URL || "localhost:3000"
+    const host = process.env.WEB_URL || "localhost:3000"
     await fetch(`${protocol}//${host}/api/sse`, { method: "POST" })
   })
 
