@@ -74,7 +74,7 @@
 
 
 import { NextResponse, type NextRequest } from "next/server"
-
+export const dynamic = "force-dynamic";
 export const runtime = 'edge'
 
 const encoder = new TextEncoder()
