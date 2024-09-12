@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
+import { type PageLinks } from "@/types"
 
 import { type Route } from "@/components/layouts/routes"
 
@@ -68,7 +69,7 @@ export const filterRoutesByRole = async (routes: Route[]) => {
   })
 }
 
-export const filterPageLinksByRole = async (routes: Route[]) => {
+export const filterPageLinksByRole = async (routes: PageLinks) => {
   const role = await currentRole()
   if (!role) redirect("/auth/login")
 

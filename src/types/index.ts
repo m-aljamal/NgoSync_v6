@@ -1,4 +1,7 @@
+import { users } from "@/db/schemas"
 import { type SQL } from "drizzle-orm"
+
+import { icons } from "@/components/layouts/icons"
 
 export interface SearchParams {
   [key: string]: string | string[] | undefined
@@ -32,3 +35,16 @@ export type DrizzleWhere<T> =
   | SQL<unknown>
   | ((aliases: T) => SQL<T> | undefined)
   | undefined
+
+export type PageLinks = {
+  title: string
+  roles?: (typeof users.$inferSelect.role)[]
+  href?: string
+  icon?: keyof typeof icons
+  children?: {
+    title: string
+    href: string
+    icon: keyof typeof icons
+    roles: (typeof users.$inferSelect.role)[]
+  }[]
+}[]

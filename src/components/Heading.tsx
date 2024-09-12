@@ -21,7 +21,7 @@ export default function Heading({
       <div className="grid grid-cols-2">
         <div className="flex items-center justify-start gap-5">
           <Component className="hidden size-6 sm:flex" />
-          <div className="space-y-3">
+          <div className="space-y-1">
             <h2 className="text-2xl font-bold tracking-tighter">{title}</h2>
             <p className="text-sm text-muted-foreground">{description}</p>
           </div>

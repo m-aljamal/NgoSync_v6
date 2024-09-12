@@ -98,7 +98,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
               <TailwindIndicator />
             </ThemeProvider>
           </Direction>
-          <Toaster position="top-center" dir="rtl" />
+          <Toaster position="bottom-center" dir="rtl" />
         </QueryProvider>
       </body>
     </html>

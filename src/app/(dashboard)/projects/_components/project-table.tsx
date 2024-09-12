@@ -4,12 +4,10 @@
 import * as React from "react"
 import { projects, type Project } from "@/db/schemas/project"
 import { type DataTableFilterField } from "@/types"
-import useSWR from "swr"
 
 import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { fetcher } from "@/app/_lib/fetchers"
 import { type getProjects } from "@/app/_lib/queries/projects"
 import {
   projectStatusTranslation,
@@ -28,17 +26,6 @@ export function ProjectsTable({ promise }: ProjectTableProps) {
   const { data, pageCount } = React.use(promise)
 
   const columns = React.useMemo(() => getColumns(), [])
-
-  const {
-    data: projectsData,
-
-    isLoading,
-  } = useSWR("/api/form/projects", fetcher, {
-    fallbackData: data,
-    refreshInterval: 5000, // Refresh every 5 seconds
-    revalidateOnFocus: true,
-    revalidateOnReconnect: true,
-  })
 
   const filterFields: DataTableFilterField<Project>[] = [
     {
@@ -86,22 +73,6 @@ export function ProjectsTable({ promise }: ProjectTableProps) {
           <ProjectsTableToolbarActions table={table} />
         </DataTableToolbar>
       </DataTable>
-
-      <div className="bg-gray-400">
-        {isLoading ? (
-          <div>Loading...</div>
-        ) : (
-          <div>
-            {projectsData?.data?.map((project) => (
-              <div key={project.id} className="flex justify-between">
-                <div>{project.name}</div>
-                <div>{project.status}</div>
-                <div>{project.system}</div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </>
   )
 }
