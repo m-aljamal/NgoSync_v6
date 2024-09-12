@@ -26,7 +26,7 @@ import {
 import { filterColumn } from "@/lib/filter-column"
 
 import { type GetSearchSchema } from "../validations"
-import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
+import { calculateOffset, calculatePageCount, convertToDate, getPaginationAndSorting } from "./utils"
 
 export async function getExpenses(input: GetSearchSchema) {
   noStore()
@@ -189,14 +189,16 @@ export async function getProjectIncome(
   const { page, per_page, sort, operator, from, to, amount } = input
 
   try {
-    const offset = calculateOffset(page, per_page)
+    const { offset, column, order } = getPaginationAndSorting<ProjectTransaction>(page, per_page, sort)
+    // const offset = calculateOffset(page, per_page)
 
-    const [column, order] = (sort?.split(".").filter(Boolean) ?? [
-      "createdAt",
-      "desc",
-    ]) as [keyof ProjectTransaction | undefined, "asc" | "desc" | undefined]
+    // const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+    //   "createdAt",
+    //   "desc",
+    // ]) as [keyof ProjectTransaction | undefined, "asc" | "desc" | undefined]
 
     const { fromDay, toDay } = convertToDate(from, to)
+
 
     const expressions: (SQL<unknown> | undefined)[] = [
       amount
