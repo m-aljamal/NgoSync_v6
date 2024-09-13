@@ -1,5 +1,6 @@
 import "server-only"
 
+import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import { currencies, projects, proposals, type Proposal } from "@/db/schemas"
@@ -104,3 +105,15 @@ export async function getProposals(input: GetSearchSchema) {
     return { data: [], pageCount: 0 }
   }
 }
+
+export const getProposal = cache(async ({ id }: { id: string }) => {
+  try {
+    const [proposal] = await db
+      .select()
+      .from(proposals)
+      .where(eq(proposals.id, id))
+    return proposal
+  } catch (error) {
+    return null
+  }
+})

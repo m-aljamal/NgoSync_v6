@@ -14,6 +14,7 @@ import { flattenValidationErrors } from "next-safe-action"
 import { generateId } from "@/lib/id"
 import { convertAmountToMiliunits } from "@/lib/utils"
 
+import { calculateAmounts } from "../queries/utils"
 import { actionClient } from "../safe-action"
 import {
   createExpenseCategorySchema,
@@ -115,15 +116,23 @@ export const createExpense = actionClient
       },
     }) => {
       noStore()
-      // todo add the amounts
+
       const amount = convertAmountToMiliunits(expenseAmount)
       const date = format(expenseDate, "yyyy-MM-dd")
+      const { amountInUSD, proposalAmount, officialAmount } =
+        await calculateAmounts({
+          amount: expenseAmount,
+          currencyId,
+          date: expenseDate,
+          isOfficial,
+          proposalId,
+        })
 
       await db.insert(projectsTransactions).values({
         amount: -amount,
-        proposalAmount: 0,
-        amountInUSD: 0,
-        officialAmount: 0,
+        proposalAmount: proposalAmount ?? 0,
+        amountInUSD: amountInUSD ?? 0,
+        officialAmount: officialAmount ?? 0,
         date,
         type: "outcome",
         category: "expense",

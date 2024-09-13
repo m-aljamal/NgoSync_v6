@@ -122,8 +122,8 @@ export const createExchangeRate = actionClient
           date,
         })
         await tx.insert(exchangeRates).values({
-          toCurrencyId,
-          fromCurrencyId,
+          toCurrencyId: fromCurrencyId,
+          fromCurrencyId: toCurrencyId,
           rate: Math.round(reverseRate * 1000),
           date,
         })

@@ -1,5 +1,6 @@
 import "server-only"
 
+import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import { fundTransactions, projectsTransactions } from "@/db/schemas"
@@ -377,3 +378,36 @@ export async function getExchangeBetweenProjects(input: GetSearchSchema) {
     return { data: [], pageCount: 0 }
   }
 }
+
+export const getCurrency = cache(
+  async ({
+    name,
+    id,
+    code,
+    official,
+  }: {
+    name?: string
+    id?: string
+    code?: string
+    official?: boolean
+  }) => {
+    if (!name && !id && !code && !official) return
+    try {
+      const data = await db.query.currencies.findFirst({
+        where: name
+          ? eq(currencies.name, name)
+          : id
+            ? eq(currencies.id, id)
+            : code
+              ? eq(currencies.code, code)
+              : official
+                ? eq(currencies.official, official)
+                : undefined,
+      })
+
+      return data
+    } catch (error) {
+      console.error(error)
+    }
+  }
+)
