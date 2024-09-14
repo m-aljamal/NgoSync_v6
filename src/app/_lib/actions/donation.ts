@@ -35,7 +35,7 @@ export const createDonation = actionClient
       },
     }) => {
       noStore()
-      // todo add the amounts
+    
       const amount = convertAmountToMiliunits(donationAmount)
       const date = format(donationDate, "yyyy-MM-dd")
       await db.transaction(async (tx) => {
