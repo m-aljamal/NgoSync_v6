@@ -4,13 +4,11 @@ import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
 import { donations, fundTransactions } from "@/db/schemas"
 import { format } from "date-fns"
-import Decimal from "decimal.js"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
-import { convertAmountToMiliunits } from "@/lib/utils"
-
 import { actionClient } from "../safe-action"
+import { toDecimalFixed } from "../utils"
 import { createDonationSchema, deleteArraySchema } from "../validations"
 
 export const createDonation = actionClient
@@ -38,14 +36,14 @@ export const createDonation = actionClient
       noStore()
 
       const date = format(donationDate, "yyyy-MM-dd")
-      const decimalAmount = new Decimal(amount)
+      const decimalAmount = toDecimalFixed(amount)
       await db.transaction(async (tx) => {
         const [transaction] = await tx
           .insert(fundTransactions)
           .values({
             fundId,
             currencyId,
-            amount: paymentType === "debt" ? "0" : decimalAmount.toFixed(4),
+            amount: paymentType === "debt" ? "0" : decimalAmount,
             proposalAmount: "0",
             amountInUSD: "0",
             officialAmount: "0",
@@ -58,7 +56,7 @@ export const createDonation = actionClient
           .returning({ id: fundTransactions.id })
         if (!transaction) throw new Error("fund transaction not created")
         await tx.insert(donations).values({
-          amount: decimalAmount.toFixed(4),
+          amount: decimalAmount,
           paymentType,
           isOfficial,
           receiptDescription,
@@ -102,7 +100,7 @@ export const updateDonation = actionClient
       if (!id || !fundTransactionId)
         throw new Error("id and fundTransactionId is required")
 
-      const amount = convertAmountToMiliunits(donationAmount)
+      const amount = toDecimalFixed(donationAmount)
       const date = format(donationDate, "yyyy-MM-dd")
 
       await db.transaction(async (tx) => {
@@ -111,10 +109,10 @@ export const updateDonation = actionClient
           .set({
             fundId,
             currencyId,
-            amount: paymentType === "debt" ? 0 : amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            amount: paymentType === "debt" ? "0" : amount,
+            proposalAmount: "0",
+            amountInUSD: "0",
+            officialAmount: "0",
             date,
             description,
             isOfficial,

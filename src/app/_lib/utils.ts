@@ -10,6 +10,7 @@ import {
   QuestionMarkCircledIcon,
   StopwatchIcon,
 } from "@radix-ui/react-icons"
+import Decimal from "decimal.js"
 import { customAlphabet } from "nanoid"
 
 import { generateId } from "@/lib/id"
@@ -58,4 +59,11 @@ export function getPriorityIcon(priority: Task["priority"]) {
   }
 
   return priorityIcons[priority] || CircleIcon
+}
+
+export function toDecimalFixed(
+  amount: Decimal,
+  decimalPlaces: number = 4
+): string {
+  return new Decimal(amount).toFixed(decimalPlaces)
 }
