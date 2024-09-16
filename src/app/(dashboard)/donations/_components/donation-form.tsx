@@ -1,19 +1,19 @@
 "use client"
 
-import * as React from "react"
-import { useMemo } from "react"
 import { donations } from "@/db/schemas/donation"
-import { Plus, X } from "lucide-react"
-import { useFieldArray, useWatch, type UseFormReturn } from "react-hook-form"
+import * as React from "react"
+import { type UseFormReturn } from "react-hook-form"
 
-import { formatCurrency } from "@/lib/utils"
+import { donationPaymentTypeTranslation } from "@/app/_lib/translate"
 import {
-  useGetCurrencies,
-  useGetDoners,
-  useGetExpensesCategoriesByProjectId,
-} from "@/hooks/use-get-form-data"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+  CreateDonationSchema
+} from "@/app/_lib/validations"
+import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
+import { DatePicker } from "@/components/form-components/date-picker"
+import FundInput from "@/components/form-components/fund-input"
+import InputGroup from "@/components/form-components/InputGroup"
+import ProjectInput from "@/components/form-components/project-input"
+import { AppSelect } from "@/components/form-components/select"
 import {
   Form,
   FormControl,
@@ -25,18 +25,9 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
-import AmountInput from "@/components/form-components/amount-input"
-import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
-import { DatePicker } from "@/components/form-components/date-picker"
-import FundInput from "@/components/form-components/fund-input"
-import InputGroup from "@/components/form-components/InputGroup"
-import ProjectInput from "@/components/form-components/project-input"
-import { AppSelect } from "@/components/form-components/select"
-import { donationPaymentTypeTranslation } from "@/app/_lib/translate"
 import {
-  CreateDonationSchema,
-  type CreateProposalSchema,
-} from "@/app/_lib/validations"
+  useGetDoners
+} from "@/hooks/use-get-form-data"
 
 interface CreateDonationFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {

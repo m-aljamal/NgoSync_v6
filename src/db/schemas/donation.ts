@@ -2,7 +2,7 @@ import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
 import {
   boolean,
-  integer,
+  decimal,
   pgEnum,
   timestamp,
   varchar,
@@ -51,7 +51,7 @@ export const donations = pgTable("donations", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())
     .primaryKey(),
-  amount: integer("amount").notNull(),
+  amount: decimal("amount", { precision: 19, scale: 4 }).notNull(),
   paymentType: donationPaymentTypes("donation_payment_types").notNull(),
   isOfficial: boolean("is_offical").notNull().default(false),
   receiptDescription: varchar("receipt_description", { length: 300 }),

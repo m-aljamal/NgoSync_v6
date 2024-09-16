@@ -10,7 +10,6 @@ import {
 
 import { useGetCurrencies } from "@/hooks/use-get-form-data"
 import {
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
@@ -68,28 +67,11 @@ export default function CurrencyAmountInput<T extends FieldValues>({
           )}
         />
         {withAmount ? (
-          <FormField
-            control={form.control}
+          <AmountInput
             name={amountName as Path<T>}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>{amountLabel}</FormLabel>
-                <FormControl>
-                  <AmountInput
-                    intlConfig={
-                      selectedCurrency && {
-                        locale: selectedCurrency.locale,
-                        currency: selectedCurrency.code,
-                      }
-                    }
-                    placeholder="0.00"
-                    value={field.value}
-                    onChange={field.onChange}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            labelName={amountLabel}
+            form={form}
+            currency={selectedCurrency?.code}
           />
         ) : null}
       </div>

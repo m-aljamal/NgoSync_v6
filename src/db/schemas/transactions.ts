@@ -2,6 +2,7 @@ import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
 import {
   boolean,
+  decimal,
   integer,
   pgEnum,
   timestamp,
@@ -48,10 +49,10 @@ export const fundTransactions = pgTable("fund_transactions", {
   currencyId: varchar("currency_id")
     .references(() => currencies.id)
     .notNull(),
-  amount: integer("amount").notNull(),
-  amountInUSD: integer("amount_in_usd").notNull(),
-  proposalAmount: integer("proposal_amount"),
-  officialAmount: integer("official_amount"),
+  amount: decimal("amount", { precision: 19, scale: 4 }).notNull(),
+  amountInUSD: decimal("amount_in_usd", { precision: 19, scale: 4 }).notNull(),
+  proposalAmount: decimal("proposal_amount", { precision: 19, scale: 4 }),
+  officialAmount: decimal("official_amount", { precision: 19, scale: 4 }),
   date: timestamp("date", { mode: "string", withTimezone: true })
     .notNull()
     .defaultNow(),

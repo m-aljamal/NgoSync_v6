@@ -1,10 +1,18 @@
 import { donations, doners, projects, tasks } from "@/db/schemas"
 import { employees } from "@/db/schemas/employee"
 import { loans } from "@/db/schemas/loan"
+import Decimal from "decimal.js"
 import * as z from "zod"
 
 const currencyId = z.string().min(2)
 const amount = z.coerce.number().positive()
+
+const decimalSchema = z.instanceof(Decimal).or(
+  z
+    .string()
+    .or(z.number())
+    .transform((val) => new Decimal(val))
+)
 const date = z.date()
 export const searchParamsSchema = z.object({
   page: z.coerce.number().default(1),
@@ -126,7 +134,7 @@ export const createDonationSchema = z.object({
   date,
   donerId: z.string().min(2),
   fundId: z.string().min(1),
-  amount,
+  amount: decimalSchema,
   currencyId,
   id: z.string().optional(),
   fundTransactionId: z.string().optional(),

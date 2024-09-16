@@ -1,39 +1,55 @@
-import { formatFractionDigits } from "@/lib/utils";
-import CurrecnyInput from "react-currency-input-field";
+import {
+  type FieldValues,
+  type Path,
+  type UseFormReturn,
+} from "react-hook-form"
 
-type Props = {
-  value: number;
-  onChange: (value: string | undefined) => void;
-  disabled?: boolean;
-  placeholder?: string;
-  prefix?: string;
-  intlConfig?: {
-    locale: string;
-    currency: string;
-  };
-};
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
 
-export default function AmountInput({
-  value,
-  onChange,
-  disabled,
-  placeholder,
+import { Input } from "../ui/input"
+
+export default function AmountInput<T extends FieldValues>({
+  form,
+  name = "amount",
+  labelName = "المبلغ",
   prefix,
-  intlConfig,
-}: Props) {
+  currency,
+}: {
+  form: UseFormReturn<T>
+  name?: string
+  labelName?: string
+  prefix?: string
+  currency?: string
+}) {
   return (
-    <div>
-      <CurrecnyInput
-        intlConfig={intlConfig}
-        prefix={prefix}
-        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-        placeholder={placeholder}
-        value={value}
-        decimalsLimit={3}
-        decimalScale={formatFractionDigits(+value)}
-        onValueChange={onChange}
-        disabled={disabled}
-      />
-    </div>
-  );
+    <FormField
+      control={form.control}
+      name={name as Path<T>}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>{labelName}</FormLabel>
+          <FormControl>
+            <div className="relative">
+              <Input
+                className="pl-5"
+                placeholder="0.00"
+                onChange={field.onChange}
+                value={field.value}
+              />
+              <span className="absolute left-2 top-2 text-gray-500">
+                {prefix || currency}
+              </span>
+            </div>
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  )
 }

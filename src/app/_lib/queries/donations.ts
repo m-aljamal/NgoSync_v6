@@ -61,7 +61,7 @@ export async function getDonations(input: GetSearchSchema) {
           date: donations.date,
           id: donations.id,
           fundTransactionId: donations.fundTransactionId,
-          amount: sql<number>`${donations.amount}/1000`,
+          amount: donations.amount,
           proposalId: donations.proposalId,
           paymentType: donations.paymentType,
           isOfficial: donations.isOfficial,
