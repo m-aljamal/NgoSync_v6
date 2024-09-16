@@ -137,7 +137,7 @@ export async function getExchangeRates(input: GetSearchSchema) {
       const data = await tx
         .select({
           id: exchangeRates.id,
-          rate: sql<number>`CAST(${exchangeRates.rate} AS FLOAT)/1000`,
+          rate: exchangeRates.rate,
           date: exchangeRates.date,
           fromCurrencyId: exchangeRates.fromCurrencyId,
           toCurrencyId: exchangeRates.toCurrencyId,

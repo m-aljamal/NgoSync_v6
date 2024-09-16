@@ -1,19 +1,10 @@
 "use client"
 
-import { donations } from "@/db/schemas/donation"
 import * as React from "react"
+import { donations } from "@/db/schemas/donation"
 import { type UseFormReturn } from "react-hook-form"
 
-import { donationPaymentTypeTranslation } from "@/app/_lib/translate"
-import {
-  CreateDonationSchema
-} from "@/app/_lib/validations"
-import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
-import { DatePicker } from "@/components/form-components/date-picker"
-import FundInput from "@/components/form-components/fund-input"
-import InputGroup from "@/components/form-components/InputGroup"
-import ProjectInput from "@/components/form-components/project-input"
-import { AppSelect } from "@/components/form-components/select"
+import { useGetDoners } from "@/hooks/use-get-form-data"
 import {
   Form,
   FormControl,
@@ -25,9 +16,14 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
-import {
-  useGetDoners
-} from "@/hooks/use-get-form-data"
+import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
+import { DatePicker } from "@/components/form-components/date-picker"
+import FundInput from "@/components/form-components/fund-input"
+import InputGroup from "@/components/form-components/InputGroup"
+import ProjectInput from "@/components/form-components/project-input"
+import { AppSelect } from "@/components/form-components/select"
+import { donationPaymentTypeTranslation } from "@/app/_lib/translate"
+import { type CreateDonationSchema } from "@/app/_lib/validations"
 
 interface CreateDonationFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {

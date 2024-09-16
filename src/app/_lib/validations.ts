@@ -180,7 +180,7 @@ export const createExchangeRateSchema = z.object({
   id: z.string().optional(),
   fromCurrencyId: z.string().min(2),
   toCurrencyId: z.string().min(2),
-  rate: amount,
+  rate: decimalSchema,
   date,
 })
 

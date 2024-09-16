@@ -1,9 +1,11 @@
 import { cache } from "react"
 import { db } from "@/db"
 import { currencies, exchangeRates } from "@/db/schemas"
+import Decimal from "decimal.js"
 import { and, asc, eq, gte, lte, or, sql, type SQL } from "drizzle-orm"
 import { alias } from "drizzle-orm/pg-core"
 
+import { toDecimalFixed } from "../utils"
 import { getCurrency } from "./currency"
 import { getProposal } from "./proposals"
 
@@ -87,6 +89,99 @@ export const getCloseExchangeRate = cache(
   }
 )
 
+// export const calculateAmounts = cache(
+//   async ({
+//     amount,
+//     currencyId,
+//     date,
+//     isOfficial = false,
+//     proposalId,
+//   }: {
+//     amount: Decimal
+//     currencyId: string
+//     date: Date
+//     isOfficial?: boolean
+//     proposalId?: string | null
+//   }) => {
+//     try {
+//       const [currency, usdCurrency, officialCurrency, proposal] =
+//         await Promise.all([
+//           getCurrency({ id: currencyId }),
+//           getCurrency({ code: "USD" }),
+//           isOfficial ? getCurrency({ official: true }) : null,
+//           proposalId ? getProposal({ id: proposalId }) : null,
+//         ])
+
+//       if (!currency) throw new Error("Invalid currency")
+
+//       const exchangeRates = await Promise.all([
+//         usdCurrency && usdCurrency.id !== currency.id
+//           ? getCloseExchangeRate({
+//               date,
+//               fromCurrencyId: currency.id,
+//               toCurrencyId: usdCurrency.id,
+//             })
+//           : null,
+//         officialCurrency && officialCurrency.id !== currency.id
+//           ? getCloseExchangeRate({
+//               date,
+//               fromCurrencyId: currency.id,
+//               toCurrencyId: officialCurrency.id,
+//             })
+//           : null,
+//         proposalId
+//           ? getCloseExchangeRate({
+//               date,
+//               fromCurrencyId: currency.id,
+//               toCurrencyId: proposal?.currencyId,
+//             })
+//           : null,
+//       ])
+
+//       const [usdRate, officialRate, proposalRate] = exchangeRates
+
+//       const result: {
+//         amountInUSD?: number
+//         officialAmount?: number
+//         proposalAmount?: number
+//       } = {}
+
+//       if (usdRate) {
+//         result.amountInUSD = Math.round(amount * +usdRate.rate)
+//       } else if (usdCurrency && usdCurrency.id === currency.id) {
+//         result.amountInUSD = amount
+//       }
+
+//       if (isOfficial) {
+//         if (officialRate) {
+//           result.officialAmount = Math.round(amount * +officialRate.rate)
+//         } else if (officialCurrency && officialCurrency.id === currency.id) {
+//           result.officialAmount = amount
+//         } else {
+//           throw new Error(
+//             "Official currency not found or exchange rate not available"
+//           )
+//         }
+//       }
+
+//       if (proposalId && proposalRate) {
+//         result.proposalAmount = Math.round(amount * +proposalRate.rate)
+//       } else if (
+//         proposalId &&
+//         proposal &&
+//         proposal.currencyId === currency.id
+//       ) {
+//         result.proposalAmount = amount
+//       }
+
+//       return result
+//     } catch (error) {
+//       console.error("Error calculating amounts:", error)
+//       throw new Error("Failed to calculate amounts")
+//     }
+//   }
+// )
+
 export const calculateAmounts = cache(
   async ({
     amount,
@@ -95,7 +190,7 @@ export const calculateAmounts = cache(
     isOfficial = false,
     proposalId,
   }: {
-    amount: number
+    amount: Decimal
     currencyId: string
     date: Date
     isOfficial?: boolean
@@ -139,31 +234,53 @@ export const calculateAmounts = cache(
       const [usdRate, officialRate, proposalRate] = exchangeRates
 
       const result: {
-        amountInUSD?: number
-        officialAmount?: number
-        proposalAmount?: number
+        amountInUSD?: Decimal
+        officialAmount?: Decimal
+        proposalAmount?: Decimal
       } = {}
-
+      if (currency.id !== usdCurrency?.id && !usdRate) {
+        throw new Error(
+          `لم يتم العثور على سعر صرف من ${currency.code} إلى ${usdCurrency?.code}`
+        )
+      }
       if (usdRate) {
-        result.amountInUSD = Math.round(amount * +usdRate.rate)
+        result.amountInUSD = amount.mul(new Decimal(usdRate.rate)).round()
       } else if (usdCurrency && usdCurrency.id === currency.id) {
         result.amountInUSD = amount
       }
 
       if (isOfficial) {
         if (officialRate) {
-          result.officialAmount = Math.round(amount * +officialRate.rate)
+          result.officialAmount = amount
+            .mul(new Decimal(officialRate.rate))
+            .round()
         } else if (officialCurrency && officialCurrency.id === currency.id) {
           result.officialAmount = amount
         } else {
           throw new Error(
-            "Official currency not found or exchange rate not available"
+            `لم يتم العثور على سعر صرف من ${currency.code} إلى ${officialCurrency?.code}`
           )
         }
       }
 
+      if (proposalId && !proposalRate) {
+        throw new Error(
+          `لم يتم العثور على سعر صرف من ${currency.code} إلى ${
+            proposal?.currencyCode
+          }`
+        )
+      }
+console.log({
+  proposalRate, 
+  proposalId,
+});
+
+// todo proposal rate not correct
+
       if (proposalId && proposalRate) {
-        result.proposalAmount = Math.round(amount * +proposalRate.rate)
+        result.proposalAmount = amount
+          .mul(new Decimal(proposalRate.rate))
+          .round()
       } else if (
         proposalId &&
         proposal &&
@@ -172,10 +289,23 @@ export const calculateAmounts = cache(
         result.proposalAmount = amount
       }
 
-      return result
+      // Convert Decimal to string with fixed decimal places
+      return {
+        amountInUSD: result.amountInUSD
+          ? toDecimalFixed(result.amountInUSD)
+          : undefined,
+        officialAmount: result.officialAmount
+          ? toDecimalFixed(result.officialAmount)
+          : undefined,
+        proposalAmount: result.proposalAmount
+          ? toDecimalFixed(result.proposalAmount)
+          : undefined,
+      }
     } catch (error) {
+      if (error instanceof Error) throw new Error(error.message)
+
       console.error("Error calculating amounts:", error)
-      throw new Error("Failed to calculate amounts")
+      throw new Error("Failed to calculate amount")
     }
   }
 )

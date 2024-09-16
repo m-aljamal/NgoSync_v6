@@ -109,9 +109,18 @@ export async function getProposals(input: GetSearchSchema) {
 export const getProposal = cache(async ({ id }: { id: string }) => {
   try {
     const [proposal] = await db
-      .select()
+      .select({
+        id: proposals.id,
+        name: proposals.name,
+        createdAt: proposals.createdAt,
+        projectId: proposals.projectId,
+        currencyCode: currencies.code,
+        currencyId: proposals.currencyId,
+        updatedAt: proposals.updatedAt,
+      })
       .from(proposals)
       .where(eq(proposals.id, id))
+      .innerJoin(currencies, eq(proposals.currencyId, currencies))
     return proposal
   } catch (error) {
     return null

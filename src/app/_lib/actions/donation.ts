@@ -7,6 +7,7 @@ import { format } from "date-fns"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
+import { calculateAmounts } from "../queries/utils"
 import { actionClient } from "../safe-action"
 import { toDecimalFixed } from "../utils"
 import { createDonationSchema, deleteArraySchema } from "../validations"
@@ -22,7 +23,7 @@ export const createDonation = actionClient
         donerId,
         fundId,
         proposalId,
-        amount,
+        amount: donationAmount,
         paymentType,
         projectId,
         date: donationDate,
@@ -36,14 +37,32 @@ export const createDonation = actionClient
       noStore()
 
       const date = format(donationDate, "yyyy-MM-dd")
-      const decimalAmount = toDecimalFixed(amount)
+      const { amountInUSD, proposalAmount, officialAmount } =
+        await calculateAmounts({
+          amount: donationAmount,
+          currencyId,
+          date: donationDate,
+          isOfficial,
+          proposalId,
+        })
+      console.log(".........................")
+      console.log({
+        amountInUSD,
+        proposalAmount,
+        officialAmount,
+        
+      })
+
+      throw new Error("test")
+
+      const amount = toDecimalFixed(donationAmount)
       await db.transaction(async (tx) => {
         const [transaction] = await tx
           .insert(fundTransactions)
           .values({
             fundId,
             currencyId,
-            amount: paymentType === "debt" ? "0" : decimalAmount,
+            amount: paymentType === "debt" ? "0" : amount,
             proposalAmount: "0",
             amountInUSD: "0",
             officialAmount: "0",
@@ -56,7 +75,7 @@ export const createDonation = actionClient
           .returning({ id: fundTransactions.id })
         if (!transaction) throw new Error("fund transaction not created")
         await tx.insert(donations).values({
-          amount: decimalAmount,
+          amount: amount,
           paymentType,
           isOfficial,
           receiptDescription,

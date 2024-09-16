@@ -12,6 +12,7 @@ import {
   projectsTransactions,
 } from "@/db/schemas"
 import { format } from "date-fns"
+import Decimal from "decimal.js"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
@@ -19,6 +20,7 @@ import { convertAmountToMiliunits } from "@/lib/utils"
 import { currencyList } from "@/app/(dashboard)/currencies/_components/currency-list"
 
 import { actionClient } from "../safe-action"
+import { toDecimalFixed } from "../utils"
 import {
   createCurrencySchema,
   createExchangeRateSchema,
@@ -109,8 +111,9 @@ export const createExchangeRate = actionClient
       },
     }) => {
       noStore()
-      const rate = rateAmount * 1000
-      const reverseRate = 1 / rateAmount
+
+      const rate = new Decimal(rateAmount)
+      const reverseRate = new Decimal(1).div(rateAmount)
 
       const date = format(rateDate, "yyyy-MM-dd")
 
@@ -118,13 +121,13 @@ export const createExchangeRate = actionClient
         await tx.insert(exchangeRates).values({
           toCurrencyId,
           fromCurrencyId,
-          rate,
+          rate: rate.toFixed(4),
           date,
         })
         await tx.insert(exchangeRates).values({
           toCurrencyId: fromCurrencyId,
           fromCurrencyId: toCurrencyId,
-          rate: Math.round(reverseRate * 1000),
+          rate: reverseRate.toFixed(4),
           date,
         })
       })
@@ -149,7 +152,7 @@ export const updateExchangeRate = actionClient
     }) => {
       if (!id) throw new Error("id is required")
       noStore()
-      const rate = convertAmountToMiliunits(rateAmount)
+      const rate = toDecimalFixed(rateAmount)
       const date = format(rateDate, "yyyy-MM-dd")
 
       await db

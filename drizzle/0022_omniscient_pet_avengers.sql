@@ -1,0 +1,1 @@
+ALTER TABLE "ngosync_exchange_rates" ALTER COLUMN "rate" SET DATA TYPE numeric;

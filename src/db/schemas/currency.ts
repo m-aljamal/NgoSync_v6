@@ -1,6 +1,6 @@
 import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
-import { boolean, integer, timestamp, varchar } from "drizzle-orm/pg-core"
+import { boolean, decimal, integer, timestamp, varchar } from "drizzle-orm/pg-core"
 
 import { generateId } from "@/lib/id"
 
@@ -38,7 +38,7 @@ export const exchangeRates = pgTable("exchange_rates", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())
     .primaryKey(),
-  rate: integer("rate").notNull(),
+  rate: decimal("rate").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
