@@ -2,14 +2,15 @@
 "use memo"
 
 import * as React from "react"
-import { DonationWithRelations } from "@/db/schemas"
+import { donations, type DonationWithRelations } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
 import { useGetCurrencies } from "@/hooks/use-get-form-data"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { getDonations } from "@/app/_lib/queries/donations"
+import { type getDonations } from "@/app/_lib/queries/donations"
+import { donationPaymentTranslation } from "@/app/_lib/translate"
 
 import { getColumns } from "./donation-table-columns"
 import { DonationTableToolbarActions } from "./donation-table-toolbar-actions"
@@ -30,6 +31,16 @@ export function DonationTable({ promise }: DonationTableProps) {
       label: "Amount",
       value: "amount",
       placeholder: "بحث عن مبلغ",
+    },
+
+    {
+      label: "الدفع",
+      value: "paymentType",
+      options: donations.paymentType.enumValues.map((paymentType) => ({
+        label: donationPaymentTranslation[paymentType],
+        value: paymentType,
+        withCount: true,
+      })),
     },
   ]
 

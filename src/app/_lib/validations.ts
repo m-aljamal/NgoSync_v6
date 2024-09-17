@@ -27,6 +27,7 @@ export const searchParamsSchema = z.object({
   to: z.string().optional(),
   operator: z.enum(["and", "or"]).optional(),
   amount: z.coerce.number().optional(),
+  paymentType: z.enum(donations.paymentType.enumValues).optional(),
   donerType: z.enum(doners.type.enumValues).optional(),
 })
 

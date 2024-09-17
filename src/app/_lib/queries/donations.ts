@@ -14,7 +14,7 @@ import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
 export async function getDonations(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, name, operator, from, to } = input
+  const { page, per_page, sort, name, operator, from, to, paymentType } = input
 
   try {
     const offset = calculateOffset(page, per_page)
@@ -36,7 +36,14 @@ export async function getDonations(input: GetSearchSchema) {
       //   : undefined,
 
       // Filter by createdAt
-
+      !!paymentType
+        ? filterColumn({
+            column: donations.paymentType,
+            value: paymentType,
+            isSelectable: true,
+          })
+        : undefined,
+        
       fromDay && toDay
         ? and(gte(donations.date, fromDay), lte(donations.date, toDay))
         : undefined,

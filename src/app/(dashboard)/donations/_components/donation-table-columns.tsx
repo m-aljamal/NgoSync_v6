@@ -102,6 +102,9 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
           {donationPaymentTranslation[row.original.paymentType]}
         </Badge>
       ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
     },
 
     {
