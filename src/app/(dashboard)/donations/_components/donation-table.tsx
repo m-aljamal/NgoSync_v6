@@ -6,7 +6,6 @@ import { donations, type DonationWithRelations } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
-import { useGetCurrencies } from "@/hooks/use-get-form-data"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { type getDonations } from "@/app/_lib/queries/donations"
@@ -23,8 +22,6 @@ export function DonationTable({ promise }: DonationTableProps) {
   const { data, pageCount } = React.use(promise)
 
   const columns = React.useMemo(() => getColumns(), [])
-
-  const { data: currencies } = useGetCurrencies()
 
   const filterFields: DataTableFilterField<DonationWithRelations>[] = [
     {
