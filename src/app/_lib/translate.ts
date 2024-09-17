@@ -77,3 +77,11 @@ export const loanTypeTranslation: Record<
   loan: "قرض",
   repayment: "سداد",
 }
+
+export const donationPaymentTranslation: Record<
+  typeof donations.$inferSelect.paymentType,
+  string
+> = {
+  cash: "نقدي",
+  debt: "دين",
+}

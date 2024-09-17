@@ -1,6 +1,6 @@
 "use client"
 
-import { type Donation } from "@/db/schemas"
+import { DonationWithRelations, type Donation } from "@/db/schemas"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
@@ -11,7 +11,7 @@ import { CreateDonationDialog } from "./create-donation-dialog"
 import { DeleteDonationsDialog } from "./delete-donations-dialog"
 
 interface DonationTableToolbarActionsProps {
-  table: Table<Donation>
+  table: Table<DonationWithRelations>
 }
 
 export function DonationTableToolbarActions({

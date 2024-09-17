@@ -6,6 +6,8 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
+import { formatCurrency } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -17,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
+import { donationPaymentTranslation } from "@/app/_lib/translate"
 
 import { DeleteDonationsDialog } from "./delete-donations-dialog"
 import { UpdateDonationSheet } from "./update-donation-sheet"
@@ -47,27 +50,60 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
       enableSorting: false,
       enableHiding: false,
     },
-
-    {
-      accessorKey: "amount",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="القيمة" />
-      ),
-      cell: ({ row }) => (
-        <div>
-          {/* {formatCurrency(row.getValue("amount"), row.original.currencyCode)} */}
-          {row.original.amount}
-        </div>
-      ),
-    },
-
     {
       accessorKey: "date",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="التاريخ" />
       ),
-      cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
     },
+
+    {
+      accessorKey: "amount",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المبلغ" />
+      ),
+      cell: ({ row }) => (
+        <span>
+          {formatCurrency(row.getValue("amount"), row.original.currencyCode)}
+        </span>
+      ),
+    },
+
+    {
+      accessorKey: "currencyCode",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="العملة" />
+      ),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("currencyCode")}>
+          {row.getValue("currencyCode")}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
+    },
+
+    {
+      accessorKey: "donerName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المتبرع" />
+      ),
+    },
+
+    {
+      accessorKey: "paymentType",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الدفع" />
+      ),
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("paymentType")}>
+          {donationPaymentTranslation[row.original.paymentType]}
+        </Badge>
+      ),
+    },
+
     {
       id: "actions",
       cell: function Cell({ row }) {

@@ -2,21 +2,10 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { fundTransactions } from "@/db/schemas"
+import { currencies, fundTransactions } from "@/db/schemas"
 import { donations, doners, type Donation } from "@/db/schemas/donation"
 import { type DrizzleWhere } from "@/types"
-import {
-  and,
-  asc,
-  count,
-  desc,
-  eq,
-  gte,
-  lte,
-  or,
-  sql,
-  type SQL,
-} from "drizzle-orm"
+import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -39,16 +28,17 @@ export async function getDonations(input: GetSearchSchema) {
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
-      name
-        ? filterColumn({
-            column: doners.name,
-            value: name,
-          })
-        : undefined,
+      // name
+      //   ? filterColumn({
+      //       column: doners.name,
+      //       value: name,
+      //     })
+      //   : undefined,
 
       // Filter by createdAt
+
       fromDay && toDay
-        ? and(gte(doners.createdAt, fromDay), lte(doners.createdAt, toDay))
+        ? and(gte(donations.date, fromDay), lte(donations.date, toDay))
         : undefined,
     ]
 
@@ -72,6 +62,10 @@ export async function getDonations(input: GetSearchSchema) {
           description: fundTransactions.description,
           fundId: fundTransactions.fundId,
           currencyId: fundTransactions.currencyId,
+          currencyCode: currencies.code,
+          donerName: doners.name,
+          createdAt: donations.createdAt,
+          updatedAt: donations.updatedAt,
         })
         .from(donations)
         .limit(per_page)
@@ -81,6 +75,8 @@ export async function getDonations(input: GetSearchSchema) {
           fundTransactions,
           eq(donations.fundTransactionId, fundTransactions.id)
         )
+        .innerJoin(currencies, eq(fundTransactions.currencyId, currencies.id))
+        .innerJoin(doners, eq(donations.donerId, doners.id))
         .orderBy(
           column && column in donations
             ? order === "asc"

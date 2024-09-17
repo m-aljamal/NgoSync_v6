@@ -50,6 +50,8 @@ export function formatFractionDigits(value: number) {
   return value % 1 !== 0 ? 3 : 0
 }
 export function formatCurrency(value: number, currency: string) {
+  
+  
   return Intl.NumberFormat("tr-TR", {
     style: "currency",
     currency: currency,

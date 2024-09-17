@@ -2,6 +2,7 @@ import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
 import {
   boolean,
+  date,
   decimal,
   pgEnum,
   timestamp,
@@ -70,13 +71,10 @@ export const donations = pgTable("donations", {
     .notNull(),
 
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .default(sql`current_timestamp`)
-    .$onUpdate(() => new Date()),
-
-  date: timestamp("date", { mode: "string", withTimezone: true })
+  updatedAt: timestamp("updated_at").default(sql`current_timestamp`),
+  date: date("date")
     .notNull()
-    .defaultNow(),
+    .default(sql`CURRENT_DATE`),
 })
 
 export const donationRelations = relations(donations, ({ one }) => ({
@@ -100,5 +98,11 @@ export const donationRelations = relations(donations, ({ one }) => ({
 
 export type Donation = typeof donations.$inferSelect
 export type NewDonation = typeof donations.$inferInsert
-export type DonationWithRelations = typeof donations.$inferSelect &
-  typeof fundTransactions.$inferSelect
+export type DonationWithRelations = typeof donations.$inferSelect & {
+  date: string
+  currencyCode: string
+  currencyId: string
+  description: string | null
+  fundId: string
+  donerName: string
+}

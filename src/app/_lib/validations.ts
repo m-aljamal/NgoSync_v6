@@ -153,7 +153,7 @@ export const createExpenseSchema = z.object({
   id: z.string().optional(),
   projectId: z.string().min(2),
   currencyId,
-  amount,
+  amount: decimalSchema,
   description: z.string().optional(),
   isOfficial: z.boolean().optional(),
   expensesCategoryId: z.string().min(2),

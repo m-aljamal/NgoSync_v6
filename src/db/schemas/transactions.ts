@@ -2,6 +2,7 @@ import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
 import {
   boolean,
+  date,
   decimal,
   integer,
   pgEnum,
@@ -40,9 +41,10 @@ export const fundTransactions = pgTable("fund_transactions", {
     .$defaultFn(() => generateId())
     .primaryKey(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .default(sql`current_timestamp`)
-    .$onUpdate(() => new Date()),
+  updatedAt: timestamp("updated_at").default(sql`current_timestamp`),
+  date: date("date")
+    .notNull()
+    .default(sql`CURRENT_DATE`),
   fundId: varchar("fund_id")
     .references(() => funds.id)
     .notNull(),
@@ -53,9 +55,7 @@ export const fundTransactions = pgTable("fund_transactions", {
   amountInUSD: decimal("amount_in_usd", { precision: 19, scale: 4 }).notNull(),
   proposalAmount: decimal("proposal_amount", { precision: 19, scale: 4 }),
   officialAmount: decimal("official_amount", { precision: 19, scale: 4 }),
-  date: timestamp("date", { mode: "string", withTimezone: true })
-    .notNull()
-    .defaultNow(),
+
   type: transactionType("transaction_type").notNull(),
   description: varchar("description", { length: 200 }),
   category: fundTransactionCategoryEnum("transaction_category_enum").notNull(),

@@ -3,6 +3,7 @@
 import * as React from "react"
 import { type DonationWithRelations } from "@/db/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Decimal from "decimal.js"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -32,7 +33,7 @@ export function UpdateDonationSheet({
       date: new Date(donation.date),
       donerId: donation.donerId,
       fundId: donation.fundId,
-      amount: donation.amount,
+      amount: new Decimal(donation.amount),
       currencyId: donation.currencyId,
       id: donation.id,
       fundTransactionId: donation.fundTransactionId ?? undefined,
