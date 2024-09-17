@@ -88,100 +88,7 @@ export const getCloseExchangeRate = cache(
     }
   }
 )
-
-// export const calculateAmounts = cache(
-//   async ({
-//     amount,
-//     currencyId,
-//     date,
-//     isOfficial = false,
-//     proposalId,
-//   }: {
-//     amount: Decimal
-//     currencyId: string
-//     date: Date
-//     isOfficial?: boolean
-//     proposalId?: string | null
-//   }) => {
-//     try {
-//       const [currency, usdCurrency, officialCurrency, proposal] =
-//         await Promise.all([
-//           getCurrency({ id: currencyId }),
-//           getCurrency({ code: "USD" }),
-//           isOfficial ? getCurrency({ official: true }) : null,
-//           proposalId ? getProposal({ id: proposalId }) : null,
-//         ])
-
-//       if (!currency) throw new Error("Invalid currency")
-
-//       const exchangeRates = await Promise.all([
-//         usdCurrency && usdCurrency.id !== currency.id
-//           ? getCloseExchangeRate({
-//               date,
-//               fromCurrencyId: currency.id,
-//               toCurrencyId: usdCurrency.id,
-//             })
-//           : null,
-//         officialCurrency && officialCurrency.id !== currency.id
-//           ? getCloseExchangeRate({
-//               date,
-//               fromCurrencyId: currency.id,
-//               toCurrencyId: officialCurrency.id,
-//             })
-//           : null,
-//         proposalId
-//           ? getCloseExchangeRate({
-//               date,
-//               fromCurrencyId: currency.id,
-//               toCurrencyId: proposal?.currencyId,
-//             })
-//           : null,
-//       ])
-
-//       const [usdRate, officialRate, proposalRate] = exchangeRates
-
-//       const result: {
-//         amountInUSD?: number
-//         officialAmount?: number
-//         proposalAmount?: number
-//       } = {}
-
-//       if (usdRate) {
-//         result.amountInUSD = Math.round(amount * +usdRate.rate)
-//       } else if (usdCurrency && usdCurrency.id === currency.id) {
-//         result.amountInUSD = amount
-//       }
-
-//       if (isOfficial) {
-//         if (officialRate) {
-//           result.officialAmount = Math.round(amount * +officialRate.rate)
-//         } else if (officialCurrency && officialCurrency.id === currency.id) {
-//           result.officialAmount = amount
-//         } else {
-//           throw new Error(
-//             "Official currency not found or exchange rate not available"
-//           )
-//         }
-//       }
-
-//       if (proposalId && proposalRate) {
-//         result.proposalAmount = Math.round(amount * +proposalRate.rate)
-//       } else if (
-//         proposalId &&
-//         proposal &&
-//         proposal.currencyId === currency.id
-//       ) {
-//         result.proposalAmount = amount
-//       }
-
-//       return result
-//     } catch (error) {
-//       console.error("Error calculating amounts:", error)
-//       throw new Error("Failed to calculate amounts")
-//     }
-//   }
-// )
-
+// todo optimize this function in update 
 export const calculateAmounts = cache(
   async ({
     amount,
@@ -270,36 +177,38 @@ export const calculateAmounts = cache(
           }`
         )
       }
-console.log({
-  proposalRate, 
-  proposalId,
-});
 
-// todo proposal rate not correct
-
-      if (proposalId && proposalRate) {
-        result.proposalAmount = amount
-          .mul(new Decimal(proposalRate.rate))
-          .round()
-      } else if (
-        proposalId &&
-        proposal &&
-        proposal.currencyId === currency.id
-      ) {
-        result.proposalAmount = amount
+      if (proposalId) {
+        if (proposalRate) {
+          result.proposalAmount = amount
+            .mul(new Decimal(proposalRate.rate))
+            .round()
+        } else if (
+          proposalId &&
+          proposal &&
+          proposal.currencyId === currency.id
+        ) {
+          result.proposalAmount = amount
+        } else {
+          throw new Error(
+            `لم يتم العثور على سعر صرف من ${currency.code} إلى ${
+              proposal?.currencyCode
+            }`
+          )
+        }
       }
 
       // Convert Decimal to string with fixed decimal places
       return {
         amountInUSD: result.amountInUSD
           ? toDecimalFixed(result.amountInUSD)
-          : undefined,
+          : "0",
         officialAmount: result.officialAmount
           ? toDecimalFixed(result.officialAmount)
-          : undefined,
+          : "0",
         proposalAmount: result.proposalAmount
           ? toDecimalFixed(result.proposalAmount)
-          : undefined,
+          : "0",
       }
     } catch (error) {
       if (error instanceof Error) throw new Error(error.message)

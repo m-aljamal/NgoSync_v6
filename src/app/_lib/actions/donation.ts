@@ -37,6 +37,7 @@ export const createDonation = actionClient
       noStore()
 
       const date = format(donationDate, "yyyy-MM-dd")
+
       const { amountInUSD, proposalAmount, officialAmount } =
         await calculateAmounts({
           amount: donationAmount,
@@ -45,15 +46,6 @@ export const createDonation = actionClient
           isOfficial,
           proposalId,
         })
-      console.log(".........................")
-      console.log({
-        amountInUSD,
-        proposalAmount,
-        officialAmount,
-        
-      })
-
-      throw new Error("test")
 
       const amount = toDecimalFixed(donationAmount)
       await db.transaction(async (tx) => {
@@ -63,9 +55,9 @@ export const createDonation = actionClient
             fundId,
             currencyId,
             amount: paymentType === "debt" ? "0" : amount,
-            proposalAmount: "0",
-            amountInUSD: "0",
-            officialAmount: "0",
+            proposalAmount,
+            amountInUSD,
+            officialAmount,
             date,
             type: "income",
             description,
@@ -116,9 +108,18 @@ export const updateDonation = actionClient
       },
     }) => {
       noStore()
+
       if (!id || !fundTransactionId)
         throw new Error("id and fundTransactionId is required")
 
+      const { amountInUSD, proposalAmount, officialAmount } =
+        await calculateAmounts({
+          amount: donationAmount,
+          currencyId,
+          date: donationDate,
+          isOfficial,
+          proposalId,
+        })
       const amount = toDecimalFixed(donationAmount)
       const date = format(donationDate, "yyyy-MM-dd")
 
@@ -129,11 +130,13 @@ export const updateDonation = actionClient
             fundId,
             currencyId,
             amount: paymentType === "debt" ? "0" : amount,
-            proposalAmount: "0",
-            amountInUSD: "0",
-            officialAmount: "0",
+            proposalAmount,
+            amountInUSD,
+            officialAmount,
             date,
+            type: "income",
             description,
+            category: "donation",
             isOfficial,
           })
           .where(eq(fundTransactions.id, fundTransactionId))

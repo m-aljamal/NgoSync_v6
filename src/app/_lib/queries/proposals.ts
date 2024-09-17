@@ -120,7 +120,8 @@ export const getProposal = cache(async ({ id }: { id: string }) => {
       })
       .from(proposals)
       .where(eq(proposals.id, id))
-      .innerJoin(currencies, eq(proposals.currencyId, currencies))
+      .innerJoin(currencies, eq(proposals.currencyId, currencies.id))
+
     return proposal
   } catch (error) {
     return null
