@@ -10,12 +10,15 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 
+import { ScrollArea } from "../ui/scroll-area"
+
 interface UpdateSheetProps extends React.ComponentPropsWithRef<typeof Sheet> {
   children: React.ReactNode
 }
 
 export function UpdateSheet({ children, ...props }: UpdateSheetProps) {
   return (
+      <ScrollArea className="overflow-y-auto">
     <Sheet {...props}>
       <SheetContent
         className="flex max-h-full flex-col gap-6 overflow-auto"
@@ -25,8 +28,9 @@ export function UpdateSheet({ children, ...props }: UpdateSheetProps) {
           <SheetTitle>تعديل</SheetTitle>
           <SheetDescription>عدل المعلومات واحفظ التغييرات</SheetDescription>
         </SheetHeader>
-        {children}
+{children}
       </SheetContent>
     </Sheet>
+        </ScrollArea>
   )
 }

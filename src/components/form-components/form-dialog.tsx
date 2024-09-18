@@ -31,6 +31,7 @@ export default function FormDialog({
   children: React.ReactNode
 }) {
   const { isOpen, onOpen, onClose } = useFormDialog()
+
   const isDesktop = useMediaQuery("(min-width: 640px)")
   const title = "إضافة جديد"
   const description = "قم بملء التفاصيل أدناه لإنشاء عنصر جديد."

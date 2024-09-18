@@ -4,9 +4,9 @@ import * as React from "react"
 import { type DonationWithRelations } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
 
 import { formatCurrency } from "@/lib/utils"
+import { useViewDataDialog } from "@/hooks/use-view-data-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -114,6 +114,7 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
           React.useState(false)
         const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
           React.useState(false)
+        const { onOpen } = useViewDataDialog()
 
         return (
           <>
@@ -129,6 +130,7 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
               showTrigger={false}
               onSuccess={() => row.toggleSelected(false)}
             />
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -140,6 +142,10 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem onSelect={()=>  onOpen("ddd")}>
+                  {/* <Edit className="mr-2 size-4" /> */}
+                  view
+                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
                   تعديل
                 </DropdownMenuItem>

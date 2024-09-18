@@ -8,6 +8,7 @@ import "@/styles/globals.css"
 import type { Metadata, Viewport } from "next"
 import { Tajawal } from "next/font/google"
 import { QueryProvider } from "@/providers/query-provider"
+import { SheetProvider } from "@/providers/sheet-provider"
 
 import { fontMono, fontSans } from "@/lib/fonts"
 import { Toaster } from "@/components/ui/toaster"
@@ -84,6 +85,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
         dir="rtl"
       >
         <QueryProvider>
+          <SheetProvider />
           <Direction>
             <ThemeProvider
               attribute="class"
