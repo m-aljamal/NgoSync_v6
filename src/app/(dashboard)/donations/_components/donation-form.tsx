@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
+import { DateInput } from "@/components/form-components"
 import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
-import { DatePicker } from "@/components/form-components/date-picker"
 import FundInput from "@/components/form-components/fund-input"
 import InputGroup from "@/components/form-components/InputGroup"
 import ProjectInput from "@/components/form-components/project-input"
@@ -37,27 +37,15 @@ export function DonationForm({
   form,
   onSubmit,
   children,
-  isUpdate,
 }: CreateDonationFormProps) {
   const { data: doners, isLoading: loadingDoners } = useGetDoners()
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup isUpdate={isUpdate}>
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>التاريخ</FormLabel>
-                <FormControl>
-                  <DatePicker onChange={field.onChange} value={field.value} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+      <form onSubmit={form.handleSubmit(onSubmit)} className=" ">
+        <InputGroup>
+          <DateInput form={form} />
+
           <FormField
             control={form.control}
             name="donerId"

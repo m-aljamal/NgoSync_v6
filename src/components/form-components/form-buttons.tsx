@@ -12,7 +12,7 @@ export default function FormButtons({ isExecuting }: { isExecuting: boolean }) {
 
   if (isDesktop)
     return (
-      <DialogFooter className="gap-2 pt-2">
+      <DialogFooter className="my-5 ">
         <Button disabled={isExecuting}>
           {isExecuting && (
             <ReloadIcon
@@ -30,7 +30,7 @@ export default function FormButtons({ isExecuting }: { isExecuting: boolean }) {
       </DialogFooter>
     )
   return (
-    <DrawerFooter className="gap-2 sm:gap-0">
+    <DrawerFooter className="my-5 gap-2 space-y-3 sm:gap-0">
       <DrawerClose asChild>
         <Button variant="outline"> إلغاء</Button>
       </DrawerClose>

@@ -76,7 +76,7 @@ export function UpdateDonationSheet({
   }
   return (
     <UpdateSheet {...props}>
-      <DonationForm form={form} onSubmit={onSubmit} isUpdate>
+      <DonationForm form={form} onSubmit={onSubmit}>
         <UpdateButtons isExecuting={isExecuting} />
       </DonationForm>
     </UpdateSheet>

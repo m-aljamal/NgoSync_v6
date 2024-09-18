@@ -44,37 +44,35 @@ export default function CurrencyAmountInput<T extends FieldValues>({
   }, [selectedCurrencyId, currencies])
 
   return (
-    <div className="col-span-2">
-      <div className="grid grid-cols-2 gap-x-2">
-        <FormField
-          control={form.control}
-          name={currencyName as Path<T>}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{currencyLabel}</FormLabel>
-              <AppSelect
-                isLoading={currenciesLoading}
-                onChange={field.onChange}
-                value={(field.value as string | undefined)?.toString()}
-                options={currencies?.map((currency) => ({
-                  value: currency.id.toString(),
-                  label: currency.name,
-                }))}
-                placeholder="أختر العملة"
-              />
-              <FormMessage />
-            </FormItem>
-          )}
+    <>
+      <FormField
+        control={form.control}
+        name={currencyName as Path<T>}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>{currencyLabel}</FormLabel>
+            <AppSelect
+              isLoading={currenciesLoading}
+              onChange={field.onChange}
+              value={(field.value as string | undefined)?.toString()}
+              options={currencies?.map((currency) => ({
+                value: currency.id.toString(),
+                label: currency.name,
+              }))}
+              placeholder="أختر العملة"
+            />
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      {withAmount ? (
+        <AmountInput
+          name={amountName as Path<T>}
+          labelName={amountLabel}
+          form={form}
+          currency={selectedCurrency?.code}
         />
-        {withAmount ? (
-          <AmountInput
-            name={amountName as Path<T>}
-            labelName={amountLabel}
-            form={form}
-            currency={selectedCurrency?.code}
-          />
-        ) : null}
-      </div>
-    </div>
+      ) : null}
+    </>
   )
 }
