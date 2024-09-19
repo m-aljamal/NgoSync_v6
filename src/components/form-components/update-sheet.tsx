@@ -18,19 +18,17 @@ interface UpdateSheetProps extends React.ComponentPropsWithRef<typeof Sheet> {
 
 export function UpdateSheet({ children, ...props }: UpdateSheetProps) {
   return (
-      <ScrollArea className="overflow-y-auto">
     <Sheet {...props}>
       <SheetContent
-        className="flex max-h-full flex-col gap-6 overflow-auto"
+        className="flex h-[calc(100vh-2rem)] flex-col gap-6 px-8"
         side="bottom"
       >
-        <SheetHeader className="text-right">
+        <SheetHeader>
           <SheetTitle>تعديل</SheetTitle>
           <SheetDescription>عدل المعلومات واحفظ التغييرات</SheetDescription>
         </SheetHeader>
-{children}
+        <ScrollArea className="pl-4">{children}</ScrollArea>
       </SheetContent>
     </Sheet>
-        </ScrollArea>
   )
 }
