@@ -6,7 +6,7 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 
 import { formatCurrency } from "@/lib/utils"
-import { useViewDataDialog } from "@/hooks/use-view-data-dialog"
+import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -114,7 +114,7 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
           React.useState(false)
         const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
           React.useState(false)
-        const { onOpen } = useViewDataDialog()
+        const { onOpen } = useViewMoreDialog()
 
         return (
           <>
@@ -142,9 +142,10 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem onSelect={()=>  onOpen("ddd")}>
-                  {/* <Edit className="mr-2 size-4" /> */}
-                  view
+                <DropdownMenuItem
+                  onSelect={() => onOpen(row.original.id, "donation")}
+                >
+                  التفاصيل
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
                   تعديل

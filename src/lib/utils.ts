@@ -49,13 +49,13 @@ export function convertAmountToMiliunits(amount: number) {
 export function formatFractionDigits(value: number) {
   return value % 1 !== 0 ? 3 : 0
 }
-export function formatCurrency(value: number, currency: string) {
+export function formatCurrency(value: string, currency: string) {
   
   
   return Intl.NumberFormat("tr-TR", {
     style: "currency",
     currency: currency,
-    minimumFractionDigits: formatFractionDigits(value),
+    minimumFractionDigits: formatFractionDigits(+value),
     maximumFractionDigits: 3,
-  }).format(value)
+  }).format(+value)
 }

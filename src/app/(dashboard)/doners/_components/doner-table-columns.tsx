@@ -6,6 +6,7 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
+import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -103,6 +104,8 @@ export function getColumns(): ColumnDef<Doner>[] {
         const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
           React.useState(false)
 
+        const { onOpen } = useViewMoreDialog()
+
         return (
           <>
             <UpdateDonerSheet
@@ -128,6 +131,11 @@ export function getColumns(): ColumnDef<Doner>[] {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem
+                  onSelect={() => onOpen(row.original.id, "doner")}
+                >
+                  التفاصيل
+                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
                   تعديل
                 </DropdownMenuItem>

@@ -1,15 +1,19 @@
 import { create } from "zustand"
 
-type ViewDialogState = {
-  id?: string
+export type TableType = "donation" | "doner"
+
+type ViewMoreDialogState = {
+  id: string | null
   isOpen: boolean
-  onOpen: (id: string) => void
+  onOpen: (id: string, table: TableType) => void
   onClose: () => void
+  table: TableType | null
 }
 
-export const useViewDataDialog = create<ViewDialogState>((set) => ({
-  id: undefined,
+export const useViewMoreDialog = create<ViewMoreDialogState>((set) => ({
+  id: null,
+  table: null,
   isOpen: false,
-  onOpen: (id: string) => set({ isOpen: true, id }),
-  onClose: () => set({ isOpen: false, id: undefined }),
+  onOpen: (id: string, table: TableType) => set({ isOpen: true, id, table }),
+  onClose: () => set({ isOpen: false, id: null, table: null }),
 }))

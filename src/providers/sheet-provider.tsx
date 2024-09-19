@@ -1,17 +1,34 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { useMountedState } from "react-use"
 
-import ShowData from "@/components/show-data"
+import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
+import ViewMoreDrawer from "@/components/view-more-drawer"
+
+const ViewMoreDonation = dynamic(
+  () => import("@/app/(dashboard)/donations/_components/view-more-donation")
+)
+const ViewMoreDoner = dynamic(
+  () => import("@/app/(dashboard)/doners/_components/view-more-doner")
+)
 
 export const SheetProvider = () => {
   const isMounted = useMountedState()
+  const { table } = useViewMoreDialog()
 
   if (!isMounted) return null
 
-  return (
-    <>
-      <ShowData />
-    </>
-  )
+  const renderComponent = () => {
+    switch (table) {
+      case "donation":
+        return <ViewMoreDonation />
+      case "doner":
+        return <ViewMoreDoner />
+      default:
+        return null
+    }
+  }
+
+  return <ViewMoreDrawer>{renderComponent()}</ViewMoreDrawer>
 }

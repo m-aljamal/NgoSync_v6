@@ -6,6 +6,7 @@ import { donations, type DonationWithRelations } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { type getDonations } from "@/app/_lib/queries/donations"
