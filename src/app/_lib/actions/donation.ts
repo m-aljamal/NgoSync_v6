@@ -56,7 +56,7 @@ export const createDonation = actionClient
             currencyId,
             amount: paymentType === "debt" ? "0" : amount,
             proposalAmount,
-            amountInUSD,
+            amountInUSD: paymentType === "debt" ? "0" : amountInUSD,
             officialAmount,
             date,
             type: "income",

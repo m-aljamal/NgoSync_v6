@@ -9,6 +9,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "./ui/drawer"
+import { ScrollArea } from "./ui/scroll-area"
 
 export default function ViewMoreDrawer({
   children,
@@ -23,12 +24,15 @@ export default function ViewMoreDrawer({
   }
   return (
     <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-      <DrawerContent>
+      <DrawerContent className="h-[calc(100%-1rem)] px-5 pb-8">
         <DrawerHeader>
           <DrawerTitle>التفاصيل</DrawerTitle>
           <DrawerDescription>تفاصيل الحركة</DrawerDescription>
         </DrawerHeader>
-        {children}
+
+        <ScrollArea className="overflow-y-auto" dir="rtl">
+          {children}
+        </ScrollArea>
       </DrawerContent>
     </Drawer>
   )

@@ -88,7 +88,7 @@ export const getCloseExchangeRate = cache(
     }
   }
 )
-// todo optimize this function in update 
+// todo optimize this function in update
 export const calculateAmounts = cache(
   async ({
     amount,
@@ -156,6 +156,16 @@ export const calculateAmounts = cache(
         result.amountInUSD = amount
       }
 
+      if (
+        officialCurrency &&
+        officialCurrency.id !== currency.id &&
+        !officialRate
+      ) {
+        throw new Error(
+          `لم يتم العثور على سعر صرف من ${currency.code} إلى ${officialCurrency?.code}`
+        )
+      }
+
       if (isOfficial) {
         if (officialRate) {
           result.officialAmount = amount
@@ -163,10 +173,6 @@ export const calculateAmounts = cache(
             .round()
         } else if (officialCurrency && officialCurrency.id === currency.id) {
           result.officialAmount = amount
-        } else {
-          throw new Error(
-            `لم يتم العثور على سعر صرف من ${currency.code} إلى ${officialCurrency?.code}`
-          )
         }
       }
 

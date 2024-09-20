@@ -10,7 +10,7 @@ export default function UpdateButtons({
   isExecuting: boolean
 }) {
   return (
-    <SheetFooter className="gap-2 pt-2">
+    <SheetFooter className="gap-2 pt-4">
       <Button disabled={isExecuting}>
         {isExecuting && (
           <ReloadIcon className="ml-2 size-4 animate-spin" aria-hidden="true" />
