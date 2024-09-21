@@ -3,6 +3,7 @@
 import * as React from "react"
 import { type DonationWithRelations } from "@/db/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
 import Decimal from "decimal.js"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
@@ -56,10 +57,15 @@ export function UpdateDonationSheet({
     form.reset(defaultValues)
   }, [donation, form, defaultValues])
 
+  const queryClient = useQueryClient()
+
   const { executeAsync, isExecuting } = useAction(updateDonation, {
     onSuccess: async () => {
       toast.success("تم تعديل التبرع")
       props.onOpenChange?.(false)
+      await queryClient.invalidateQueries({
+        queryKey: ["donation"],
+      })
       form.reset()
     },
     onError: ({ error }) => {

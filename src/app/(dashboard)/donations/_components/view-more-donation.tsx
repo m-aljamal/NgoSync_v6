@@ -1,16 +1,34 @@
-import React from "react"
+import { InfoCircledIcon } from "@radix-ui/react-icons"
 
-import { cn, formatCurrency } from "@/lib/utils"
 import { useGetDonationById } from "@/hooks/queries/use-get-donation"
 import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import ViewMoreCards from "@/components/view-more-card"
 import { donationPaymentTypeTranslation } from "@/app/_lib/translate"
 
 export default function ViewMoreDonation() {
   const { id } = useViewMoreDialog()
   const { data, isLoading } = useGetDonationById(id)
-  if (isLoading) return <div>loading...</div>
-  if (!data) return <div>no data</div>
+  if (isLoading) {
+    return (
+      <div className="space-y-5">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
+          <Skeleton className="h-[100px]" />
+          <Skeleton className="h-[100px]" />
+          <Skeleton className="h-[100px]" />
+        </div>
+        <Skeleton className="h-[300px]" />
+      </div>
+    )
+  }
+  if (!data)
+    return (
+      <div className="mt-20 flex items-center justify-center text-sm">
+        لا يوجد بيانات
+        <InfoCircledIcon className="mr-2 size-4" />
+      </div>
+    )
+
   const {
     currency,
     amount,
@@ -72,76 +90,21 @@ export default function ViewMoreDonation() {
     ]
 
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
-        <AmountCard currency={currency} amount={amount} title="المبلغ" />
-        {currency !== "USD" && (
-          <AmountCard currency="USD" amount={amountInUSD} title="يعادل USD" />
-        )}
-        {proposalAmount && proposalCurrency && (
-          <AmountCard
-            currency={proposalCurrency}
-            amount={proposalAmount}
-            title="المبلغ بعملة الدراسة"
-          />
-        )}
-        {isOfficial && officialAmount && officialAmountCurrency && (
-          <AmountCard
-            currency={officialAmountCurrency}
-            amount={officialAmount}
-            title="المبلغ بالعملة الرسمية"
-          />
-        )}
-      </div>
-      <DetailsCard title={`المتبرع ${doner}`} details={details} />
-    </div>
-  )
-}
-
-const AmountCard = ({
-  currency,
-  amount,
-  title,
-}: {
-  currency: string
-  amount: string
-  title?: string
-}) => {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-
-        <span className="font-bold text-muted-foreground">{currency}</span>
-      </CardHeader>
-      <CardContent>{formatCurrency(amount, currency)}</CardContent>
-    </Card>
-  )
-}
-
-const DetailsCard = ({
-  details,
-  title,
-}: {
-  details: { label: string; value: string | number; colSpan?: string }[]
-  title?: string
-}) => {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-      </CardHeader>
-      <div className="mt-4 grid grid-cols-1 gap-x-4 gap-y-6 px-4 py-6 sm:grid-cols-4">
-        {details?.map(({ label, value, colSpan }) => (
-          <dl
-            className={cn("flex items-end gap-2 text-sm font-medium", colSpan)}
-            key={label}
-          >
-            <dt className="text-gray-500">{label}: </dt>
-            <dd className="text-gray-900">{value}</dd>
-          </dl>
-        ))}
-      </div>
-    </Card>
+    <ViewMoreCards
+      amounts={{
+        amount,
+        amountInUSD,
+        currency,
+        isOfficial,
+        officialAmount,
+        officialAmountCurrency,
+        proposalAmount,
+        proposalCurrency,
+      }}
+      details={{
+        details,
+        title: `المتبرع ${doner}`,
+      }}
+    />
   )
 }
