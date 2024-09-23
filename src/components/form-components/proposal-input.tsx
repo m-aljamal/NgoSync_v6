@@ -30,7 +30,7 @@ export default function ProposalInput<T extends FieldValues>({
       control={form.control}
       name={"proposalId" as Path<T>}
       render={({ field }) => (
-        <FormItem >
+        <FormItem>
           <FormLabel>الدراسة</FormLabel>
           <AppSelect
             isLoading={proposalsLoading}

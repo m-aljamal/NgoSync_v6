@@ -1,8 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
 import {
-  PathValue,
   type FieldValues,
   type Path,
   type UseFormReturn,
@@ -39,13 +37,6 @@ export default function ProjectInput<T extends FieldValues>({
   const { data: projects, isLoading: projectsLoading } = useGetProjects()
 
   const selectedProject = form.watch("projectId" as Path<T>)
-
-  useEffect(() => {
-    form.setValue(
-      "proposalId" as Path<T>,
-      null as unknown as PathValue<T, Path<T>>
-    )
-  }, [selectedProject, form])
 
   return (
     <>

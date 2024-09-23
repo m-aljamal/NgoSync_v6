@@ -30,7 +30,6 @@ interface CreateDonationFormProps
   children: React.ReactNode
   form: UseFormReturn<CreateDonationSchema>
   onSubmit: (data: CreateDonationSchema) => void
-  isUpdate?: boolean
 }
 
 export function DonationForm({
@@ -39,10 +38,11 @@ export function DonationForm({
   children,
 }: CreateDonationFormProps) {
   const { data: doners, isLoading: loadingDoners } = useGetDoners()
-
+  console.log({donationForm:form.getValues()});
+  
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className=" ">
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <InputGroup>
           <DateInput form={form} />
 
