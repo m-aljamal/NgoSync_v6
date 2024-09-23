@@ -38,8 +38,7 @@ export function DonationForm({
   children,
 }: CreateDonationFormProps) {
   const { data: doners, isLoading: loadingDoners } = useGetDoners()
-  console.log({donationForm:form.getValues()});
-  
+   
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
