@@ -1,33 +1,17 @@
-import { InfoCircledIcon } from "@radix-ui/react-icons"
-
 import { useGetDonationById } from "@/hooks/queries/use-get-donation"
 import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
-import { Skeleton } from "@/components/ui/skeleton"
-import ViewMoreCards from "@/components/view-more-card"
+import NoDataFound from "@/app/_components/view-more/no-data-found"
+import ViewMoreCards from "@/app/_components/view-more/view-more-card"
+import ViewMoreLoading from "@/app/_components/view-more/view-more-loading"
 import { donationPaymentTypeTranslation } from "@/app/_lib/translate"
 
 export default function ViewMoreDonation() {
   const { id } = useViewMoreDialog()
   const { data, isLoading } = useGetDonationById(id)
   if (isLoading) {
-    return (
-      <div className="space-y-5">
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
-          <Skeleton className="h-[100px]" />
-          <Skeleton className="h-[100px]" />
-          <Skeleton className="h-[100px]" />
-        </div>
-        <Skeleton className="h-[300px]" />
-      </div>
-    )
+    return <ViewMoreLoading />
   }
-  if (!data)
-    return (
-      <div className="mt-20 flex items-center justify-center text-sm">
-        لا يوجد بيانات
-        <InfoCircledIcon className="mr-2 size-4" />
-      </div>
-    )
+  if (!data) return <NoDataFound />
 
   const {
     currency,

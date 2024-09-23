@@ -12,6 +12,7 @@ import {
 } from "@/db/schemas"
 import { donations, doners, type Donation } from "@/db/schemas/donation"
 import { type DrizzleWhere } from "@/types"
+import Decimal from "decimal.js"
 import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 import { alias } from "drizzle-orm/pg-core"
 
@@ -22,7 +23,18 @@ import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
 export async function getDonations(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, operator, from, to, paymentType } = input
+  const {
+    page,
+    per_page,
+    sort,
+    operator,
+    from,
+    to,
+    paymentType,
+    amount,
+    currencyCode,
+    donerName,
+  } = input
 
   try {
     const offset = calculateOffset(page, per_page)
@@ -32,7 +44,6 @@ export async function getDonations(input: GetSearchSchema) {
       "desc",
     ]) as [keyof Donation | undefined, "asc" | "desc" | undefined]
 
-    // Convert the date strings to date objects
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
@@ -43,12 +54,29 @@ export async function getDonations(input: GetSearchSchema) {
       //     })
       //   : undefined,
 
-      // Filter by createdAt
+      // Filter by amount
+      amount ? eq(donations.amount, new Decimal(amount).toFixed(4)) : undefined,
+
       !!paymentType
         ? filterColumn({
             column: donations.paymentType,
             value: paymentType,
             isSelectable: true,
+          })
+        : undefined,
+
+      !!currencyCode
+        ? filterColumn({
+            column: currencies.code,
+            value: currencyCode,
+            isSelectable: true,
+          })
+        : undefined,
+
+      !!donerName
+        ? filterColumn({
+            column: doners.name,
+            value: donations.donerId,
           })
         : undefined,
 

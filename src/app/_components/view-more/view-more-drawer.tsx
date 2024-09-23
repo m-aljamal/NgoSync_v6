@@ -8,8 +8,8 @@ import {
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-} from "./ui/drawer"
-import { ScrollArea } from "./ui/scroll-area"
+} from "../../../components/ui/drawer"
+import { ScrollArea } from "../../../components/ui/scroll-area"
 
 export default function ViewMoreDrawer({
   children,

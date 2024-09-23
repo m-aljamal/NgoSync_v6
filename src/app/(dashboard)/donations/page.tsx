@@ -1,18 +1,23 @@
-import { type SearchParams } from "@/types"
 import React from "react"
+import { type SearchParams } from "@/types"
 
-import { getDonations } from "@/app/_lib/queries/donations"
-import { searchParamsSchema } from "@/app/_lib/validations"
+import { Skeleton } from "@/components/ui/skeleton"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { Skeleton } from "@/components/ui/skeleton"
+import { getDonations } from "@/app/_lib/queries/donations"
+import { searchParamsSchema } from "@/app/_lib/validations"
+
 import { DonationTable } from "./_components/donation-table"
 
- 
-export default function Proposals({ searchParams }: SearchParams) {
+export interface IndexPageProps {
+  searchParams: SearchParams
+}
+
+export default function Proposals({ searchParams }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
+
   const promise = getDonations(search)
 
   return (

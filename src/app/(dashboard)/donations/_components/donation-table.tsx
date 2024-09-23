@@ -25,9 +25,36 @@ export function DonationTable({ promise }: DonationTableProps) {
 
   const filterFields: DataTableFilterField<DonationWithRelations>[] = [
     {
-      label: "Amount",
+      label: "المبلغ",
       value: "amount",
       placeholder: "بحث عن مبلغ",
+    },
+    {
+      label: "العملة",
+      value: "currencyCode",
+      options: [
+        {
+          label: "دولار",
+          value: "USD",
+          withCount: true,
+        },
+      ],
+    },
+    {
+      label: "المتبرع",
+      value: "donerName",
+      options: [
+        {
+          label: "yyyyy",
+          value: "yyyyy",
+          withCount: true,
+        },
+        {
+          label: "ssssss",
+          value: "ssssss",
+          withCount: true,
+        },
+      ],
     },
 
     {
