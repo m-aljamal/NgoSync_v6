@@ -9,11 +9,13 @@ import { useDataTable } from "@/hooks/use-data-table"
 import { useGetCurrencies, useGetDoners } from "@/hooks/use-get-form-data"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
+ 
 import { type getDonations } from "@/app/_lib/queries/donations"
 import { donationPaymentTranslation } from "@/app/_lib/translate"
 
 import { getColumns } from "./donation-table-columns"
 import { DonationTableToolbarActions } from "./donation-table-toolbar-actions"
+import { DonationsTableFloatingBar } from "./donations-table-floating-bar"
 
 interface DonationTableProps {
   promise: ReturnType<typeof getDonations>
@@ -92,7 +94,10 @@ export function DonationTable({ promise }: DonationTableProps) {
   })
 
   return (
-    <DataTable table={table}>
+    <DataTable
+      table={table}
+      floatingBar={<DonationsTableFloatingBar table={table} />}
+    >
       <DataTableToolbar table={table} filterFields={filterFields}>
         <DonationTableToolbarActions table={table} />
       </DataTableToolbar>

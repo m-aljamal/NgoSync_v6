@@ -167,6 +167,8 @@ export const deleteDonations = actionClient
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput: { ids } }) => {
+    console.log("ids", ids);
+    
     noStore()
 
     await db.transaction(async (ex) => {
