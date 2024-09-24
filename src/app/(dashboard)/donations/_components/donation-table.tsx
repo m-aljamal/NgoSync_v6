@@ -38,20 +38,9 @@ export function DonationTable({ promise }: DonationTableProps) {
           value: "USD",
           withCount: true,
         },
-      ],
-    },
-    {
-      label: "المتبرع",
-      value: "donerName",
-      options: [
         {
-          label: "yyyyy",
-          value: "yyyyy",
-          withCount: true,
-        },
-        {
-          label: "ssssss",
-          value: "ssssss",
+          label: "تركي",
+          value: "TRY",
           withCount: true,
         },
       ],

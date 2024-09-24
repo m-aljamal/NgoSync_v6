@@ -47,14 +47,6 @@ export async function getDonations(input: GetSearchSchema) {
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
-      // name
-      //   ? filterColumn({
-      //       column: doners.name,
-      //       value: name,
-      //     })
-      //   : undefined,
-
-      // Filter by amount
       amount ? eq(donations.amount, new Decimal(amount).toFixed(4)) : undefined,
 
       !!paymentType
@@ -70,13 +62,6 @@ export async function getDonations(input: GetSearchSchema) {
             column: currencies.code,
             value: currencyCode,
             isSelectable: true,
-          })
-        : undefined,
-
-      !!donerName
-        ? filterColumn({
-            column: doners.name,
-            value: donations.donerId,
           })
         : undefined,
 
@@ -134,6 +119,12 @@ export async function getDonations(input: GetSearchSchema) {
         })
         .from(donations)
         .where(where)
+        .innerJoin(
+          fundTransactions,
+          eq(donations.fundTransactionId, fundTransactions.id)
+        )
+        .innerJoin(currencies, eq(fundTransactions.currencyId, currencies.id))
+        .innerJoin(doners, eq(donations.donerId, doners.id))
         .execute()
         .then((res) => res[0]?.count ?? 0)
 

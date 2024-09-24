@@ -81,8 +81,8 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
         </Badge>
       ),
       filterFn: (row, id, value) => {
-        console.log("teeeee")
-
+ console.log("dsdsd");
+ 
         return Array.isArray(value) && value.includes(row.getValue(id))
       },
     },
