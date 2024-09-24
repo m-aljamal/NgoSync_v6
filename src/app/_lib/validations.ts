@@ -30,7 +30,7 @@ export const searchParamsSchema = z.object({
   currencyCode: z.string().optional(),
   paymentType: z.string().optional(),
   donerType: z.enum(doners.type.enumValues).optional(),
-  donerName: z.string().optional(),
+  donerId: z.string().optional(),
 })
 
 export const getTasksSchema = searchParamsSchema

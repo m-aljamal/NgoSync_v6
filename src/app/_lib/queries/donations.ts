@@ -33,7 +33,7 @@ export async function getDonations(input: GetSearchSchema) {
     paymentType,
     amount,
     currencyCode,
-    donerName,
+    donerId,
   } = input
 
   try {
@@ -53,6 +53,14 @@ export async function getDonations(input: GetSearchSchema) {
         ? filterColumn({
             column: donations.paymentType,
             value: paymentType,
+            isSelectable: true,
+          })
+        : undefined,
+
+      !!donerId
+        ? filterColumn({
+            column: donations.donerId,
+            value: donerId,
             isSelectable: true,
           })
         : undefined,

@@ -81,8 +81,6 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
         </Badge>
       ),
       filterFn: (row, id, value) => {
- console.log("dsdsd");
- 
         return Array.isArray(value) && value.includes(row.getValue(id))
       },
     },
@@ -92,9 +90,13 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="المتبرع" />
       ),
-      filterFn: (row, id, value) => {
-        return Array.isArray(value) && value.includes(row.getValue(id))
-      },
+      cell: ({ row }) => <span>{row.getValue("donerName")}</span>,
+    },
+    {
+      size: 0,
+      accessorKey: "donerId",
+      header: undefined,
+      cell: undefined,
     },
 
     {

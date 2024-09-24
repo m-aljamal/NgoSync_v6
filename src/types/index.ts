@@ -19,6 +19,7 @@ export interface DataTableFilterField<TData> {
   value: keyof TData
   placeholder?: string
   options?: Option[]
+  isLoading?: boolean
 }
 
 export interface DataTableFilterOption<TData> {
@@ -35,8 +36,6 @@ export type DrizzleWhere<T> =
   | SQL<unknown>
   | ((aliases: T) => SQL<T> | undefined)
   | undefined
-
- 
 
 export type PageLinks = {
   title: string

@@ -6,6 +6,7 @@ import { donations, type DonationWithRelations } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
+import { useGetCurrencies, useGetDoners } from "@/hooks/use-get-form-data"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { type getDonations } from "@/app/_lib/queries/donations"
@@ -21,6 +22,10 @@ interface DonationTableProps {
 export function DonationTable({ promise }: DonationTableProps) {
   const { data, pageCount } = React.use(promise)
 
+  const { data: currencies, isLoading: loadingCurrencies } = useGetCurrencies()
+
+  const { data: doners, isLoading: LoadingDoners } = useGetDoners()
+
   const columns = React.useMemo(() => getColumns(), [])
 
   const filterFields: DataTableFilterField<DonationWithRelations>[] = [
@@ -29,21 +34,38 @@ export function DonationTable({ promise }: DonationTableProps) {
       value: "amount",
       placeholder: "بحث عن مبلغ",
     },
+
     {
       label: "العملة",
       value: "currencyCode",
-      options: [
-        {
-          label: "دولار",
-          value: "USD",
-          withCount: true,
-        },
-        {
-          label: "تركي",
-          value: "TRY",
-          withCount: true,
-        },
-      ],
+      options: loadingCurrencies
+        ? [
+            {
+              label: "جاري التحميل...",
+              value: "loading",
+            },
+          ]
+        : currencies?.map((currency) => ({
+            label: currency.name,
+            value: currency.code,
+            withCount: true,
+          })),
+    },
+    {
+      label: "الداعم",
+      value: "donerId",
+      options: LoadingDoners
+        ? [
+            {
+              label: "جاري التحميل...",
+              value: "loading",
+            },
+          ]
+        : doners?.map((doner) => ({
+            label: doner.name,
+            value: doner.id,
+            withCount: true,
+          })),
     },
 
     {
