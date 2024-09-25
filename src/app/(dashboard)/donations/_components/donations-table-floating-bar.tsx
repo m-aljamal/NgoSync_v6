@@ -1,15 +1,13 @@
 import * as React from "react"
-import { Donation, tasks, type Task } from "@/db/schemas"
 import {
-  ArrowUpIcon,
-  CheckCircledIcon,
-  Cross2Icon,
-  DownloadIcon,
-  ReloadIcon,
-  TrashIcon,
-} from "@radix-ui/react-icons"
+  donations,
+  type Donation,
+  type DonationWithRelations,
+} from "@/db/schemas"
+import { DownloadIcon, ReloadIcon, TrashIcon } from "@radix-ui/react-icons"
 import { SelectTrigger } from "@radix-ui/react-select"
 import { type Table } from "@tanstack/react-table"
+import { CircleDollarSign } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"
 
@@ -21,17 +19,22 @@ import {
   SelectGroup,
   SelectItem,
 } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { Kbd } from "@/components/kbd"
-import { deleteDonations } from "@/app/_lib/actions/donation"
+import { FloatingTooltip } from "@/app/_components/table/floating-tooltip"
+import TableFloatingBar from "@/app/_components/table/table-floating-bar"
+import {
+  deleteDonations,
+  updateDonationsPayment,
+} from "@/app/_lib/actions/donation"
+import { donationPaymentTranslation } from "@/app/_lib/translate"
+import { FloatingSelect } from "@/app/_components/table/floating-select"
 
 interface TasksTableFloatingBarProps {
-  table: Table<Donation>
+  table: Table<DonationWithRelations>
 }
 
 export function DonationsTableFloatingBar({
@@ -41,20 +44,8 @@ export function DonationsTableFloatingBar({
 
   const [isPending, startTransition] = React.useTransition()
   const [method, setMethod] = React.useState<
-    "update-status" | "update-priority" | "export" | "delete"
+    "update-paymentType" | "update-priority" | "export" | "delete"
   >()
-
-  // Clear selection on Escape key press
-  React.useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        table.toggleAllRowsSelected(false)
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [table])
 
   const { executeAsync, isExecuting } = useAction(deleteDonations, {
     onSuccess: () => {
@@ -64,238 +55,101 @@ export function DonationsTableFloatingBar({
       toast.error(error.serverError)
     },
   })
-  // async function onDelete() {
-  //   await executeAsync({ ids: rows.map((d)=> )
-  //     .map((p) => p.fundTransactionId) })
-  //   toast.dismiss()
-  // }
+
+  async function onDelete() {
+    setMethod("delete")
+    await executeAsync({
+      ids: rows.map((row) => row.original.fundTransactionId),
+    })
+  }
+
+  const {
+    executeAsync: updateExecuteAsync,
+    isExecuting: updateDonationExecuting,
+  } = useAction(updateDonationsPayment, {
+    onSuccess: () => {
+      toast.success("تم التحديث بنجاح")
+      table.toggleAllRowsSelected(false)
+    },
+    onError: ({ error }) => {
+      toast.error(error.serverError)
+    },
+  })
+
+  async function updatePaymentType(value: Donation["paymentType"]) {
+    setMethod("update-paymentType")
+    await updateExecuteAsync({
+      ids: rows.map((row) => row.original.fundTransactionId),
+      paymentType: value,
+    })
+  }
+
   return (
-    <div className="fixed inset-x-0 bottom-4 z-50 mx-auto w-fit px-4">
-      <div className="w-full overflow-x-auto">
-        <div className="mx-auto flex w-fit items-center gap-2 rounded-md border bg-card p-2 shadow-2xl">
-          <div className="flex h-7 items-center rounded-md border border-dashed pl-2.5 pr-1">
-            <span className="whitespace-nowrap text-xs">
-              {rows.length} selected
-            </span>
-            <Separator orientation="vertical" className="ml-2 mr-1" />
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-5 hover:border"
-                  onClick={() => table.toggleAllRowsSelected(false)}
-                >
-                  <Cross2Icon
-                    className="size-3.5 shrink-0"
+    <TableFloatingBar table={table}>
+
+    <FloatingSelect
+      icon={CircleDollarSign}
+      isLoading={updateDonationExecuting}
+      text="تحديث الدفع"
+      onValueChange={(value: Donation["paymentType"]) =>
+        updatePaymentType(value)
+      }
+      options={donations.paymentType.enumValues.map((status) => ({
+        label: donationPaymentTranslation[status],
+        value: status,
+      }))}
+
+    />
+
+
+{/* 
+      <Select
+        onValueChange={(value: Donation["paymentType"]) =>
+          updatePaymentType(value)
+        }
+      >
+
+        <Tooltip delayDuration={250}>
+          <SelectTrigger asChild>
+            <TooltipTrigger asChild>
+              <Button
+                variant="secondary"
+                size="icon"
+                className="size-7 border data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
+                disabled={updateDonationExecuting}
+              >
+                {updateDonationExecuting && method === "update-paymentType" ? (
+                  <ReloadIcon
+                    className="size-3.5 animate-spin"
                     aria-hidden="true"
                   />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="flex items-center border bg-accent px-2 py-1 font-semibold text-foreground dark:bg-zinc-900">
-                <p className="mr-2">Clear selection</p>
-                <Kbd abbrTitle="Escape" variant="outline">
-                  Esc
-                </Kbd>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          <Separator orientation="vertical" className="hidden h-5 sm:block" />
-          <div className="flex items-center gap-1.5">
-            <Select
-              onValueChange={(value: Task["status"]) => {
-                setMethod("update-status")
+                ) : (
+                  <CircleDollarSign className="size-3.5" aria-hidden="true" />
+                )}
+              </Button>
+            </TooltipTrigger>
+          </SelectTrigger>
+          <TooltipContent className="border bg-accent font-semibold text-foreground dark:bg-zinc-900">
+            <p>تحديث الدفع</p>
+          </TooltipContent>
+        </Tooltip>
+        <SelectContent align="center">
+          <SelectGroup>
+            {donations.paymentType.enumValues.map((status) => (
+              <SelectItem key={status} value={status} className="capitalize">
+                {donationPaymentTranslation[status]}
+              </SelectItem>
+            ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select> */}
 
-                startTransition(async () => {
-                  // const { error } = await updateTasks({
-                  //   ids: rows.map((row) => row.original.id),
-                  //   status: value,
-                  // })
-
-                  // if (error) {
-                  //   toast.error(error)
-                  //   return
-                  // }
-
-                  toast.success("Tasks updated")
-                })
-              }}
-            >
-              <Tooltip delayDuration={250}>
-                <SelectTrigger asChild>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      className="size-7 border data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
-                      disabled={isPending}
-                    >
-                      {isPending && method === "update-status" ? (
-                        <ReloadIcon
-                          className="size-3.5 animate-spin"
-                          aria-hidden="true"
-                        />
-                      ) : (
-                        <CheckCircledIcon
-                          className="size-3.5"
-                          aria-hidden="true"
-                        />
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                </SelectTrigger>
-                <TooltipContent className="border bg-accent font-semibold text-foreground dark:bg-zinc-900">
-                  <p>Update status</p>
-                </TooltipContent>
-              </Tooltip>
-              <SelectContent align="center">
-                <SelectGroup>
-                  {tasks.status.enumValues.map((status) => (
-                    <SelectItem
-                      key={status}
-                      value={status}
-                      className="capitalize"
-                    >
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Select
-              onValueChange={(value: Task["priority"]) => {
-                setMethod("update-priority")
-
-                startTransition(async () => {
-                  // const { error } = await updateTasks({
-                  //   ids: rows.map((row) => row.original.id),
-                  //   priority: value,
-                  // })
-
-                  // if (error) {
-                  //   toast.error(error)
-                  //   return
-                  // }
-
-                  toast.success("Tasks updated")
-                })
-              }}
-            >
-              <Tooltip delayDuration={250}>
-                <SelectTrigger asChild>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="secondary"
-                      size="icon"
-                      className="size-7 border data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
-                      disabled={isPending}
-                    >
-                      {isPending && method === "update-priority" ? (
-                        <ReloadIcon
-                          className="size-3.5 animate-spin"
-                          aria-hidden="true"
-                        />
-                      ) : (
-                        <ArrowUpIcon className="size-3.5" aria-hidden="true" />
-                      )}
-                    </Button>
-                  </TooltipTrigger>
-                </SelectTrigger>
-                <TooltipContent className="border bg-accent font-semibold text-foreground dark:bg-zinc-900">
-                  <p>Update priority</p>
-                </TooltipContent>
-              </Tooltip>
-              <SelectContent align="center">
-                <SelectGroup>
-                  {tasks.priority.enumValues.map((priority) => (
-                    <SelectItem
-                      key={priority}
-                      value={priority}
-                      className="capitalize"
-                    >
-                      {priority}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-            <Tooltip delayDuration={250}>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="size-7 border"
-                  onClick={() => {
-                    setMethod("export")
-
-                    startTransition(() => {
-                      exportTableToCSV(table, {
-                        excludeColumns: ["select", "actions"],
-                        onlySelected: true,
-                      })
-                    })
-                  }}
-                  disabled={isPending}
-                >
-                  {isPending && method === "export" ? (
-                    <ReloadIcon
-                      className="size-3.5 animate-spin"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <DownloadIcon className="size-3.5" aria-hidden="true" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="border bg-accent font-semibold text-foreground dark:bg-zinc-900">
-                <p>Export tasks</p>
-              </TooltipContent>
-            </Tooltip>
-            <Tooltip delayDuration={250}>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="icon"
-                  className="size-7 border"
-                  onClick={async () => {
-                    setMethod("delete")
-
-                    await executeAsync({
-                      ids: rows.map((row) => row.original.fundTransactionId),
-                    })
-
-                    // startTransition(async () => {
-                    //   const deleteDonation = await deleteDonations({
-                    //     ids: rows.map((row) => row.original.id),
-                    //   })
-
-                    //   if (deleteDonation?.serverError) {
-                    //     toast.error(deleteDonation?.serverError)
-                    //     return
-                    //   }
-
-                    //   table.toggleAllRowsSelected(false)
-                    // })
-                  }}
-                  disabled={isExecuting}
-                >
-                  {isExecuting && method === "delete" ? (
-                    <ReloadIcon
-                      className="size-3.5 animate-spin"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <TrashIcon className="size-3.5" aria-hidden="true" />
-                  )}
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="border bg-accent font-semibold text-foreground dark:bg-zinc-900">
-                <p>Delete tasks</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-        </div>
-      </div>
-    </div>
+      <FloatingTooltip
+        icon={TrashIcon}
+        isLoading={isExecuting}
+        text="حذف"
+        onClick={onDelete}
+      />
+    </TableFloatingBar>
   )
 }

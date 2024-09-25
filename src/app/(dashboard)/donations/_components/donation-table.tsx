@@ -9,7 +9,6 @@ import { useDataTable } from "@/hooks/use-data-table"
 import { useGetCurrencies, useGetDoners } from "@/hooks/use-get-form-data"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
- 
 import { type getDonations } from "@/app/_lib/queries/donations"
 import { donationPaymentTranslation } from "@/app/_lib/translate"
 

@@ -6,6 +6,7 @@ import { donations, fundTransactions } from "@/db/schemas"
 import { format } from "date-fns"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
+import { z } from "zod"
 
 import { calculateAmounts } from "../queries/utils"
 import { actionClient } from "../safe-action"
@@ -167,15 +168,54 @@ export const deleteDonations = actionClient
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput: { ids } }) => {
-    console.log("ids", ids);
-    
     noStore()
 
     await db.transaction(async (ex) => {
       await ex.delete(fundTransactions).where(inArray(fundTransactions.id, ids))
+
       await ex
         .delete(donations)
         .where(inArray(donations.fundTransactionId, ids))
     })
+    revalidatePath("/donations")
+  })
+
+export const updateDonationsPayment = actionClient
+  .schema(
+    z.object({
+      ids: z.array(z.string()),
+      paymentType: z.enum(donations.paymentType.enumValues),
+    }),
+    {
+      handleValidationErrorsShape: (ve) =>
+        flattenValidationErrors(ve).fieldErrors,
+    }
+  )
+  .action(async ({ parsedInput: { ids, paymentType } }) => {
+    await db.transaction(async (tx) => {
+      const updatePromises = ids.map(async (id) => {
+        const [donation] = await tx
+          .update(donations)
+          .set({ paymentType })
+          .where(eq(donations.fundTransactionId, id))
+          .returning({
+            donationAmount: donations.amount,
+          })
+
+        if (!donation?.donationAmount) {
+          throw new Error("خطأ في تحديث الدفع")
+        }
+
+        await tx
+          .update(fundTransactions)
+          .set({
+            amount: paymentType === "debt" ? "0" : donation.donationAmount,
+          })
+          .where(eq(fundTransactions.id, id))
+      })
+
+      await Promise.all(updatePromises)
+    })
+
     revalidatePath("/donations")
   })
