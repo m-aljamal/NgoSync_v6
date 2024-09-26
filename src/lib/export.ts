@@ -54,6 +54,8 @@ export function exportTableToCSV<TData>(
     ),
   ].join("\n")
 
+   
+
   const utf8Bom = "\uFEFF"
   // Create a Blob with CSV content
   const blob = new Blob([utf8Bom + csvContent], {
