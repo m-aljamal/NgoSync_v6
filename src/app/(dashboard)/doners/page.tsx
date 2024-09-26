@@ -11,7 +11,11 @@ import { searchParamsSchema } from "@/app/_lib/validations"
 
 import { DonersTable } from "./_components/doners-table"
 
-export default function Doners({ searchParams }: SearchParams) {
+export interface IndexPageProps {
+  searchParams: SearchParams
+}
+
+export default function Doners({ searchParams }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
   const promise = getDoners(search)
 

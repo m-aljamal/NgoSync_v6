@@ -13,8 +13,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import InputGroup from "@/components/form-components/InputGroup"
-import { AppSelect } from "@/components/form-components/select"
+import {
+  AppSelect,
+  DescriptionInput,
+  InputGroup,
+} from "@/components/form-components"
 import {
   donerStatusTranslation,
   donerTypeTranslation,
@@ -27,24 +30,18 @@ interface CreateDonerFormProps
   children: React.ReactNode
   form: UseFormReturn<CreateDonerSchema>
   onSubmit: (data: CreateDonerSchema) => void
-  isUpdate?: boolean
 }
 
-export function DonerForm({
-  form,
-  onSubmit,
-  children,
-  isUpdate,
-}: CreateDonerFormProps) {
+export function DonerForm({ form, onSubmit, children }: CreateDonerFormProps) {
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup isUpdate={isUpdate}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <InputGroup>
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="mt-5">
                 <FormLabel>اسم المتبرع</FormLabel>
                 <FormControl>
                   <Input type="text" placeholder="اسم المتبرع" {...field} />
@@ -153,19 +150,7 @@ export function DonerForm({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>ملاحظات</FormLabel>
-                <FormControl>
-                  <Input placeholder="متبرع مميز يتبرع بشكل دوري." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <DescriptionInput form={form} />
         </InputGroup>
         {children}
       </form>
