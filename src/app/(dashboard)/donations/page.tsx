@@ -32,7 +32,7 @@ export default function Proposals({ searchParams }: IndexPageProps) {
           <DateRangePicker
             triggerSize="sm"
             triggerClassName="ml-auto w-56 sm:w-60"
-            align="end"
+            align="start"
           />
         </React.Suspense>
         <React.Suspense
