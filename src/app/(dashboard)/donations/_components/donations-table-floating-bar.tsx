@@ -9,9 +9,9 @@ import { CircleDollarSign } from "lucide-react"
 import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"
 
-import { FloatingSelect } from "@/app/_components/table/floating-select"
-import { FloatingTooltip } from "@/app/_components/table/floating-tooltip"
-import TableFloatingBar from "@/app/_components/table/table-floating-bar"
+import { FloatingSelect } from "@/components/data-table/floating-select"
+import { FloatingTooltip } from "@/components/data-table/floating-tooltip"
+import TableFloatingBar from "@/components/data-table/table-floating-bar"
 import {
   deleteDonations,
   updateDonationsPayment,

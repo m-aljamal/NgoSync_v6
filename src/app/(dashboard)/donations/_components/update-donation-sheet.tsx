@@ -10,8 +10,7 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { type Sheet } from "@/components/ui/sheet"
-import UpdateButtons from "@/components/form-components/update-buttons"
-import { UpdateSheet } from "@/components/form-components/update-sheet"
+import { UpdateButtons, UpdateSheet } from "@/components/form-components"
 import { updateDonation } from "@/app/_lib/actions/donation"
 import {
   createDonationSchema,

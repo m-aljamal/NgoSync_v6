@@ -4,7 +4,7 @@ import dynamic from "next/dynamic"
 import { useMountedState } from "react-use"
 
 import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
-import ViewMoreDrawer from "@/app/_components/view-more/view-more-drawer"
+import { ViewMoreDrawer } from "@/components/view-more"
 
 const ViewMoreDonation = dynamic(
   () => import("@/app/(dashboard)/donations/_components/view-more-donation")

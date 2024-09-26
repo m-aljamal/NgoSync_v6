@@ -15,7 +15,7 @@ export interface IndexPageProps {
   searchParams: SearchParams
 }
 
-export default function Proposals({ searchParams }: IndexPageProps) {
+export default function Donations({ searchParams }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
   const promise = getDonations(search)

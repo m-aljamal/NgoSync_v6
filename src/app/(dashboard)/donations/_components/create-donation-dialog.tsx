@@ -6,8 +6,7 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { useFormDialog } from "@/hooks/use-form-dialog"
-import FormButtons from "@/components/form-components/form-buttons"
-import FormDialog from "@/components/form-components/form-dialog"
+import { FormButtons, FormDialog } from "@/components/form-components"
 import { createDonation } from "@/app/_lib/actions/donation"
 import {
   createDonationSchema,

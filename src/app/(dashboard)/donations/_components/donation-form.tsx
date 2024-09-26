@@ -16,12 +16,14 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
-import { DateInput } from "@/components/form-components"
-import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
-import FundInput from "@/components/form-components/fund-input"
-import InputGroup from "@/components/form-components/InputGroup"
-import ProjectInput from "@/components/form-components/project-input"
-import { AppSelect } from "@/components/form-components/select"
+import {
+  AppSelect,
+  CurrencyAmountInput,
+  DateInput,
+  FundInput,
+  InputGroup,
+  ProjectInput,
+} from "@/components/form-components"
 import { donationPaymentTypeTranslation } from "@/app/_lib/translate"
 import { type CreateDonationSchema } from "@/app/_lib/validations"
 
@@ -38,7 +40,7 @@ export function DonationForm({
   children,
 }: CreateDonationFormProps) {
   const { data: doners, isLoading: loadingDoners } = useGetDoners()
-   
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>

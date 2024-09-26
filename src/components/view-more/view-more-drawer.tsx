@@ -1,15 +1,14 @@
 import React from "react"
 
 import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
-
 import {
   Drawer,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-} from "../../../components/ui/drawer"
-import { ScrollArea } from "../../../components/ui/scroll-area"
+} from "@/components/ui/drawer"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 export default function ViewMoreDrawer({
   children,

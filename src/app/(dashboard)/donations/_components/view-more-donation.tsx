@@ -1,8 +1,10 @@
 import { useGetDonationById } from "@/hooks/queries/use-get-donation"
 import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
-import NoDataFound from "@/app/_components/view-more/no-data-found"
-import ViewMoreCards from "@/app/_components/view-more/view-more-card"
-import ViewMoreLoading from "@/app/_components/view-more/view-more-loading"
+import {
+  NoDataFound,
+  ViewMoreCards,
+  ViewMoreLoading,
+} from "@/components/view-more"
 import { donationPaymentTypeTranslation } from "@/app/_lib/translate"
 
 export default function ViewMoreDonation() {

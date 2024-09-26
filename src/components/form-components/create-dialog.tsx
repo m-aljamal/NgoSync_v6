@@ -30,9 +30,9 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 
-import { createTask } from "../_lib/actions"
-import { createTaskSchema, type CreateTaskSchema } from "../_lib/validations"
-import { CreateTaskForm } from "./create-task-form"
+import { createTask } from "../../app/_lib/actions"
+import { createTaskSchema, type CreateTaskSchema } from "../../app/_lib/validations"
+import { CreateTaskForm } from "../../app/_components/create-task-form"
 
 export function CreateDialog() {
   const [open, setOpen] = React.useState(false)
