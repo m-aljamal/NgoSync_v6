@@ -1,3 +1,5 @@
+import { ViewMoreDataDetails } from "@/types"
+
 import { useGetDonationById } from "@/hooks/queries/use-get-donation"
 import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
 import {
@@ -35,45 +37,44 @@ export default function ViewMoreDonation() {
     amountInText,
   } = data
 
-  const details: { label: string; value: string | number; colSpan?: string }[] =
-    [
-      { label: "التاريخ", value: date },
+  const details: ViewMoreDataDetails = [
+    { label: "التاريخ", value: date },
 
-      {
-        label: "طريقة الدفع",
-        value: donationPaymentTypeTranslation[paymentType],
-      },
-      {
-        label: "المشروع",
-        value: project || "من دون مشروع",
-      },
-      {
-        label: "الدراسة المالية",
-        value: proposal || "من دون دراسة",
-      },
-      {
-        label: "توثيق رسمي",
-        value: isOfficial ? "نعم" : "لا",
-      },
-      {
-        label: "الصندوق",
-        value: fund,
-      },
-      {
-        label: "ملاحظات",
-        value: description || "-",
-        colSpan: "col-span-full",
-      },
-      {
-        label: "المبلغ بالنص",
-        value: amountInText || "-",
-      },
-      {
-        label: "وصف الإيصال",
-        value: receiptDescription || "-",
-        colSpan: "col-span-full",
-      },
-    ]
+    {
+      label: "طريقة الدفع",
+      value: donationPaymentTypeTranslation[paymentType],
+    },
+    {
+      label: "المشروع",
+      value: project || "من دون مشروع",
+    },
+    {
+      label: "الدراسة المالية",
+      value: proposal || "من دون دراسة",
+    },
+    {
+      label: "توثيق رسمي",
+      value: isOfficial ? "نعم" : "لا",
+    },
+    {
+      label: "الصندوق",
+      value: fund,
+    },
+    {
+      label: "ملاحظات",
+      value: description || "-",
+      colSpan: "col-span-full",
+    },
+    {
+      label: "المبلغ بالنص",
+      value: amountInText || "-",
+    },
+    {
+      label: "وصف الإيصال",
+      value: receiptDescription || "-",
+      colSpan: "col-span-full",
+    },
+  ]
 
   return (
     <ViewMoreCards

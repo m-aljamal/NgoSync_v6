@@ -1,7 +1,7 @@
-import { users } from "@/db/schemas"
+import { type users } from "@/db/schemas"
 import { type SQL } from "drizzle-orm"
 
-import { icons } from "@/components/layouts/icons"
+import { type icons } from "@/components/layouts/icons"
 
 export interface SearchParams {
   [key: string]: string | string[] | undefined
@@ -48,4 +48,10 @@ export type PageLinks = {
     icon: keyof typeof icons
     roles: (typeof users.$inferSelect.role)[]
   }[]
+}[]
+
+export type ViewMoreDataDetails = {
+  label: string
+  value: string | number
+  colSpan?: string
 }[]

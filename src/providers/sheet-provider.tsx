@@ -9,9 +9,6 @@ import { ViewMoreDrawer } from "@/components/view-more"
 const ViewMoreDonation = dynamic(
   () => import("@/app/(dashboard)/donations/_components/view-more-donation")
 )
-const ViewMoreDoner = dynamic(
-  () => import("@/app/(dashboard)/doners/_components/view-more-doner")
-)
 
 export const SheetProvider = () => {
   const isMounted = useMountedState()
@@ -23,8 +20,7 @@ export const SheetProvider = () => {
     switch (table) {
       case "donation":
         return <ViewMoreDonation />
-      case "doner":
-        return <ViewMoreDoner />
+
       default:
         return null
     }

@@ -1,10 +1,11 @@
 import "server-only"
 
+import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import { doners, type Doner } from "@/db/schemas/donation"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, gte, lte, or, type SQL } from "drizzle-orm"
+import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -13,7 +14,7 @@ import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
 export async function getDoners(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, name, operator, from, to, donerType } = input
+  const { page, per_page, sort, name, operator, from, to, type, status } = input
 
   try {
     const offset = calculateOffset(page, per_page)
@@ -23,7 +24,6 @@ export async function getDoners(input: GetSearchSchema) {
       "desc",
     ]) as [keyof Doner | undefined, "asc" | "desc" | undefined]
 
-    // Convert the date strings to date objects
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
@@ -33,16 +33,23 @@ export async function getDoners(input: GetSearchSchema) {
             value: name,
           })
         : undefined,
-      // Filter tasks by status
-      !!donerType
+
+      !!type
         ? filterColumn({
             column: doners.type,
-            value: donerType,
+            value: type,
             isSelectable: true,
           })
         : undefined,
 
-      // Filter by createdAt
+      !!status
+        ? filterColumn({
+            column: doners.status,
+            value: status,
+            isSelectable: true,
+          })
+        : undefined,
+
       fromDay && toDay
         ? and(gte(doners.createdAt, fromDay), lte(doners.createdAt, toDay))
         : undefined,
@@ -51,7 +58,6 @@ export async function getDoners(input: GetSearchSchema) {
     const where: DrizzleWhere<Doner> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
 
-    // Transaction is used to ensure both queries are executed in a single transaction
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
         .select()
@@ -89,3 +95,21 @@ export async function getDoners(input: GetSearchSchema) {
     return { data: [], pageCount: 0 }
   }
 }
+
+export const getDoner = cache(
+  async ({ id, name }: { id?: string; name?: string }) => {
+    if (!id && !name) return
+    try {
+      const data = await db.query.doners.findFirst({
+        where: id
+          ? eq(doners.id, id)
+          : name
+            ? eq(doners.name, name)
+            : undefined,
+      })
+      return data
+    } catch (error) {
+      throw new Error("Error fetching doner")
+    }
+  }
+)

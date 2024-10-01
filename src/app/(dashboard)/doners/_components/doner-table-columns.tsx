@@ -1,12 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { doners, type Doner } from "@/db/schemas/donation"
+import { useRouter } from "next/navigation"
+import { type Doner } from "@/db/schemas/donation"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
 
-import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -19,7 +18,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
-import { donerStatusTranslation } from "@/app/_lib/translate"
+import {
+  donerStatusTranslation,
+  donerTypeTranslation,
+} from "@/app/_lib/translate"
 
 import { DeleteDonersDialog } from "./delete-doner-dialog"
 import { UpdateDonerSheet } from "./update-doner-sheet"
@@ -68,6 +70,11 @@ export function getColumns(): ColumnDef<Doner>[] {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="النوع" />
       ),
+      cell: ({ row }) => (
+        <Badge variant={row.original.type}>
+          {donerTypeTranslation[row.original.type]}
+        </Badge>
+      ),
     },
 
     {
@@ -76,26 +83,14 @@ export function getColumns(): ColumnDef<Doner>[] {
         <DataTableColumnHeader column={column} title="الحالة" />
       ),
       cell: ({ row }) => {
-        const status = doners.status.enumValues.find(
-          (status) => status === row.original.status
-        )
-
-        if (!status) return null
-
-        return <Badge variant="outline">{donerStatusTranslation[status]}</Badge>
+        const status = row.original.status
+        return <Badge variant={status}>{donerStatusTranslation[status]}</Badge>
       },
       filterFn: (row, id, value) => {
         return Array.isArray(value) && value.includes(row.getValue(id))
       },
     },
 
-    {
-      accessorKey: "createdAt",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="تاريخ الانشاء" />
-      ),
-      cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
-    },
     {
       id: "actions",
       cell: function Cell({ row }) {
@@ -104,8 +99,7 @@ export function getColumns(): ColumnDef<Doner>[] {
         const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
           React.useState(false)
 
-        const { onOpen } = useViewMoreDialog()
-
+        const router = useRouter()
         return (
           <>
             <UpdateDonerSheet
@@ -132,7 +126,9 @@ export function getColumns(): ColumnDef<Doner>[] {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
                 <DropdownMenuItem
-                  onSelect={() => onOpen(row.original.id, "doner")}
+                  onSelect={() =>
+                    router.push(`/doners/${row.original.id}/overview`)
+                  }
                 >
                   التفاصيل
                 </DropdownMenuItem>

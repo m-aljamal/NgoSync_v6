@@ -29,7 +29,7 @@ export const searchParamsSchema = z.object({
   amount: z.string().optional(),
   currencyCode: z.string().optional(),
   paymentType: z.string().optional(),
-  donerType: z.enum(doners.type.enumValues).optional(),
+  type:  z.string().optional(),
   donerId: z.string().optional(),
 })
 

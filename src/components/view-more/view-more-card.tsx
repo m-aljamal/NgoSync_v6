@@ -6,7 +6,7 @@ type ViewMoreCardProps = {
     title: string
     details: { label: string; value: string | number }[]
   }
-  amounts: {
+  amounts?: {
     currency: string
     amount: string
     amountInUSD: string
@@ -20,43 +20,42 @@ type ViewMoreCardProps = {
 
 export default function ViewMoreCards({
   details: { title, details },
-  amounts: {
-    currency,
-    amount,
-    amountInUSD,
-    proposalAmount,
-    proposalCurrency,
-    isOfficial,
-    officialAmount,
-    officialAmountCurrency,
-  },
+  amounts,
 }: ViewMoreCardProps) {
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
-        <AmountCard
-          currency={currency}
-          amount={amount}
-          title="المبلغ المستلم"
-        />
-        {currency !== "USD" && (
-          <AmountCard currency="USD" amount={amountInUSD} title="يعادل USD" />
-        )}
-        {proposalAmount && proposalCurrency && (
+      {amounts && (
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
           <AmountCard
-            currency={proposalCurrency}
-            amount={proposalAmount}
-            title="المبلغ بعملة الدراسة"
+            currency={amounts.currency}
+            amount={amounts.amount}
+            title="المبلغ المستلم"
           />
-        )}
-        {isOfficial && officialAmount && officialAmountCurrency && (
-          <AmountCard
-            currency={officialAmountCurrency}
-            amount={officialAmount}
-            title="المبلغ بالعملة الرسمية"
-          />
-        )}
-      </div>
+          {amounts.currency !== "USD" && (
+            <AmountCard
+              currency="USD"
+              amount={amounts.amountInUSD}
+              title="يعادل USD"
+            />
+          )}
+          {amounts.proposalAmount && amounts.proposalCurrency && (
+            <AmountCard
+              currency={amounts.proposalCurrency}
+              amount={amounts.proposalAmount}
+              title="المبلغ بعملة الدراسة"
+            />
+          )}
+          {amounts.isOfficial &&
+            amounts.officialAmount &&
+            amounts.officialAmountCurrency && (
+              <AmountCard
+                currency={amounts.officialAmountCurrency}
+                amount={amounts.officialAmount}
+                title="المبلغ بالعملة الرسمية"
+              />
+            )}
+        </div>
+      )}
       <DetailsCard title={title} details={details} />
     </div>
   )

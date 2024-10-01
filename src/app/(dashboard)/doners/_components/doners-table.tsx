@@ -1,14 +1,18 @@
 "use client"
 "use memo"
 
-import { type Doner } from "@/db/schemas"
-import { type DataTableFilterField } from "@/types"
 import * as React from "react"
+import { doners, type Doner } from "@/db/schemas"
+import { type DataTableFilterField } from "@/types"
 
-import { type getDoners } from "@/app/_lib/queries/doners"
+import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { useDataTable } from "@/hooks/use-data-table"
+import { type getDoners } from "@/app/_lib/queries/doners"
+import {
+  donerStatusTranslation,
+  donerTypeTranslation,
+} from "@/app/_lib/translate"
 
 import { getColumns } from "./doner-table-columns"
 import { DonersTableToolbarActions } from "./doners-table-toolbar-actions"
@@ -26,18 +30,26 @@ export function DonersTable({ promise }: DonersTableProps) {
     {
       label: "Title",
       value: "name",
-      placeholder: "بحث عن عنوان",
+      placeholder: "بحث عن  متبرع",
     },
-    // {
-    //   label: "الحالة",
-    //   value: "status",
-    //   options: doners.status.enumValues.map((status) => ({
-    //     label: projectStatusTranslation[status],
-    //     value: status,
-    //     icon: getStatusIcon(status),
-    //     withCount: true,
-    //   })),
-    // },
+    {
+      label: "الحالة",
+      value: "status",
+      options: doners.status.enumValues.map((status) => ({
+        label: donerStatusTranslation[status],
+        value: status,
+        withCount: true,
+      })),
+    },
+    {
+      label: "النوع",
+      value: "type",
+      options: doners.type.enumValues.map((type) => ({
+        label: donerTypeTranslation[type],
+        value: type,
+        withCount: true,
+      })),
+    },
   ]
 
   const { table } = useDataTable({
