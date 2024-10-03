@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { Fragment, useMemo } from "react"
 import {
   useWatch,
   type FieldValues,
@@ -44,7 +44,7 @@ export default function CurrencyAmountInput<T extends FieldValues>({
   }, [selectedCurrencyId, currencies])
 
   return (
-    <>
+    <Fragment>
       <FormField
         control={form.control}
         name={currencyName as Path<T>}
@@ -73,6 +73,6 @@ export default function CurrencyAmountInput<T extends FieldValues>({
           currency={selectedCurrency?.code}
         />
       ) : null}
-    </>
+    </Fragment>
   )
 }

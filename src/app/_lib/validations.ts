@@ -5,7 +5,6 @@ import Decimal from "decimal.js"
 import * as z from "zod"
 
 const currencyId = z.string().min(2)
-const amount = z.coerce.number().positive()
 
 const decimalSchema = z.instanceof(Decimal).or(
   z
@@ -29,7 +28,7 @@ export const searchParamsSchema = z.object({
   amount: z.string().optional(),
   currencyCode: z.string().optional(),
   paymentType: z.string().optional(),
-  type:  z.string().optional(),
+  type: z.string().optional(),
   donerId: z.string().optional(),
 })
 
@@ -119,12 +118,12 @@ export type CreateExpenseCategorySchema = z.infer<
 export const createProposalSchema = z.object({
   id: z.string().optional(),
   name: z.string().min(2),
-  amount,
+  amount: decimalSchema,
   projectId: z.string().min(2),
   currencyId,
   proposalExpenseCategories: z.array(
     z.object({
-      amount,
+      amount: decimalSchema,
       expensesCategoryId: z.string().min(2),
       id: z.string().optional(),
     })
@@ -170,7 +169,7 @@ export const createTransferSchema = z.object({
   id: z.string().optional(),
   senderId: z.string().min(2),
   receiverId: z.string().min(2),
-  amount,
+  amount: decimalSchema,
   date,
   description: z.string().optional(),
   currencyId,
@@ -193,9 +192,9 @@ export const createExchangeSchema = z.object({
   id: z.string().optional(),
   senderId: z.string().min(2),
   receiverId: z.string().min(2),
-  fromAmount: amount,
-  toAmount: amount,
-  rate: amount,
+  fromAmount: decimalSchema,
+  toAmount: decimalSchema,
+  rate: decimalSchema,
   date,
   description: z.string().optional(),
   fromCurrencyId: currencyId,
@@ -213,7 +212,7 @@ export const createEmployeeSchema = z.object({
   email: z.string().email().optional(),
   phone: z.string().optional(),
   address: z.string().optional(),
-  salary: amount,
+  salary: decimalSchema,
   currencyId,
   status: z.enum(employees.status.enumValues),
   description: z.string().optional(),
@@ -233,7 +232,7 @@ export type CreateJobTitleSchema = z.infer<typeof createJobTitleSchema>
 export const createLoanSchema = z.object({
   projectId: z.string().min(2),
   employeeId: z.string().min(2),
-  amount,
+  amount: decimalSchema,
   currencyId,
   type: z.enum(loans.type.enumValues),
   date,

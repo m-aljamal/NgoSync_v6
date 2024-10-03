@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { useMemo } from "react"
+import Decimal from "decimal.js"
 import { Plus, X } from "lucide-react"
 import { useFieldArray, useWatch, type UseFormReturn } from "react-hook-form"
 
@@ -40,7 +41,6 @@ export function ProposalForm({
   form,
   onSubmit,
   children,
-  isUpdate,
 }: CreateProposalFormProps) {
   const { fields, append, remove } = useFieldArray({
     name: "proposalExpenseCategories",
@@ -85,13 +85,13 @@ export function ProposalForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup isUpdate={isUpdate}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <InputGroup>
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="mt-5">
                 <FormLabel>اسم الدراسة</FormLabel>
                 <FormControl>
                   <Input type="text" placeholder="اسم الدراسة" {...field} />
@@ -192,28 +192,11 @@ export function ProposalForm({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
+              <AmountInput
                 name={`proposalExpenseCategories.${index}.amount`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>المبلغ</FormLabel>
-                    <FormControl>
-                      <AmountInput
-                        intlConfig={
-                          selectedCurrency && {
-                            locale: selectedCurrency.locale,
-                            currency: selectedCurrency.code,
-                          }
-                        }
-                        placeholder="0.00"
-                        value={field.value}
-                        onChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                form={form}
+                labelName="المبلغ"
+                currency={selectedCurrency?.code}
               />
             </React.Fragment>
           ))}
@@ -224,7 +207,7 @@ export function ProposalForm({
             variant="ghost"
             onClick={() =>
               append({
-                amount: 0,
+                amount: new Decimal(0),
                 expensesCategoryId: "",
               })
             }
