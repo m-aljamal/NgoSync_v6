@@ -1,6 +1,6 @@
 import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
-import { integer, timestamp, varchar } from "drizzle-orm/pg-core"
+import { decimal, timestamp, varchar } from "drizzle-orm/pg-core"
 
 import { generateId } from "@/lib/id"
 
@@ -15,7 +15,7 @@ export const proposals = pgTable("proposals", {
     .primaryKey(),
   name: varchar("name", { length: 50 }).unique().notNull(),
   projectId: varchar("project_id", { length: 30 }).notNull(),
-  amount: integer("amount").notNull(),
+  amount: decimal("amount", { precision: 19, scale: 4 }).notNull(),
   currencyId: varchar("currency_id", { length: 30 }).notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
@@ -50,7 +50,7 @@ export const proposalsExpenses = pgTable("proposals_expenses", {
     .$defaultFn(() => generateId())
     .primaryKey(),
   proposalId: varchar("proposal_id", { length: 30 }).notNull(),
-  amount: integer("amount").notNull(),
+  amount: decimal("amount", { precision: 19, scale: 4 }).notNull(),
   currencyId: varchar("currency_id", { length: 30 }).notNull(),
   description: varchar("description", { length: 200 }),
   expensesCategoryId: varchar("expenses_category_id", { length: 30 }).notNull(),

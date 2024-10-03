@@ -10,7 +10,6 @@ import {
 } from "drizzle-orm/pg-core"
 
 import { generateId } from "@/lib/id"
-
 import { genders } from "./enums"
 import { projects } from "./project"
 import { proposals } from "./proposal"

@@ -4,7 +4,6 @@ import {
   boolean,
   date,
   decimal,
-  integer,
   pgEnum,
   timestamp,
   varchar,
@@ -107,10 +106,10 @@ export const projectsTransactions = pgTable("projects_transactions", {
   currencyId: varchar("currency_id")
     .references(() => currencies.id)
     .notNull(),
-  amount: integer("amount").notNull(),
-  amountInUSD: integer("amount_in_usd").notNull(),
-  officialAmount: integer("official_amount"),
-  proposalAmount: integer("proposal_amount"),
+  amount: decimal("amount", { precision: 19, scale: 4 }).notNull(),
+  amountInUSD: decimal("amountInUSD", { precision: 19, scale: 4 }).notNull(),
+  officialAmount: decimal("officialAmount", { precision: 19, scale: 4 }).notNull(),
+  proposalAmount: decimal("proposalAmount", { precision: 19, scale: 4 }).notNull(),
   type: transactionType("transaction_type").notNull(),
   category: transactionCategory("transaction_category").notNull(),
   transactionStatus: transactionStatus("transaction_status").notNull(),

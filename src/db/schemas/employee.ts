@@ -1,9 +1,7 @@
 import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
-import { integer, pgEnum, timestamp, varchar } from "drizzle-orm/pg-core"
-
+import { decimal, pgEnum, timestamp, varchar } from "drizzle-orm/pg-core"
 import { generateId } from "@/lib/id"
-
 import { currencies } from "./currency"
 import { genders } from "./enums"
 import { loans } from "./loan"
@@ -28,7 +26,7 @@ export const employees = pgTable("employees", {
   phone: varchar("phone", { length: 20 }),
   status: employeeStatus("employee_status").notNull(),
   description: varchar("description", { length: 200 }),
-  salary: integer("salary"),
+  salary: decimal("salary", { precision: 19, scale: 4 }).notNull(),
   currencyId: varchar("currency_id").references(() => currencies.id),
   address: varchar("address", { length: 200 }),
   birthDate: timestamp("birth_date"),

@@ -1,6 +1,6 @@
 import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
-import { boolean, decimal, integer, timestamp, varchar } from "drizzle-orm/pg-core"
+import { boolean, decimal, timestamp, varchar } from "drizzle-orm/pg-core"
 
 import { generateId } from "@/lib/id"
 
@@ -89,7 +89,7 @@ export const exchnageBetweenFunds = pgTable("exchnage_between_funds", {
   receiver: varchar("receiver")
     .notNull()
     .references(() => fundTransactions.id),
-  rate: integer("rate").notNull(),
+  rate: decimal("rate", { precision: 19, scale: 4 }).notNull(),
 })
 
 export const exchnageBetweenFundsRelations = relations(
@@ -139,7 +139,7 @@ export const exchnageBetweenProjects = pgTable("exchnage_between_projects", {
   receiver: varchar("receiver")
     .notNull()
     .references(() => projectsTransactions.id),
-  rate: integer("rate").notNull(),
+  rate: decimal("amount", { precision: 19, scale: 4 }).notNull(),
 })
 
 export const exchnageBetweenProjectsRelations = relations(
