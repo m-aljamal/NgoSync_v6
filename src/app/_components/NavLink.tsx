@@ -10,7 +10,7 @@ export function NavLink({
   children,
   link,
 }: {
-  children?: React.ReactNode
+  children: React.ReactNode
   link: {
     href: string
     icon?: keyof typeof icons
@@ -22,11 +22,11 @@ export function NavLink({
     <Link
       href={link.href}
       className={cn(
-        "flex w-full items-center justify-start gap-2 rounded-md py-2 text-sm hover:bg-accent hover:text-accent-foreground",
+        "flex w-full items-center justify-start gap-2 rounded-md p-2 text-sm hover:bg-accent hover:text-accent-foreground",
         pathname === link.href && "bg-accent text-accent-foreground"
       )}
     >
-      <Component className="mr-2 size-5" />
+      <Component className="size-5" />
       <span>{children}</span>
     </Link>
   )
