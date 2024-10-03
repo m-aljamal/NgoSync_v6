@@ -16,15 +16,14 @@ export default function Heading({
 }: HeadingProps) {
   const Component = icons[icon || "Users"]
   return (
-    <div className="  space-y-3">
+    <div className="space-y-3">
       {breadcrumList && <BreadcrumList links={breadcrumList} />}
-      <div className="grid grid-cols-2">
-        <div className="flex items-center justify-start gap-5">
-          <Component className="hidden size-6 sm:flex" />
-          <div className="space-y-1">
-            <h2 className="text-2xl font-bold tracking-tighter">{title}</h2>
-            <p className="text-sm text-muted-foreground">{description}</p>
-          </div>
+
+      <div className="flex items-center justify-start gap-5">
+        <Component className="hidden size-6 sm:flex" />
+        <div className="space-y-1">
+          <h2 className="text-2xl font-bold tracking-tighter">{title}</h2>
+          <p className="text-sm text-muted-foreground">{description}</p>
         </div>
       </div>
     </div>

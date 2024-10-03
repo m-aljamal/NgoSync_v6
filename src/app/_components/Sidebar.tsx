@@ -1,10 +1,11 @@
+import { Fragment } from "react"
 import { type PageLinks } from "@/types"
 
 import { NavLink } from "./NavLink"
 
 export default function Sidebar({ links }: { links: PageLinks }) {
   return (
-    <div className="fixed bottom-0 top-[65px] w-[200px] border-l">
+    <div className="fixed bottom-0 top-[65px] hidden w-[150px] border-l sm:flex md:w-[180px]">
       <div className="my-8 ml-2">
         {links?.map((link) => (
           <div className="py-2" key={link.title}>
@@ -18,7 +19,7 @@ export default function Sidebar({ links }: { links: PageLinks }) {
                 {link.title}
               </NavLink>
             ) : (
-              <>
+              <Fragment key={link.title}>
                 <h2 className="mb-2 font-semibold tracking-tight">
                   {link.title}
                 </h2>
@@ -35,7 +36,7 @@ export default function Sidebar({ links }: { links: PageLinks }) {
                     </NavLink>
                   ))}
                 </div>
-              </>
+              </Fragment>
             )}
           </div>
         ))}

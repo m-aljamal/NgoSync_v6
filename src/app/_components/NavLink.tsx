@@ -10,7 +10,7 @@ export function NavLink({
   children,
   link,
 }: {
-  children: React.ReactNode
+  children?: React.ReactNode
   link: {
     href: string
     icon?: keyof typeof icons

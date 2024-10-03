@@ -59,14 +59,12 @@ export function getColumns(): ColumnDef<Project>[] {
         <DataTableColumnHeader column={column} title="الاسم" />
       ),
       cell: ({ row }) => (
-        <div className="max-w-[31.25rem] truncate font-medium">
-          <Link
-            className="hover:font-bold hover:underline"
-            href={`/projects/${row.original.id}/overview`}
-          >
-            {row.getValue("name")}
-          </Link>
-        </div>
+        <Link
+          href={`/projects/${row.original.id}/overview`}
+          className="max-w-[31.25rem] truncate font-medium"
+        >
+          {row.getValue("name")}
+        </Link>
       ),
       enableSorting: false,
       enableHiding: false,

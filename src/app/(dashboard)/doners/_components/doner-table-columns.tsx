@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { type Doner } from "@/db/schemas/donation"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
@@ -58,9 +59,12 @@ export function getColumns(): ColumnDef<Doner>[] {
         <DataTableColumnHeader column={column} title="الاسم" />
       ),
       cell: ({ row }) => (
-        <div className="max-w-[31.25rem] truncate font-medium">
+        <Link
+          href={`/doners/${row.original.id}/overview`}
+          className="max-w-[31.25rem] truncate font-medium"
+        >
           {row.getValue("name")}
-        </div>
+        </Link>
       ),
       enableSorting: false,
       enableHiding: false,

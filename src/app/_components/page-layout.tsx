@@ -1,6 +1,7 @@
 import { type PageLinks } from "@/types"
 
 import { filterPageLinksByRole } from "../_lib/auth"
+import MobileSidebar from "./MobileSidebar"
 import Sidebar from "./Sidebar"
 
 interface Props {
@@ -14,7 +15,10 @@ export default async function PageLayout({ children, links }: Props) {
   return (
     <div className="flex gap-8">
       <Sidebar links={filteredRoutes} />
-      <main className="mr-[220px] h-full flex-1">{children}</main>
+      <main className="h-full flex-1 sm:mr-[170px] md:mr-[200px]">
+        <MobileSidebar />
+        {children}
+      </main>
     </div>
   )
 }
