@@ -1,10 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  transactionStatus,
-  type ProjectTransactionWithRelations,
-} from "@/db/schemas"
+import { type ProjectTransactionWithRelations } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
