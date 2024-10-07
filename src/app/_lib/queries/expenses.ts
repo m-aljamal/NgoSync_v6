@@ -3,96 +3,77 @@ import "server-only"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import {
+  currencies,
   projectsTransactions,
-  tasks,
   type ProjectTransaction,
 } from "@/db/schemas"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, or, sql, type SQL } from "drizzle-orm"
-
-import { filterColumn } from "@/lib/filter-column"
+import Decimal from "decimal.js"
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  lte,
+  or,
+  sql,
+  type SQL,
+} from "drizzle-orm"
 
 import { type GetSearchSchema } from "../validations"
+import { calculateOffset, convertToDate } from "./utils"
 
-export async function getexpenses(input: GetSearchSchema) {
+export async function getExpenses(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, amount, status, priority, operator, from, to } =
-    input
+  const { page, per_page, sort, amount, operator, from, to } = input
 
   try {
-    // Offset to paginate the results
-    const offset = (page - 1) * per_page
-    // Column and order to sort by
-    // Spliting the sort string by "." to get the column and order
-    // Example: "title.desc" => ["title", "desc"]
+    const offset = calculateOffset(page, per_page)
+
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
       "createdAt",
       "desc",
     ]) as [keyof ProjectTransaction | undefined, "asc" | "desc" | undefined]
 
-    const fromDay = from
-      ? sql`${projectsTransactions.createdAt} >= ${from}`
-      : undefined
-    const toDay = to
-      ? sql`${projectsTransactions.createdAt} <= ${to}`
-      : undefined
+    const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
       amount
-        ? filterColumn({
-            column: projectsTransactions.amount,
-            value: amount.toString(),
-          })
+        ? eq(projectsTransactions.amount, new Decimal(amount).toFixed(4))
         : undefined,
-      // Filter tasks by status
-      !!status
-        ? filterColumn({
-            column: tasks.status,
-            value: status,
-            isSelectable: true,
-          })
-        : undefined,
-      // Filter tasks by priority
-      !!priority
-        ? filterColumn({
-            column: tasks.priority,
-            value: priority,
-            isSelectable: true,
-          })
-        : undefined,
-      // Filter by createdAt
+
       fromDay && toDay
         ? and(
-            sql`${projectsTransactions.createdAt} >= ${from}`,
-            sql`${projectsTransactions.createdAt} <= ${to}`
+            gte(projectsTransactions.date, fromDay),
+            lte(projectsTransactions.date, toDay)
           )
         : undefined,
-      fromDay ? fromDay : undefined,
     ]
 
     const where: DrizzleWhere<ProjectTransaction> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
 
-    // Transaction is used to ensure both queries are executed in a single transaction
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
         .select({
           id: projectsTransactions.id,
-          amountInUSD: projectsTransactions.amountInUSD,
-          officialAmount: projectsTransactions.officialAmount,
-          proposalAmount: projectsTransactions.proposalAmount,
+          currencyCode: currencies.code,
           type: projectsTransactions.type,
           description: projectsTransactions.description,
           isOfficial: projectsTransactions.isOfficial,
           date: projectsTransactions.date,
-          updatedAt: projectsTransactions.updatedAt,
-          amount: sql<number>`${projectsTransactions.amount}/1000`,
-          createdAt: projectsTransactions.createdAt,
+          amount: sql<number>`ABS(${projectsTransactions.amount})`,
         })
         .from(projectsTransactions)
         .limit(per_page)
         .offset(offset)
         .where(where)
+        .innerJoin(
+          currencies,
+          eq(projectsTransactions.currencyId, currencies.id)
+        )
         .orderBy(
           column && column in projectsTransactions
             ? order === "asc"
@@ -107,6 +88,10 @@ export async function getexpenses(input: GetSearchSchema) {
         })
         .from(projectsTransactions)
         .where(where)
+        .innerJoin(
+          currencies,
+          eq(projectsTransactions.currencyId, currencies.id)
+        )
         .execute()
         .then((res) => res[0]?.count ?? 0)
 

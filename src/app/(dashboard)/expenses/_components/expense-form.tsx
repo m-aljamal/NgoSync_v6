@@ -25,19 +25,17 @@ interface CreateExpenseFormProps
   children: React.ReactNode
   form: UseFormReturn<CreateExpenseSchema>
   onSubmit: (data: CreateExpenseSchema) => void
-  isUpdate?: boolean
 }
 
 export function ExpenseForm({
   form,
   onSubmit,
   children,
-  isUpdate,
 }: CreateExpenseFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup isUpdate={isUpdate}>
+        <InputGroup>
           <CurrencyAmountInput form={form} />
           <FormField
             control={form.control}

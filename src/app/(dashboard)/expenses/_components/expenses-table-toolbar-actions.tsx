@@ -1,6 +1,6 @@
 "use client"
 
-import { type ProjectTransaction } from "@/db/schemas"
+import { type ProjectTransactionWithRelations } from "@/db/schemas"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
@@ -11,7 +11,7 @@ import { CreateExpenseDialog } from "./create-expense-dialog"
 import { DeleteExpensesDialog } from "./delete-expenses-dialog"
 
 interface ExpensesTableToolbarActionsProps {
-  table: Table<ProjectTransaction>
+  table: Table<ProjectTransactionWithRelations>
 }
 
 export function ExpensesTableToolbarActions({

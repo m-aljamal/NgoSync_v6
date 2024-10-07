@@ -8,14 +8,14 @@ import {
   type ExpensesCategory,
 } from "@/db/schemas"
 import { format } from "date-fns"
-import { eq, inArray } from "drizzle-orm"
+import { eq, inArray, sql } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { generateId } from "@/lib/id"
-import { convertAmountToMiliunits } from "@/lib/utils"
 
 import { calculateAmounts } from "../queries/utils"
 import { actionClient } from "../safe-action"
+import { toDecimalFixed } from "../utils"
 import {
   createExpenseCategorySchema,
   createExpenseSchema,
@@ -117,7 +117,7 @@ export const createExpense = actionClient
     }) => {
       noStore()
 
-      const amount = convertAmountToMiliunits(expenseAmount)
+      const amount = toDecimalFixed(expenseAmount)
       const date = format(expenseDate, "yyyy-MM-dd")
       const { amountInUSD, proposalAmount, officialAmount } =
         await calculateAmounts({
@@ -129,10 +129,10 @@ export const createExpense = actionClient
         })
 
       await db.insert(projectsTransactions).values({
-        amount: -amount,
-        proposalAmount: proposalAmount ?? 0,
-        amountInUSD: amountInUSD ?? 0,
-        officialAmount: officialAmount ?? 0,
+        amount: sql`${-amount}`,
+        proposalAmount: proposalAmount ? sql`${-proposalAmount}` : "0",
+        amountInUSD: amountInUSD ? sql`${-amountInUSD}` : "0",
+        officialAmount: officialAmount ? sql`${-officialAmount}` : "0",
         date,
         type: "outcome",
         category: "expense",
@@ -170,16 +170,25 @@ export const updateExpense = actionClient
     }) => {
       noStore()
       if (!id) throw new Error("id is required")
-      const amount = convertAmountToMiliunits(expenseAmount)
+      const amount = toDecimalFixed(expenseAmount)
       const date = format(expenseDate, "yyyy-MM-dd")
+
+      const { amountInUSD, proposalAmount, officialAmount } =
+        await calculateAmounts({
+          amount: expenseAmount,
+          currencyId,
+          date: expenseDate,
+          isOfficial,
+          proposalId,
+        })
 
       await db
         .update(projectsTransactions)
         .set({
-          amount: -amount,
-          proposalAmount: 0,
-          amountInUSD: 0,
-          officialAmount: 0,
+          amount: sql`${-amount}`,
+          proposalAmount: proposalAmount ? sql`${-proposalAmount}` : "0",
+          amountInUSD: amountInUSD ? sql`${-amountInUSD}` : "0",
+          officialAmount: officialAmount ? sql`${-officialAmount}` : "0",
           date,
           projectId,
           currencyId,

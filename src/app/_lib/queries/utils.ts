@@ -176,7 +176,7 @@ export const calculateAmounts = cache(
         }
       }
 
-      if (proposalId && !proposalRate) {
+      if (proposalId && !proposalRate && proposal?.currencyId !== currency.id) {
         throw new Error(
           `لم يتم العثور على سعر صرف من ${currency.code} إلى ${
             proposal?.currencyCode

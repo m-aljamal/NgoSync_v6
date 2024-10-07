@@ -1,11 +1,16 @@
 "use client"
 
 import * as React from "react"
-import { type ProjectTransaction } from "@/db/schemas"
+import {
+  ProjectTransactionWithRelations,
+  type ProjectTransaction,
+} from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
+import { formatCurrency } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -21,7 +26,7 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { DeleteExpensesDialog } from "./delete-expenses-dialog"
 import { UpdateExpenseSheet } from "./update-expense-sheet"
 
-export function getColumns(): ColumnDef<ProjectTransaction>[] {
+export function getColumns(): ColumnDef<ProjectTransactionWithRelations>[] {
   return [
     {
       id: "select",
@@ -54,11 +59,26 @@ export function getColumns(): ColumnDef<ProjectTransaction>[] {
         <DataTableColumnHeader column={column} title="القيمة" />
       ),
       cell: ({ row }) => (
-        <div>
-          {/* {formatCurrency(row.getValue("amount"), row.original.currencyCode)} */}
-          {row.original.amount}
-        </div>
+        <span>
+          {formatCurrency(row.getValue("amount"), row.original.currencyCode)}
+        </span>
       ),
+    },
+
+    {
+      accessorKey: "currencyCode",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="العملة" />
+      ),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("currencyCode")}>
+          {row.getValue("currencyCode")}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
     },
 
     {

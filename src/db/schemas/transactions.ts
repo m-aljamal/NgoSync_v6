@@ -108,8 +108,14 @@ export const projectsTransactions = pgTable("projects_transactions", {
     .notNull(),
   amount: decimal("amount", { precision: 19, scale: 4 }).notNull(),
   amountInUSD: decimal("amountInUSD", { precision: 19, scale: 4 }).notNull(),
-  officialAmount: decimal("officialAmount", { precision: 19, scale: 4 }).notNull(),
-  proposalAmount: decimal("proposalAmount", { precision: 19, scale: 4 }).notNull(),
+  officialAmount: decimal("officialAmount", {
+    precision: 19,
+    scale: 4,
+  }).notNull(),
+  proposalAmount: decimal("proposalAmount", {
+    precision: 19,
+    scale: 4,
+  }).notNull(),
   type: transactionType("transaction_type").notNull(),
   category: transactionCategory("transaction_category").notNull(),
   transactionStatus: transactionStatus("transaction_status").notNull(),
@@ -158,6 +164,10 @@ export const projectsTransactionsRelations = relations(
 )
 
 export type ProjectTransaction = typeof projectsTransactions.$inferSelect
+export type ProjectTransactionWithRelations =
+  typeof projectsTransactions.$inferSelect & {
+    currencyCode: string
+  }
 export type NewProjectTransaction = typeof projectsTransactions.$inferInsert
 
 export const expensesCategories = pgTable("expenses_categories", {

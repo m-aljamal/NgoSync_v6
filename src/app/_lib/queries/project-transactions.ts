@@ -3,6 +3,7 @@ import "server-only"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import {
+  currencies,
   expensesCategories,
   funds,
   projectsTransactions,
@@ -26,7 +27,12 @@ import {
 import { filterColumn } from "@/lib/filter-column"
 
 import { type GetSearchSchema } from "../validations"
-import { calculateOffset, calculatePageCount, convertToDate, getPaginationAndSorting } from "./utils"
+import {
+  calculateOffset,
+  calculatePageCount,
+  convertToDate,
+  getPaginationAndSorting,
+} from "./utils"
 
 export async function getExpenses(input: GetSearchSchema) {
   noStore()
@@ -65,7 +71,8 @@ export async function getExpenses(input: GetSearchSchema) {
       const data = await tx
         .select({
           id: projectsTransactions.id,
-          amount: sql<number>`ABS(${projectsTransactions.amount})/1000`,
+          amount: sql<number>`ABS(${projectsTransactions.amount})`,
+          currencyCode: currencies.code,
           date: projectsTransactions.date,
           description: projectsTransactions.description,
         })
@@ -80,6 +87,10 @@ export async function getExpenses(input: GetSearchSchema) {
               eq(projectsTransactions.category, "expense")
             )
           )
+        )
+        .innerJoin(
+          currencies,
+          eq(projectsTransactions.currencyId, currencies.id)
         )
 
         .orderBy(
@@ -189,7 +200,8 @@ export async function getProjectIncome(
   const { page, per_page, sort, operator, from, to, amount } = input
 
   try {
-    const { offset, column, order } = getPaginationAndSorting<ProjectTransaction>(page, per_page, sort)
+    const { offset, column, order } =
+      getPaginationAndSorting<ProjectTransaction>(page, per_page, sort)
     // const offset = calculateOffset(page, per_page)
 
     // const [column, order] = (sort?.split(".").filter(Boolean) ?? [
@@ -198,7 +210,6 @@ export async function getProjectIncome(
     // ]) as [keyof ProjectTransaction | undefined, "asc" | "desc" | undefined]
 
     const { fromDay, toDay } = convertToDate(from, to)
-
 
     const expressions: (SQL<unknown> | undefined)[] = [
       amount

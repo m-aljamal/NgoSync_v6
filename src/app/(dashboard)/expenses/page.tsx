@@ -6,7 +6,7 @@ import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getExpenses } from "@/app/_lib/queries/project-transactions"
+import { getExpenses } from "@/app/_lib/queries/expenses"
 import { searchParamsSchema } from "@/app/_lib/validations"
 
 import { ExpenseTable } from "./_components/expense-table"
