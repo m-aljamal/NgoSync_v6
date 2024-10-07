@@ -23,16 +23,11 @@ interface CreateFundFormProps
   isUpdate?: boolean
 }
 
-export function FundForm({
-  form,
-  onSubmit,
-  children,
-  isUpdate,
-}: CreateFundFormProps) {
+export function FundForm({ form, onSubmit, children }: CreateFundFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup isUpdate={isUpdate}>
+        <InputGroup>
           <FormField
             control={form.control}
             name="name"

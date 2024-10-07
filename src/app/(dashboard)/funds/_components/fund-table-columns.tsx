@@ -1,6 +1,8 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { type Fund } from "@/db/schemas/fund"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
@@ -53,9 +55,12 @@ export function getColumns(): ColumnDef<Fund>[] {
         <DataTableColumnHeader column={column} title="الاسم" />
       ),
       cell: ({ row }) => (
-        <div className="max-w-[31.25rem] truncate font-medium">
+        <Link
+          href={`/funds/${row.original.id}/overview`}
+          className="max-w-[31.25rem] truncate font-medium"
+        >
           {row.getValue("name")}
-        </div>
+        </Link>
       ),
       enableSorting: false,
       enableHiding: false,
@@ -75,7 +80,7 @@ export function getColumns(): ColumnDef<Fund>[] {
           React.useState(false)
         const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
           React.useState(false)
-
+        const router = useRouter()
         return (
           <>
             <UpdateFundSheet
@@ -101,6 +106,13 @@ export function getColumns(): ColumnDef<Fund>[] {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem
+                  onClick={() =>
+                    router.push(`/funds/${row.original.id}/overview`)
+                  }
+                >
+                  التفاصيل
+                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
                   تعديل
                 </DropdownMenuItem>

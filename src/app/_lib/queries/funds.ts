@@ -1,10 +1,11 @@
 import "server-only"
 
+import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import { funds, type Fund } from "@/db/schemas/fund"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, gte, lte, or, type SQL } from "drizzle-orm"
+import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -78,3 +79,16 @@ export async function getFunds(input: GetSearchSchema) {
     return { data: [], pageCount: 0 }
   }
 }
+
+export const getFund = cache(async ({ id }: { id: string }) => {
+  if (!id) return null
+
+  try {
+    const data = await db.query.funds.findFirst({
+      where: eq(funds.id, id),
+    })
+    return data
+  } catch (error) {
+    throw new Error("Failed to get fund")
+  }
+})
