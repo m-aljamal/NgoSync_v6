@@ -4,6 +4,7 @@ import * as React from "react"
 import { type Proposal } from "@/db/schemas/proposal"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQueryClient } from "@tanstack/react-query"
+import Decimal from "decimal.js"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -35,7 +36,7 @@ export function UpdateProposalSheet({
   const proposalExpenseCategories = React.useMemo(
     () =>
       data?.map((item) => ({
-        amount: item.amount,
+        amount: new Decimal(item.amount),
         expensesCategoryId: item.expensesCategoryId,
         id: item.id,
       })) || [],
@@ -47,7 +48,7 @@ export function UpdateProposalSheet({
       id: proposal.id,
       name: proposal.name,
       projectId: proposal.projectId,
-      amount: proposal.amount,
+      amount: new Decimal(proposal.amount),
       currencyId: proposal.currencyId,
       proposalExpenseCategories,
     }

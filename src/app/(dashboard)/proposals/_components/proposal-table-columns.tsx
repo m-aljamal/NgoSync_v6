@@ -1,12 +1,15 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { type ProposalWithRelations } from "@/db/schemas/proposal"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
 import { formatCurrency } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -54,9 +57,12 @@ export function getColumns(): ColumnDef<ProposalWithRelations>[] {
         <DataTableColumnHeader column={column} title="الاسم" />
       ),
       cell: ({ row }) => (
-        <div className="max-w-[31.25rem] truncate font-medium">
+        <Link
+          href={`/proposals/${row.original.id}/overview`}
+          className="max-w-[31.25rem] truncate font-medium"
+        >
           {row.getValue("name")}
-        </div>
+        </Link>
       ),
       enableSorting: false,
       enableHiding: false,
@@ -85,6 +91,22 @@ export function getColumns(): ColumnDef<ProposalWithRelations>[] {
     },
 
     {
+      accessorKey: "currencyCode",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="العملة" />
+      ),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("currencyCode")}>
+          {row.getValue("currencyCode")}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
+    },
+
+    {
       accessorKey: "createdAt",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="تاريخ الانشاء" />
@@ -98,6 +120,7 @@ export function getColumns(): ColumnDef<ProposalWithRelations>[] {
           React.useState(false)
         const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
           React.useState(false)
+        const router = useRouter()
 
         return (
           <>
@@ -124,6 +147,13 @@ export function getColumns(): ColumnDef<ProposalWithRelations>[] {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem
+                  onSelect={() =>
+                    router.push(`/proposals/${row.original.id}/overview`)
+                  }
+                >
+                  التفاصيل
+                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
                   تعديل
                 </DropdownMenuItem>

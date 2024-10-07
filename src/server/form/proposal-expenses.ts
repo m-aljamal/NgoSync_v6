@@ -1,7 +1,7 @@
 import { db } from "@/db"
 import { expensesCategories, proposalsExpenses } from "@/db/schemas"
 import { zValidator } from "@hono/zod-validator"
-import { eq, sql } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import { Hono } from "hono"
 import { z } from "zod"
 
@@ -29,7 +29,7 @@ const app = new Hono()
         .select({
           id: proposalsExpenses.id,
           expensesCategoryId: proposalsExpenses.expensesCategoryId,
-          amount: sql<number>`${proposalsExpenses.amount}/1000`,
+          amount: proposalsExpenses.amount,
         })
         .from(proposalsExpenses)
         .where(eq(proposalsExpenses.proposalId, proposalId))

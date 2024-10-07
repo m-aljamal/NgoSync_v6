@@ -5,18 +5,7 @@ import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import { currencies, projects, proposals, type Proposal } from "@/db/schemas"
 import { type DrizzleWhere } from "@/types"
-import {
-  and,
-  asc,
-  count,
-  desc,
-  eq,
-  gte,
-  lte,
-  or,
-  sql,
-  type SQL,
-} from "drizzle-orm"
+import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -64,7 +53,7 @@ export async function getProposals(input: GetSearchSchema) {
           createdAt: proposals.createdAt,
           projectId: proposals.projectId,
           projectName: projects.name,
-          amount: sql<number>`${proposals.amount}/1000`,
+          amount: proposals.amount,
           currencyCode: currencies.code,
           currencyId: proposals.currencyId,
           updatedAt: proposals.updatedAt,

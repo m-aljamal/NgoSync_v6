@@ -5,92 +5,89 @@ import { db } from "@/db"
 import {
   proposals,
   proposalsExpenses,
-  type Proposal,
   type ProposalExpense,
 } from "@/db/schemas"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
-import { generateId } from "@/lib/id"
-import { convertAmountToMiliunits } from "@/lib/utils"
-
 import { actionClient } from "../safe-action"
+import { toDecimalFixed } from "../utils"
 import { createProposalSchema, deleteArraySchema } from "../validations"
 
-function generateProposal(): Omit<Proposal, "projectId" | "currencyId"> {
-  return {
-    id: generateId(),
-    name: `proposal ${Math.floor(Math.random() * 100)}`,
-    amount: convertAmountToMiliunits(Math.floor(Math.random() * 100)),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  }
-}
+// function generateProposal(): Omit<Proposal, "projectId" | "currencyId"> {
+//   return {
+//     id: generateId(),
+//     name: `proposal ${Math.floor(Math.random() * 100)}`,
+//     amount: convertAmountToMiliunits(Math.floor(Math.random() * 100)),
+//     createdAt: new Date(),
+//     updatedAt: new Date(),
+//   }
+// }
 
-function generateProposalExpense(): Omit<
-  ProposalExpense,
-  "proposalId" | "currencyId" | "expensesCategoryId"
-> {
-  return {
-    id: generateId(),
-    amount: convertAmountToMiliunits(Math.floor(Math.random() * 100)),
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    description: "",
-  }
-}
+// function generateProposalExpense(): Omit<
+//   ProposalExpense,
+//   "proposalId" | "currencyId" | "expensesCategoryId"
+// > {
+//   return {
+//     id: generateId(),
+//     amount: convertAmountToMiliunits(Math.floor(Math.random() * 100)),
+//     createdAt: new Date(),
+//     updatedAt: new Date(),
+//     description: "",
+//   }
+// }
 
-export async function seedProposals() {
-  try {
-    const projects = await db.query.projects.findMany()
-    const currencies = await db.query.currencies.findMany()
-    const expensesCategories = await db.query.expensesCategories.findMany()
-    if (
-      projects.length === 0 &&
-      currencies.length === 0 &&
-      expensesCategories.length === 0
-    ) {
-      console.log(
-        "🚨 Skipping seeding proposals, no projects or currencies found"
-      )
-      return
-    }
+// export async function seedProposals() {
+//   try {
+//     const projects = await db.query.projects.findMany()
+//     const currencies = await db.query.currencies.findMany()
+//     const expensesCategories = await db.query.expensesCategories.findMany()
+//     if (
+//       projects.length === 0 &&
+//       currencies.length === 0 &&
+//       expensesCategories.length === 0
+//     ) {
+//       console.log(
+//         "🚨 Skipping seeding proposals, no projects or currencies found"
+//       )
+//       return
+//     }
 
-    const allProposals: Proposal[] = []
-    const allProposalsExpenses: ProposalExpense[] = []
-    for (let i = 0; i < 10; i++) {
-      const currencyId =
-        currencies[Math.floor(Math.random() * currencies.length)]?.id || ""
+//     const allProposals: Proposal[] = []
+//     const allProposalsExpenses: ProposalExpense[] = []
+//     for (let i = 0; i < 10; i++) {
+//       const currencyId =
+//         currencies[Math.floor(Math.random() * currencies.length)]?.id || ""
 
-      allProposals.push({
-        ...generateProposal(),
-        projectId:
-          projects[Math.floor(Math.random() * projects.length)]?.id || "",
-        currencyId,
-      })
-      allProposalsExpenses.push({
-        ...generateProposalExpense(),
-        proposalId: generateProposal().id,
-        currencyId,
-        expensesCategoryId:
-          expensesCategories[
-            Math.floor(Math.random() * expensesCategories.length)
-          ]?.id || "",
-      })
-    }
-    await db.delete(proposals)
-    console.log("📝 Inserting proposals", allProposals.length)
-    await db.insert(proposals).values(allProposals).onConflictDoNothing()
-    await db.delete(proposalsExpenses)
-    console.log("📝 Inserting proposals expenses", allProposalsExpenses.length)
-    await db
-      .insert(proposalsExpenses)
-      .values(allProposalsExpenses)
-      .onConflictDoNothing()
-  } catch (error) {
-    console.error(error)
-  }
-}
+//       allProposals.push({
+//         ...generateProposal(),
+//         projectId:
+//           projects[Math.floor(Math.random() * projects.length)]?.id || "",
+//         currencyId,
+//       })
+//       allProposalsExpenses.push({
+//         ...generateProposalExpense(),
+//         proposalId: generateProposal().id,
+//         currencyId,
+//         expensesCategoryId:
+//           expensesCategories[
+//             Math.floor(Math.random() * expensesCategories.length)
+//           ]?.id || "",
+//       })
+//     }
+//     await db.delete(proposals)
+//     console.log("📝 Inserting proposals", allProposals.length)
+//     await db.insert(proposals).values(allProposals).onConflictDoNothing()
+//     await db.delete(proposalsExpenses)
+//     console.log("📝 Inserting proposals expenses", allProposalsExpenses.length)
+//     await db
+//       .insert(proposalsExpenses)
+//       .values(allProposalsExpenses)
+//       .onConflictDoNothing()
+//   } catch (error) {
+//     console.error(error)
+//   }
+// }
 
 export const createProposal = actionClient
   .schema(createProposalSchema, {
@@ -107,12 +104,13 @@ export const createProposal = actionClient
     if (totalExpenses !== Number(data.amount)) {
       throw new Error("مجموع المصاريف يجب ان يساوي المبلغ الدراسة")
     }
+    const amount = toDecimalFixed(data.amount)
     await db.transaction(async (ex) => {
       const [proposal] = await ex
         .insert(proposals)
         .values({
           ...data,
-          amount: convertAmountToMiliunits(data.amount),
+          amount,
         })
         .returning({ proposalId: proposals.id })
 
@@ -128,7 +126,7 @@ export const createProposal = actionClient
           currencyId: data.currencyId,
           description: "",
           expensesCategoryId: expense.expensesCategoryId,
-          amount: convertAmountToMiliunits(expense.amount),
+          amount: toDecimalFixed(expense.amount),
           proposalId: proposal.proposalId,
         })
       }
@@ -164,7 +162,7 @@ export const updateProposal = actionClient
       parsedInput: {
         id,
         proposalExpenseCategories,
-        amount,
+        amount: proposalAmount,
         name,
         projectId,
         currencyId,
@@ -176,7 +174,7 @@ export const updateProposal = actionClient
         (acc, expense) => acc + Number(expense.amount),
         0
       )
-      if (totalExpenses !== Number(amount)) {
+      if (totalExpenses !== Number(proposalAmount)) {
         throw new Error("مجموع المصاريف يجب ان يساوي المبلغ الدراسة")
       }
 
@@ -187,7 +185,7 @@ export const updateProposal = actionClient
         },
       })
       if (!proposalInDb) throw new Error("Proposal not found")
-
+      const amount = toDecimalFixed(proposalAmount)
       await db.transaction(async (ex) => {
         await ex
           .update(proposals)
@@ -195,7 +193,7 @@ export const updateProposal = actionClient
             name,
             projectId,
             currencyId,
-            amount: convertAmountToMiliunits(amount),
+            amount,
           })
           .where(eq(proposals.id, proposalInDb.id))
 
@@ -215,7 +213,7 @@ export const updateProposal = actionClient
             currencyId: currencyId,
             description: "",
             expensesCategoryId: expense.expensesCategoryId,
-            amount: convertAmountToMiliunits(expense.amount),
+            amount: toDecimalFixed(expense.amount),
             proposalId: id,
           })
         }
