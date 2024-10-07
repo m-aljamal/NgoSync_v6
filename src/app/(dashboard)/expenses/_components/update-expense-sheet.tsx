@@ -3,6 +3,7 @@
 import * as React from "react"
 import { type ProjectTransaction } from "@/db/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Decimal from "decimal.js"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -32,7 +33,7 @@ export function UpdateExpenseSheet({
       date: new Date(expense.date),
       projectId: expense.projectId,
       currencyId: expense.currencyId,
-      amount: expense.amount,
+      amount: new Decimal(expense.amount),
       description: expense.description ?? "",
       isOfficial: expense.isOfficial,
       expensesCategoryId: expense.expensesCategoryId ?? "",
@@ -69,7 +70,7 @@ export function UpdateExpenseSheet({
   }
   return (
     <UpdateSheet {...props}>
-      <ExpenseForm form={form} onSubmit={onSubmit} isUpdate>
+      <ExpenseForm form={form} onSubmit={onSubmit}>
         <UpdateButtons isExecuting={isExecuting} />
       </ExpenseForm>
     </UpdateSheet>

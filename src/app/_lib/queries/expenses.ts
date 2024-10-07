@@ -1,5 +1,6 @@
 import "server-only"
 
+import exp from "constants"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import {
@@ -63,7 +64,11 @@ export async function getExpenses(input: GetSearchSchema) {
         .select({
           id: projectsTransactions.id,
           currencyCode: currencies.code,
+          currencyId: projectsTransactions.currencyId,
           type: projectsTransactions.type,
+          projectId: projectsTransactions.projectId,
+          proposalId: projectsTransactions.proposalId,
+          expensesCategoryId: projectsTransactions.expensesCategoryId,
           description: projectsTransactions.description,
           isOfficial: projectsTransactions.isOfficial,
           date: projectsTransactions.date,

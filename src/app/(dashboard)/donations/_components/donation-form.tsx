@@ -20,6 +20,7 @@ import {
   AppSelect,
   CurrencyAmountInput,
   DateInput,
+  DescriptionInput,
   FundInput,
   InputGroup,
   ProjectInput,
@@ -88,24 +89,7 @@ export function DonationForm({
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem className="sm:col-span-full">
-                <FormLabel> ملاحظات</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="ملاحظات"
-                    {...field}
-                    className="resize-none"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <DescriptionInput form={form} />
 
           <ProjectInput form={form} withProposals />
 

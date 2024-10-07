@@ -10,11 +10,9 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
-import { DateInput } from "@/components/form-components"
+import { DateInput, DescriptionInput } from "@/components/form-components"
 import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
 import InputGroup from "@/components/form-components/InputGroup"
 import ProjectInput from "@/components/form-components/project-input"
@@ -34,30 +32,13 @@ export function ExpenseForm({
 }: CreateExpenseFormProps) {
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <InputGroup>
-          <CurrencyAmountInput form={form} />
           <DateInput form={form} />
+          <CurrencyAmountInput form={form} />
 
           <ProjectInput form={form} withProposals withExpensesCategories />
-
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem className="sm:col-span-full">
-                <FormLabel> ملاحظات</FormLabel>
-                <FormControl>
-                  <Input
-                    placeholder="ملاحظات"
-                    {...field}
-                    className="resize-none"
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <DescriptionInput form={form} />
 
           <FormField
             control={form.control}
