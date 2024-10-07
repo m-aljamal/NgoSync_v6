@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
+import { DateInput } from "@/components/form-components"
 import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
-import { DatePicker } from "@/components/form-components/date-picker"
 import InputGroup from "@/components/form-components/InputGroup"
 import ProjectInput from "@/components/form-components/project-input"
 import { type CreateExpenseSchema } from "@/app/_lib/validations"
@@ -37,19 +37,7 @@ export function ExpenseForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <InputGroup>
           <CurrencyAmountInput form={form} />
-          <FormField
-            control={form.control}
-            name="date"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>التاريخ</FormLabel>
-                <FormControl>
-                  <DatePicker onChange={field.onChange} value={field.value} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <DateInput form={form} />
 
           <ProjectInput form={form} withProposals withExpensesCategories />
 

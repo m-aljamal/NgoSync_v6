@@ -4,6 +4,8 @@ import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import {
   currencies,
+  expensesCategories,
+  projects,
   projectsTransactions,
   type ProjectTransaction,
 } from "@/db/schemas"
@@ -50,6 +52,7 @@ export async function getExpenses(input: GetSearchSchema) {
             lte(projectsTransactions.date, toDay)
           )
         : undefined,
+      eq(projectsTransactions.category, "expense"),
     ]
 
     const where: DrizzleWhere<ProjectTransaction> =
@@ -65,6 +68,9 @@ export async function getExpenses(input: GetSearchSchema) {
           isOfficial: projectsTransactions.isOfficial,
           date: projectsTransactions.date,
           amount: sql<number>`ABS(${projectsTransactions.amount})`,
+          projectName: projects.name,
+          expenseCategoryName: expensesCategories.name,
+          transactionStatus: projectsTransactions.transactionStatus,
         })
         .from(projectsTransactions)
         .limit(per_page)
@@ -73,6 +79,11 @@ export async function getExpenses(input: GetSearchSchema) {
         .innerJoin(
           currencies,
           eq(projectsTransactions.currencyId, currencies.id)
+        )
+        .innerJoin(projects, eq(projectsTransactions.projectId, projects.id))
+        .innerJoin(
+          expensesCategories,
+          eq(projectsTransactions.expensesCategoryId, expensesCategories.id)
         )
         .orderBy(
           column && column in projectsTransactions
@@ -91,6 +102,11 @@ export async function getExpenses(input: GetSearchSchema) {
         .innerJoin(
           currencies,
           eq(projectsTransactions.currencyId, currencies.id)
+        )
+        .innerJoin(projects, eq(projectsTransactions.projectId, projects.id))
+        .innerJoin(
+          expensesCategories,
+          eq(projectsTransactions.expensesCategoryId, expensesCategories.id)
         )
         .execute()
         .then((res) => res[0]?.count ?? 0)

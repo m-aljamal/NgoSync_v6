@@ -1,4 +1,10 @@
-import type { donations, doners, employees, projects } from "@/db/schemas"
+import type {
+  donations,
+  doners,
+  employees,
+  projects,
+  projectsTransactions,
+} from "@/db/schemas"
 import { loans } from "@/db/schemas/loan"
 
 export const projectStatusTranslation: Record<
@@ -8,6 +14,15 @@ export const projectStatusTranslation: Record<
   "in-progress": "قيد التنفيذ",
   done: "منتهي",
   canceled: "ملغي",
+}
+
+export const transactionStatusTranslation: Record<
+  typeof projectsTransactions.$inferSelect.transactionStatus,
+  string
+> = {
+  pending: "قيد الانتظار",
+  approved: "موافق",
+  rejected: "مرفوض",
 }
 
 export const projectSystemTranslation: Record<

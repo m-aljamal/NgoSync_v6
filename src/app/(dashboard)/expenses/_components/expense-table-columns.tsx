@@ -2,8 +2,8 @@
 
 import * as React from "react"
 import {
-  ProjectTransactionWithRelations,
-  type ProjectTransaction,
+  transactionStatus,
+  type ProjectTransactionWithRelations,
 } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
+import { transactionStatusTranslation } from "@/app/_lib/translate"
 
 import { DeleteExpensesDialog } from "./delete-expenses-dialog"
 import { UpdateExpenseSheet } from "./update-expense-sheet"
@@ -54,9 +55,17 @@ export function getColumns(): ColumnDef<ProjectTransactionWithRelations>[] {
     },
 
     {
+      accessorKey: "date",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="التاريخ" />
+      ),
+      cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
+    },
+
+    {
       accessorKey: "amount",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="القيمة" />
+        <DataTableColumnHeader column={column} title="المبلغ" />
       ),
       cell: ({ row }) => (
         <span>
@@ -82,12 +91,29 @@ export function getColumns(): ColumnDef<ProjectTransactionWithRelations>[] {
     },
 
     {
-      accessorKey: "date",
+      accessorKey: "transactionStatus",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="التاريخ" />
+        <DataTableColumnHeader column={column} title="الحالة" />
       ),
-      cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
+      cell: ({ row }) => (
+        <Badge variant={row.original.transactionStatus}>
+          {transactionStatusTranslation[row.original.transactionStatus]}
+        </Badge>
+      ),
     },
+    {
+      accessorKey: "projectName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المشروع" />
+      ),
+    },
+    {
+      accessorKey: "expenseCategoryName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الفئة" />
+      ),
+    },
+
     {
       id: "actions",
       cell: function Cell({ row }) {

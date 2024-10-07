@@ -167,6 +167,8 @@ export type ProjectTransaction = typeof projectsTransactions.$inferSelect
 export type ProjectTransactionWithRelations =
   typeof projectsTransactions.$inferSelect & {
     currencyCode: string
+    projectName: string
+    expenseCategoryName: string
   }
 export type NewProjectTransaction = typeof projectsTransactions.$inferInsert
 
