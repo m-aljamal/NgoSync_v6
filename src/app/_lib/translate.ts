@@ -5,7 +5,7 @@ import type {
   projects,
   projectsTransactions,
 } from "@/db/schemas"
-import { loans } from "@/db/schemas/loan"
+import { type loans } from "@/db/schemas/loan"
 
 export const projectStatusTranslation: Record<
   typeof projects.$inferSelect.status,
