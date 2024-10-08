@@ -10,6 +10,10 @@ const ViewMoreDonation = dynamic(
   () => import("@/app/(dashboard)/donations/_components/view-more-donation")
 )
 
+const ViewMoreExpenses = dynamic(
+  () => import("@/app/(dashboard)/expenses/_components/view-more-expenses")
+)
+
 export const SheetProvider = () => {
   const isMounted = useMountedState()
   const { table } = useViewMoreDialog()
@@ -20,7 +24,8 @@ export const SheetProvider = () => {
     switch (table) {
       case "donation":
         return <ViewMoreDonation />
-
+      case "expenses":
+        return <ViewMoreExpenses />
       default:
         return null
     }

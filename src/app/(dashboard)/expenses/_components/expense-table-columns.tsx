@@ -7,6 +7,7 @@ import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
 import { formatCurrency } from "@/lib/utils"
+import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -118,6 +119,7 @@ export function getColumns(): ColumnDef<ProjectTransactionWithRelations>[] {
           React.useState(false)
         const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
           React.useState(false)
+        const { onOpen } = useViewMoreDialog()
 
         return (
           <>
@@ -144,6 +146,11 @@ export function getColumns(): ColumnDef<ProjectTransactionWithRelations>[] {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
+                <DropdownMenuItem
+                  onSelect={() => onOpen(row.original.id, "expenses")}
+                >
+                  التفاصيل
+                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
                   تعديل
                 </DropdownMenuItem>

@@ -38,6 +38,7 @@ export function UpdateExpenseSheet({
       isOfficial: expense.isOfficial,
       expensesCategoryId: expense.expensesCategoryId ?? "",
       proposalId: expense.proposalId,
+      id: expense.id,
     }
   }, [expense])
 
@@ -68,6 +69,7 @@ export function UpdateExpenseSheet({
     await executeAsync(input)
     toast.dismiss()
   }
+  
   return (
     <UpdateSheet {...props}>
       <ExpenseForm form={form} onSubmit={onSubmit}>

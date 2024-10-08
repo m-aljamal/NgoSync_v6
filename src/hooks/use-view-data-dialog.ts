@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-export type TableType = "donation" | "doner"
+export type TableType = "donation" | "expenses"
 
 type ViewMoreDialogState = {
   id: string | null
