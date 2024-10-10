@@ -27,12 +27,15 @@ import {
 } from "drizzle-orm"
 import { alias } from "drizzle-orm/pg-core"
 
+import { filterColumn } from "@/lib/filter-column"
+
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, convertToDate } from "./utils"
 
 export async function getExpenses(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, amount, operator, from, to } = input
+  const { page, per_page, sort, amount, operator, from, to, currencyCode } =
+    input
 
   try {
     const offset = calculateOffset(page, per_page)
@@ -46,7 +49,21 @@ export async function getExpenses(input: GetSearchSchema) {
 
     const expressions: (SQL<unknown> | undefined)[] = [
       amount
-        ? eq(projectsTransactions.amount, new Decimal(amount).toFixed(4))
+        ? or(
+            eq(projectsTransactions.amount, new Decimal(amount).toFixed(4)),
+            eq(
+              sql`CASE WHEN ${projectsTransactions.amount} < 0 THEN ${projectsTransactions.amount} * -1 ELSE ${projectsTransactions.amount} END`,
+              new Decimal(amount).toFixed(4)
+            )
+          )
+        : undefined,
+
+      !!currencyCode
+        ? filterColumn({
+            column: currencies.code,
+            value: currencyCode,
+            isSelectable: true,
+          })
         : undefined,
 
       fromDay && toDay
@@ -74,10 +91,16 @@ export async function getExpenses(input: GetSearchSchema) {
           description: projectsTransactions.description,
           isOfficial: projectsTransactions.isOfficial,
           date: projectsTransactions.date,
-          amount: sql<number>`ABS(${projectsTransactions.amount})`,
+          amount: sql<string>`ABS(${projectsTransactions.amount})`,
           projectName: projects.name,
           expenseCategoryName: expensesCategories.name,
           transactionStatus: projectsTransactions.transactionStatus,
+          createdAt: projectsTransactions.createdAt,
+          updatedAt: projectsTransactions.updatedAt,
+          amountInUSD: projectsTransactions.amountInUSD,
+          officialAmount: projectsTransactions.officialAmount,
+          proposalAmount: projectsTransactions.proposalAmount,
+          category: projectsTransactions.category,
         })
         .from(projectsTransactions)
         .limit(per_page)

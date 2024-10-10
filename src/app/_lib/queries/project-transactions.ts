@@ -75,6 +75,7 @@ export async function getExpenses(input: GetSearchSchema) {
           currencyCode: currencies.code,
           date: projectsTransactions.date,
           description: projectsTransactions.description,
+          
         })
         .from(projectsTransactions)
         .limit(per_page)
