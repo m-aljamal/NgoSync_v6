@@ -3,16 +3,12 @@
 import * as React from "react"
 import { type UseFormReturn } from "react-hook-form"
 
+import { Form } from "@/components/ui/form"
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form"
-import { Switch } from "@/components/ui/switch"
-import { DateInput, DescriptionInput } from "@/components/form-components"
+  DateInput,
+  DescriptionInput,
+  IsOfficialInput,
+} from "@/components/form-components"
 import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
 import InputGroup from "@/components/form-components/InputGroup"
 import ProjectInput from "@/components/form-components/project-input"
@@ -39,25 +35,7 @@ export function ExpenseForm({
 
           <ProjectInput form={form} withProposals withExpensesCategories />
           <DescriptionInput form={form} />
-
-          <FormField
-            control={form.control}
-            name="isOfficial"
-            render={({ field }) => (
-              <FormItem className="flex flex-col items-center justify-between rounded-lg border p-3 shadow-sm sm:flex-row">
-                <div className="space-y-0.5">
-                  <FormLabel>توثيق رسمي</FormLabel>
-                  <FormDescription>توثيق التبرع بشكل رسمي</FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          <IsOfficialInput form={form} />
         </InputGroup>
         {children}
       </form>

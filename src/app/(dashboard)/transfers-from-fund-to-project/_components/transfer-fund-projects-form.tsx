@@ -20,19 +20,17 @@ interface CreateTransferFundToProjectsFormProps
   children: React.ReactNode
   form: UseFormReturn<CreateTransferSchema>
   onSubmit: (data: CreateTransferSchema) => void
-  isUpdate?: boolean
 }
 
 export function TransferFundToProjectsForm({
   form,
   onSubmit,
   children,
-  isUpdate,
 }: CreateTransferFundToProjectsFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup isUpdate={isUpdate}>
+        <InputGroup>
           <CurrencyAmountInput form={form} />
           <DateInput form={form} />
           <FundInput form={form} name="senderId" label="الصندوق المرسل" />

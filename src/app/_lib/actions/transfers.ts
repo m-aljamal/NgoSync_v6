@@ -10,12 +10,14 @@ import {
   transferProjectToFund,
 } from "@/db/schemas/transfer"
 import { format } from "date-fns"
-import { eq, inArray } from "drizzle-orm"
+import { eq, inArray, sql } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { convertAmountToMiliunits } from "@/lib/utils"
 
+import { calculateAmounts } from "../queries/utils"
 import { actionClient } from "../safe-action"
+import { toDecimalFixed } from "../utils"
 import { createTransferSchema, deleteArraySchema } from "../validations"
 
 export const createTransferBetweenFunds = actionClient
@@ -35,19 +37,27 @@ export const createTransferBetweenFunds = actionClient
       },
     }) => {
       noStore()
-      // todo add the amounts
-      const amount = convertAmountToMiliunits(transferAmount)
+
+      const amount = toDecimalFixed(transferAmount)
       const date = format(transferDate, "yyyy-MM-dd")
+
+      const { amountInUSD, proposalAmount, officialAmount } =
+        await calculateAmounts({
+          amount: transferAmount,
+          currencyId,
+          date: transferDate,
+        })
+
       await db.transaction(async (tx) => {
         const [sender] = await tx
           .insert(fundTransactions)
           .values({
             fundId: senderId,
             currencyId,
-            amount: -amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            amount: sql`${-amount}`,
+            proposalAmount: proposalAmount ? sql`${-proposalAmount}` : "0",
+            amountInUSD: amountInUSD ? sql`${-amountInUSD}` : "0",
+            officialAmount: officialAmount ? sql`${-officialAmount}` : "0",
             date,
             type: "outcome",
             description,
@@ -61,9 +71,9 @@ export const createTransferBetweenFunds = actionClient
             fundId: receiverId,
             currencyId,
             amount: amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            proposalAmount,
+            amountInUSD,
+            officialAmount,
             date,
             type: "income",
             description,
@@ -101,9 +111,14 @@ export const updateTransferBetweenFunds = actionClient
       },
     }) => {
       noStore()
-      // todo add the amounts
+
       if (!id) throw new Error("id is required")
 
+      const { amountInUSD, proposalAmount } = await calculateAmounts({
+        amount: transferAmount,
+        currencyId,
+        date: transferDate,
+      })
       const [transfer] = await db
         .select({
           id: transferBetweenFunds.id,
@@ -114,7 +129,7 @@ export const updateTransferBetweenFunds = actionClient
         .where(eq(transferBetweenFunds.id, id))
 
       if (!transfer) throw new Error("transfer not found")
-      const amount = convertAmountToMiliunits(transferAmount)
+      const amount = toDecimalFixed(transferAmount)
       const date = format(transferDate, "yyyy-MM-dd")
       await db.transaction(async (tx) => {
         await tx
@@ -122,10 +137,9 @@ export const updateTransferBetweenFunds = actionClient
           .set({
             fundId: senderId,
             currencyId,
-            amount: -amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            amount: sql`${-amount}`,
+            proposalAmount: proposalAmount ? sql`${-proposalAmount}` : "0",
+            amountInUSD: amountInUSD ? sql`${-amountInUSD}` : "0",
             date,
             description,
           })
@@ -137,9 +151,8 @@ export const updateTransferBetweenFunds = actionClient
             fundId: receiverId,
             currencyId,
             amount: amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            proposalAmount,
+            amountInUSD,
             date,
             description,
           })
@@ -342,19 +355,28 @@ export const createTransferFundToProject = actionClient
       },
     }) => {
       noStore()
-      // todo add the amounts
-      const amount = convertAmountToMiliunits(transferAmount)
+
+      const amount = toDecimalFixed(transferAmount)
       const date = format(transferDate, "yyyy-MM-dd")
+
+      const { amountInUSD, proposalAmount, officialAmount } =
+        await calculateAmounts({
+          amount: transferAmount,
+          currencyId,
+          date: transferDate,
+          isOfficial,
+        })
+
       await db.transaction(async (tx) => {
         const [sender] = await tx
           .insert(fundTransactions)
           .values({
             fundId: senderId,
             currencyId,
-            amount: -amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            amount: sql`${-amount}`,
+            proposalAmount: proposalAmount ? sql`${-proposalAmount}` : "0",
+            amountInUSD: amountInUSD ? sql`${-amountInUSD}` : "0",
+            officialAmount: officialAmount ? sql`${-officialAmount}` : "0",
             date,
             type: "outcome",
             description,
@@ -368,9 +390,9 @@ export const createTransferFundToProject = actionClient
             projectId: receiverId,
             currencyId,
             amount: amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            proposalAmount,
+            amountInUSD,
+            officialAmount,
             transactionStatus: "approved",
             date,
             type: "income",
@@ -411,7 +433,6 @@ export const updateTransferFundToProject = actionClient
       },
     }) => {
       noStore()
-      // todo add the amounts
       if (!id) throw new Error("id is required")
 
       const [transfer] = await db
@@ -424,7 +445,17 @@ export const updateTransferFundToProject = actionClient
         .where(eq(transferFundToProject.id, id))
 
       if (!transfer) throw new Error("transfer not found")
-      const amount = convertAmountToMiliunits(transferAmount)
+
+      const amount = toDecimalFixed(transferAmount)
+
+      const { amountInUSD, proposalAmount, officialAmount } =
+        await calculateAmounts({
+          amount: transferAmount,
+          currencyId,
+          date: transferDate,
+          isOfficial,
+        })
+
       const date = format(transferDate, "yyyy-MM-dd")
       await db.transaction(async (tx) => {
         await tx
@@ -432,10 +463,11 @@ export const updateTransferFundToProject = actionClient
           .set({
             fundId: senderId,
             currencyId,
-            amount: -amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+
+            amount: sql`${-amount}`,
+            proposalAmount: proposalAmount ? sql`${-proposalAmount}` : "0",
+            amountInUSD: amountInUSD ? sql`${-amountInUSD}` : "0",
+            officialAmount: officialAmount ? sql`${-officialAmount}` : "0",
             date,
             description,
             isOfficial,
@@ -448,9 +480,9 @@ export const updateTransferFundToProject = actionClient
             projectId: receiverId,
             currencyId,
             amount: amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            proposalAmount,
+            amountInUSD,
+            officialAmount,
             date,
             description,
             isOfficial,
@@ -500,8 +532,7 @@ export const createTransferProjectToFund = actionClient
       },
     }) => {
       noStore()
-      // todo add the amounts
-    
+
       const amount = convertAmountToMiliunits(transferAmount)
       const date = format(transferDate, "yyyy-MM-dd")
       await db.transaction(async (tx) => {

@@ -8,14 +8,12 @@ import { useGetDoners } from "@/hooks/use-get-form-data"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
 import {
   AppSelect,
   CurrencyAmountInput,
@@ -23,6 +21,7 @@ import {
   DescriptionInput,
   FundInput,
   InputGroup,
+  IsOfficialInput,
   ProjectInput,
 } from "@/components/form-components"
 import { donationPaymentTypeTranslation } from "@/app/_lib/translate"
@@ -123,24 +122,7 @@ export function DonationForm({
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="isOfficial"
-            render={({ field }) => (
-              <FormItem className="flex flex-col items-center justify-between rounded-lg border p-3 shadow-sm sm:flex-row">
-                <div className="space-y-0.5">
-                  <FormLabel>توثيق رسمي</FormLabel>
-                  <FormDescription>توثيق التبرع بشكل رسمي</FormDescription>
-                </div>
-                <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
+          <IsOfficialInput form={form} />
         </InputGroup>
         {children}
       </form>

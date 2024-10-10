@@ -69,7 +69,7 @@ export function UpdateTransferFundToProjectsSheet({
   }
   return (
     <UpdateSheet {...props}>
-      <TransferFundToProjectsForm form={form} onSubmit={onSubmit} isUpdate>
+      <TransferFundToProjectsForm form={form} onSubmit={onSubmit}>
         <UpdateButtons isExecuting={isExecuting} />
       </TransferFundToProjectsForm>
     </UpdateSheet>
