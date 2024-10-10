@@ -1,4 +1,4 @@
-import { ViewMoreDataDetails } from "@/types"
+import { type ViewMoreDataDetails } from "@/types"
 
 import { useGetDonationById } from "@/hooks/queries/use-get-donation"
 import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"

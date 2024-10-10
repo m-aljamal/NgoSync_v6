@@ -3,6 +3,7 @@
 import * as React from "react"
 import { type ProjectTransaction } from "@/db/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
 import Decimal from "decimal.js"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
@@ -51,10 +52,15 @@ export function UpdateExpenseSheet({
     form.reset(defaultValues)
   }, [expense, form, defaultValues])
 
+  const queryClient = useQueryClient()
+
   const { executeAsync, isExecuting } = useAction(updateExpense, {
     onSuccess: async () => {
       toast.success("تم تعديل المصروف")
       props.onOpenChange?.(false)
+      await queryClient.invalidateQueries({
+        queryKey: ["expense"],
+      })
       form.reset()
     },
     onError: ({ error }) => {
@@ -69,7 +75,7 @@ export function UpdateExpenseSheet({
     await executeAsync(input)
     toast.dismiss()
   }
-  
+
   return (
     <UpdateSheet {...props}>
       <ExpenseForm form={form} onSubmit={onSubmit}>

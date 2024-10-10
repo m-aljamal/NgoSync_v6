@@ -1,5 +1,6 @@
 import "server-only"
 
+import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import {
@@ -7,6 +8,7 @@ import {
   expensesCategories,
   projects,
   projectsTransactions,
+  proposals,
   type ProjectTransaction,
 } from "@/db/schemas"
 import { type DrizzleWhere } from "@/types"
@@ -23,6 +25,7 @@ import {
   sql,
   type SQL,
 } from "drizzle-orm"
+import { alias } from "drizzle-orm/pg-core"
 
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, convertToDate } from "./utils"
@@ -127,3 +130,46 @@ export async function getExpenses(input: GetSearchSchema) {
     return { data: [], pageCount: 0 }
   }
 }
+
+export const getExpense = cache(async (id: string) => {
+  const officialCurrency = alias(currencies, "officialCurrency")
+  const proposalCurrency = alias(currencies, "proposalCurrency")
+  try {
+    const [expense] = await db
+      .select({
+        id: projectsTransactions.id,
+        date: projectsTransactions.date,
+        amount: sql`ABS(${projectsTransactions.amount})`,
+        currency: currencies.code,
+        amountInUSD: sql`ABS(${projectsTransactions.amountInUSD})`,
+        officialAmount: sql`ABS(${projectsTransactions.officialAmount})`,
+        officialAmountCurrency: officialCurrency.code,
+        proposalAmount: sql`ABS(${projectsTransactions.proposalAmount})`,
+        proposalCurrency: proposalCurrency.code,
+        isOfficial: projectsTransactions.isOfficial,
+        project: projects.name,
+        proposal: proposals.name,
+        currencyName: currencies.name,
+        description: projectsTransactions.description,
+        transactionStatus: projectsTransactions.transactionStatus,
+        expensesCategory: expensesCategories.name,
+      })
+      .from(projectsTransactions)
+      .where(eq(projectsTransactions.id, id))
+      .innerJoin(currencies, eq(projectsTransactions.currencyId, currencies.id))
+      .innerJoin(projects, eq(projectsTransactions.projectId, projects.id))
+      .leftJoin(proposals, eq(projectsTransactions.proposalId, proposals.id))
+      .leftJoin(officialCurrency, eq(officialCurrency.official, true))
+      .leftJoin(proposalCurrency, eq(proposalCurrency.id, proposals.currencyId))
+      .innerJoin(
+        expensesCategories,
+        eq(projectsTransactions.expensesCategoryId, expensesCategories.id)
+      )
+
+    return expense
+  } catch (error) {
+    console.log(error)
+
+    throw new Error("Error in getting expense")
+  }
+})

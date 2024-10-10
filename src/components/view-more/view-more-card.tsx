@@ -25,11 +25,11 @@ export default function ViewMoreCards({
   return (
     <div className="space-y-5">
       {amounts && (
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
           <AmountCard
             currency={amounts.currency}
             amount={amounts.amount}
-            title="المبلغ المستلم"
+            title="المبلغ"
           />
           {amounts.currency !== "USD" && (
             <AmountCard

@@ -2,8 +2,10 @@ import provider from "@/auth.config"
 import { AuthConfig, initAuthConfig } from "@hono/auth-js"
 import { Context, Hono } from "hono"
 import { logger } from "hono/logger"
-import doner from './doner'
+
 import donation from "./donation"
+import doner from "./doner"
+import expense from "./expense"
 import form from "./form"
 
 const app = new Hono().basePath("/api")
@@ -13,7 +15,11 @@ const app = new Hono().basePath("/api")
 // protect all routes
 // app.use("/*", verifyAuth());
 
-const routes = app.route("/form", form).route("/donation", donation).route("/doner", doner)
+const routes = app
+  .route("/form", form)
+  .route("/donation", donation)
+  .route("/doner", doner)
+  .route("/expense", expense)
 
 export type AppType = typeof routes
 export default app
