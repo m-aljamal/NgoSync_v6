@@ -2,7 +2,7 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { fundTransactions, projectsTransactions, tasks } from "@/db/schemas"
+import { fundTransactions, projectsTransactions } from "@/db/schemas"
 import {
   transferBetweenFunds,
   transferBetweenProjects,
@@ -16,56 +16,33 @@ import type {
   TransferProjectToFund,
 } from "@/db/schemas/transfer"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, eq, or, sql, type SQL } from "drizzle-orm"
+import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 import { alias } from "drizzle-orm/pg-core"
 
-import { filterColumn } from "@/lib/filter-column"
-
 import { type GetSearchSchema } from "../validations"
+import { calculateOffset, convertToDate } from "./utils"
 
 export async function getTransferBetweenFunds(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, status, priority, operator, from, to } = input
+  const { page, per_page, sort, operator, from, to } = input
 
   try {
-    const offset = (page - 1) * per_page
+    const offset = calculateOffset(page, per_page)
 
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
       "createdAt",
       "desc",
     ]) as [keyof TransferBetweenFunds | undefined, "asc" | "desc" | undefined]
 
-    const fromDay = from
-      ? sql`${transferBetweenFunds.createdAt} >= ${from}`
-      : undefined
-    const toDay = to
-      ? sql`${transferBetweenFunds.createdAt} <= ${to}`
-      : undefined
+    const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
-      !!status
-        ? filterColumn({
-            column: tasks.status,
-            value: status,
-            isSelectable: true,
-          })
-        : undefined,
-
-      !!priority
-        ? filterColumn({
-            column: tasks.priority,
-            value: priority,
-            isSelectable: true,
-          })
-        : undefined,
-
       fromDay && toDay
         ? and(
-            sql`${transferBetweenFunds.createdAt} >= ${from}`,
-            sql`${transferBetweenFunds.createdAt} <= ${to}`
+            gte(transferBetweenFunds.date, fromDay),
+            lte(transferBetweenFunds.date, toDay)
           )
         : undefined,
-      fromDay ? fromDay : undefined,
     ]
 
     const where: DrizzleWhere<TransferBetweenFunds> =
@@ -85,8 +62,8 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
           description: senderTransaction.description,
           senderFundId: senderTransaction.fundId,
           receiverFundId: recipientTransaction.fundId,
-          date: senderTransaction.date,
-          amount: sql<number>`ABS(${senderTransaction.amount})/1000`,
+          date: transferBetweenFunds.date,
+          amount: senderTransaction.amount,
           currencyId: senderTransaction.currencyId,
         })
         .from(transferBetweenFunds)
@@ -115,6 +92,14 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
         })
         .from(transferBetweenFunds)
         .where(where)
+        .innerJoin(
+          senderTransaction,
+          eq(transferBetweenFunds.sender, senderTransaction.id)
+        )
+        .innerJoin(
+          recipientTransaction,
+          eq(transferBetweenFunds.receiver, recipientTransaction.id)
+        )
         .execute()
         .then((res) => res[0]?.count ?? 0)
 
@@ -137,7 +122,7 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
   const { page, per_page, sort, operator, from, to } = input
 
   try {
-    const offset = (page - 1) * per_page
+    const offset = calculateOffset(page, per_page)
 
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
       "createdAt",
@@ -147,21 +132,15 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
       "asc" | "desc" | undefined,
     ]
 
-    const fromDay = from
-      ? sql`${transferBetweenProjects.createdAt} >= ${from}`
-      : undefined
-    const toDay = to
-      ? sql`${transferBetweenProjects.createdAt} <= ${to}`
-      : undefined
+    const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
       fromDay && toDay
         ? and(
-            sql`${transferBetweenProjects.createdAt} >= ${from}`,
-            sql`${transferBetweenProjects.createdAt} <= ${to}`
+            gte(transferBetweenProjects.date, fromDay),
+            lte(transferBetweenProjects.date, toDay)
           )
         : undefined,
-      fromDay ? fromDay : undefined,
     ]
 
     const where: DrizzleWhere<TransferBetweenProjects> =
@@ -185,7 +164,7 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
           senderProjectId: senderTransaction.projectId,
           receiverProjectId: recipientTransaction.projectId,
           date: senderTransaction.date,
-          amount: sql<number>`ABS(${senderTransaction.amount})/1000`,
+          amount: senderTransaction.amount,
           currencyId: senderTransaction.currencyId,
         })
         .from(transferBetweenProjects)
@@ -214,6 +193,14 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
         })
         .from(transferBetweenProjects)
         .where(where)
+        .innerJoin(
+          senderTransaction,
+          eq(transferBetweenProjects.sender, senderTransaction.id)
+        )
+        .innerJoin(
+          recipientTransaction,
+          eq(transferBetweenProjects.receiver, recipientTransaction.id)
+        )
         .execute()
         .then((res) => res[0]?.count ?? 0)
 
@@ -236,28 +223,22 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
   const { page, per_page, sort, operator, from, to } = input
 
   try {
-    const offset = (page - 1) * per_page
+    const offset = calculateOffset(page, per_page)
 
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
       "createdAt",
       "desc",
     ]) as [keyof TransferFundToProject | undefined, "asc" | "desc" | undefined]
 
-    const fromDay = from
-      ? sql`${transferFundToProject.createdAt} >= ${from}`
-      : undefined
-    const toDay = to
-      ? sql`${transferFundToProject.createdAt} <= ${to}`
-      : undefined
+    const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
       fromDay && toDay
         ? and(
-            sql`${transferFundToProject.createdAt} >= ${from}`,
-            sql`${transferFundToProject.createdAt} <= ${to}`
+            gte(transferFundToProject.date, fromDay),
+            lte(transferFundToProject.date, toDay)
           )
         : undefined,
-      fromDay ? fromDay : undefined,
     ]
 
     const where: DrizzleWhere<TransferFundToProject> =
@@ -275,7 +256,7 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
           senderFundId: fundTransactions.fundId,
           receiverProjectId: projectsTransactions.projectId,
           date: fundTransactions.date,
-          amount: sql<number>`${projectsTransactions.amount}/1000`,
+          amount: projectsTransactions.amount,
           currencyId: projectsTransactions.currencyId,
           isOfficial: projectsTransactions.isOfficial,
         })
@@ -305,6 +286,14 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
         })
         .from(transferFundToProject)
         .where(where)
+        .innerJoin(
+          fundTransactions,
+          eq(transferFundToProject.sender, fundTransactions.id)
+        )
+        .innerJoin(
+          projectsTransactions,
+          eq(transferFundToProject.receiver, projectsTransactions.id)
+        )
         .execute()
         .then((res) => res[0]?.count ?? 0)
 
@@ -327,28 +316,22 @@ export async function getTransferProjectToFund(input: GetSearchSchema) {
   const { page, per_page, sort, operator, from, to } = input
 
   try {
-    const offset = (page - 1) * per_page
+    const offset = calculateOffset(page, per_page)
 
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
       "createdAt",
       "desc",
     ]) as [keyof TransferProjectToFund | undefined, "asc" | "desc" | undefined]
 
-    const fromDay = from
-      ? sql`${transferProjectToFund.createdAt} >= ${from}`
-      : undefined
-    const toDay = to
-      ? sql`${transferProjectToFund.createdAt} <= ${to}`
-      : undefined
+    const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
       fromDay && toDay
         ? and(
-            sql`${transferProjectToFund.createdAt} >= ${from}`,
-            sql`${transferProjectToFund.createdAt} <= ${to}`
+            gte(transferProjectToFund.date, fromDay),
+            lte(transferProjectToFund.date, toDay)
           )
         : undefined,
-      fromDay ? fromDay : undefined,
     ]
 
     const where: DrizzleWhere<TransferProjectToFund> =
@@ -366,7 +349,7 @@ export async function getTransferProjectToFund(input: GetSearchSchema) {
           senderProjectId: projectsTransactions.projectId,
           receiverFundId: fundTransactions.fundId,
           date: fundTransactions.date,
-          amount: sql<number>`${fundTransactions.amount}/1000`,
+          amount: fundTransactions.amount,
           currencyId: projectsTransactions.currencyId,
           isOfficial: projectsTransactions.isOfficial,
         })
@@ -396,6 +379,14 @@ export async function getTransferProjectToFund(input: GetSearchSchema) {
         })
         .from(transferProjectToFund)
         .where(where)
+        .innerJoin(
+          projectsTransactions,
+          eq(transferProjectToFund.sender, projectsTransactions.id)
+        )
+        .innerJoin(
+          fundTransactions,
+          eq(transferProjectToFund.receiver, fundTransactions.id)
+        )
         .execute()
         .then((res) => res[0]?.count ?? 0)
 

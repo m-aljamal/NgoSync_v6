@@ -111,7 +111,7 @@ export const projectsTransactions = pgTable("projects_transactions", {
   officialAmount: decimal("officialAmount", {
     precision: 19,
     scale: 4,
-  }).notNull(),
+  }),
   proposalAmount: decimal("proposalAmount", {
     precision: 19,
     scale: 4,

@@ -13,8 +13,6 @@ import { format } from "date-fns"
 import { eq, inArray, sql } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
-import { convertAmountToMiliunits } from "@/lib/utils"
-
 import { calculateAmounts } from "../queries/utils"
 import { actionClient } from "../safe-action"
 import { toDecimalFixed } from "../utils"
@@ -41,12 +39,11 @@ export const createTransferBetweenFunds = actionClient
       const amount = toDecimalFixed(transferAmount)
       const date = format(transferDate, "yyyy-MM-dd")
 
-      const { amountInUSD, proposalAmount, officialAmount } =
-        await calculateAmounts({
-          amount: transferAmount,
-          currencyId,
-          date: transferDate,
-        })
+      const { amountInUSD, proposalAmount } = await calculateAmounts({
+        amount: transferAmount,
+        currencyId,
+        date: transferDate,
+      })
 
       await db.transaction(async (tx) => {
         const [sender] = await tx
@@ -57,7 +54,6 @@ export const createTransferBetweenFunds = actionClient
             amount: sql`${-amount}`,
             proposalAmount: proposalAmount ? sql`${-proposalAmount}` : "0",
             amountInUSD: amountInUSD ? sql`${-amountInUSD}` : "0",
-            officialAmount: officialAmount ? sql`${-officialAmount}` : "0",
             date,
             type: "outcome",
             description,
@@ -73,7 +69,6 @@ export const createTransferBetweenFunds = actionClient
             amount: amount,
             proposalAmount,
             amountInUSD,
-            officialAmount,
             date,
             type: "income",
             description,
@@ -87,6 +82,7 @@ export const createTransferBetweenFunds = actionClient
         await tx.insert(transferBetweenFunds).values({
           sender: sender?.id,
           receiver: receiver?.id,
+          date,
         })
       })
       revalidatePath("/transfers-from-fund-to-fund")
@@ -157,6 +153,11 @@ export const updateTransferBetweenFunds = actionClient
             description,
           })
           .where(eq(fundTransactions.id, transfer?.receiverId))
+
+        await tx
+          .update(transferBetweenFunds)
+          .set({ date })
+          .where(eq(transferBetweenFunds.id, id))
       })
       revalidatePath("/transfers-from-fund-to-fund")
     }
@@ -197,20 +198,27 @@ export const createTransferBetweenProjects = actionClient
       },
     }) => {
       noStore()
-      // todo add the amounts
-      const amount = convertAmountToMiliunits(transferAmount)
+
+      const amount = toDecimalFixed(transferAmount)
+
+      const { amountInUSD, proposalAmount } = await calculateAmounts({
+        amount: transferAmount,
+        currencyId,
+        date: transferDate,
+      })
+
       const date = format(transferDate, "yyyy-MM-dd")
+
       await db.transaction(async (tx) => {
         const [sender] = await tx
           .insert(projectsTransactions)
           .values({
             projectId: senderId,
             currencyId,
-            amount: -amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
+            amount: sql`${-amount}`,
+            proposalAmount: proposalAmount ? sql`${-proposalAmount}` : "0",
+            amountInUSD: amountInUSD ? sql`${-amountInUSD}` : "0",
             transactionStatus: "approved",
-            officialAmount: 0,
             date,
             type: "outcome",
             description,
@@ -224,9 +232,8 @@ export const createTransferBetweenProjects = actionClient
             projectId: receiverId,
             currencyId,
             amount: amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            proposalAmount,
+            amountInUSD,
             transactionStatus: "approved",
             date,
             type: "income",
@@ -241,6 +248,7 @@ export const createTransferBetweenProjects = actionClient
         await tx.insert(transferBetweenProjects).values({
           sender: sender?.id,
           receiver: receiver?.id,
+          date,
         })
       })
       revalidatePath("/transfers-from-project-to-project")
@@ -266,7 +274,7 @@ export const updateTransferBetweenProjects = actionClient
       },
     }) => {
       noStore()
-      // todo add the amounts
+
       if (!id) throw new Error("id is required")
 
       const [transfer] = await db
@@ -279,18 +287,26 @@ export const updateTransferBetweenProjects = actionClient
         .where(eq(transferBetweenProjects.id, id))
 
       if (!transfer) throw new Error("transfer not found")
-      const amount = convertAmountToMiliunits(transferAmount)
+
+      const amount = toDecimalFixed(transferAmount)
+
       const date = format(transferDate, "yyyy-MM-dd")
+
+      const { amountInUSD, proposalAmount } = await calculateAmounts({
+        amount: transferAmount,
+        currencyId,
+        date: transferDate,
+      })
+
       await db.transaction(async (tx) => {
         await tx
           .update(projectsTransactions)
           .set({
             projectId: senderId,
             currencyId,
-            amount: -amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            amount: sql`${-amount}`,
+            proposalAmount: proposalAmount ? sql`${-proposalAmount}` : "0",
+            amountInUSD: amountInUSD ? sql`${-amountInUSD}` : "0",
             date,
             description,
             isOfficial,
@@ -303,14 +319,18 @@ export const updateTransferBetweenProjects = actionClient
             projectId: receiverId,
             currencyId,
             amount: amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            proposalAmount,
+            amountInUSD,
             date,
             description,
             isOfficial,
           })
           .where(eq(projectsTransactions.id, transfer?.receiverId))
+
+        await tx
+          .update(transferBetweenProjects)
+          .set({ date })
+          .where(eq(transferBetweenProjects.id, id))
       })
       revalidatePath("/transfers-from-project-to-project")
     }
@@ -408,6 +428,7 @@ export const createTransferFundToProject = actionClient
         await tx.insert(transferFundToProject).values({
           sender: sender?.id,
           receiver: receiver?.id,
+          date,
         })
       })
       revalidatePath("/transfers-from-fund-to-project")
@@ -463,7 +484,6 @@ export const updateTransferFundToProject = actionClient
           .set({
             fundId: senderId,
             currencyId,
-
             amount: sql`${-amount}`,
             proposalAmount: proposalAmount ? sql`${-proposalAmount}` : "0",
             amountInUSD: amountInUSD ? sql`${-amountInUSD}` : "0",
@@ -488,6 +508,11 @@ export const updateTransferFundToProject = actionClient
             isOfficial,
           })
           .where(eq(projectsTransactions.id, transfer?.receiverId))
+
+        await tx
+          .update(transferFundToProject)
+          .set({ date })
+          .where(eq(transferFundToProject.id, id))
       })
       revalidatePath("/transfers-from-fund-to-project")
     }
@@ -533,18 +558,27 @@ export const createTransferProjectToFund = actionClient
     }) => {
       noStore()
 
-      const amount = convertAmountToMiliunits(transferAmount)
+      const amount = toDecimalFixed(transferAmount)
       const date = format(transferDate, "yyyy-MM-dd")
+
+      const { amountInUSD, proposalAmount, officialAmount } =
+        await calculateAmounts({
+          amount: transferAmount,
+          currencyId,
+          date: transferDate,
+          isOfficial,
+        })
+
       await db.transaction(async (tx) => {
         const [sender] = await tx
           .insert(projectsTransactions)
           .values({
             projectId: senderId,
             currencyId,
-            amount: -amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            amount: sql`${-amount}`,
+            proposalAmount: proposalAmount ? sql`${-proposalAmount}` : "0",
+            amountInUSD: amountInUSD ? sql`${-amountInUSD}` : "0",
+            officialAmount: officialAmount ? sql`${-officialAmount}` : "0",
             date,
             type: "outcome",
             isOfficial,
@@ -560,9 +594,9 @@ export const createTransferProjectToFund = actionClient
             fundId: receiverId,
             currencyId,
             amount: amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            proposalAmount,
+            amountInUSD,
+            officialAmount,
             date,
             type: "income",
             description,
@@ -577,6 +611,7 @@ export const createTransferProjectToFund = actionClient
         await tx.insert(transferProjectToFund).values({
           sender: sender?.id,
           receiver: receiver?.id,
+          date,
         })
       })
       revalidatePath("/transfers-from-project-to-fund")
@@ -602,7 +637,7 @@ export const updateTransferProjectToFund = actionClient
       },
     }) => {
       noStore()
-      // todo add the amounts
+
       if (!id) throw new Error("id is required")
 
       const [transfer] = await db
@@ -615,7 +650,16 @@ export const updateTransferProjectToFund = actionClient
         .where(eq(transferProjectToFund.id, id))
 
       if (!transfer) throw new Error("transfer not found")
-      const amount = convertAmountToMiliunits(transferAmount)
+      const amount = toDecimalFixed(transferAmount)
+
+      const { amountInUSD, proposalAmount, officialAmount } =
+        await calculateAmounts({
+          amount: transferAmount,
+          currencyId,
+          date: transferDate,
+          isOfficial,
+        })
+
       const date = format(transferDate, "yyyy-MM-dd")
       await db.transaction(async (tx) => {
         await tx
@@ -623,10 +667,10 @@ export const updateTransferProjectToFund = actionClient
           .set({
             projectId: senderId,
             currencyId,
-            amount: -amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            amount: sql`${-amount}`,
+            proposalAmount: proposalAmount ? sql`${-proposalAmount}` : "0",
+            amountInUSD: amountInUSD ? sql`${-amountInUSD}` : "0",
+            officialAmount: officialAmount ? sql`${-officialAmount}` : "0",
             date,
             description,
             isOfficial,
@@ -639,14 +683,19 @@ export const updateTransferProjectToFund = actionClient
             fundId: receiverId,
             currencyId,
             amount: amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            proposalAmount,
+            amountInUSD,
+            officialAmount,
             date,
             description,
             isOfficial,
           })
           .where(eq(fundTransactions.id, transfer?.receiverId))
+
+        await tx
+          .update(transferProjectToFund)
+          .set({ date })
+          .where(eq(transferProjectToFund.id, id))
       })
       revalidatePath("/transfers-from-project-to-fund")
     }

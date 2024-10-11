@@ -1,6 +1,6 @@
 import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
-import { timestamp, varchar } from "drizzle-orm/pg-core"
+import { date, timestamp, varchar } from "drizzle-orm/pg-core"
 
 import { generateId } from "@/lib/id"
 
@@ -10,12 +10,13 @@ export const transferBetweenFunds = pgTable("transfer_between_funds", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())
     .primaryKey(),
-
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
     .$onUpdate(() => new Date()),
-
+  date: date("date")
+    .notNull()
+    .default(sql`CURRENT_DATE`),
   sender: varchar("sender")
     .notNull()
     .references(() => fundTransactions.id),
@@ -62,7 +63,9 @@ export const transferBetweenProjects = pgTable("transfer_between_projects", {
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
     .$onUpdate(() => new Date()),
-
+  date: date("date")
+    .notNull()
+    .default(sql`CURRENT_DATE`),
   sender: varchar("sender")
     .notNull()
     .references(() => projectsTransactions.id),
@@ -112,7 +115,9 @@ export const transferFundToProject = pgTable("transfer_fund_to_project", {
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
     .$onUpdate(() => new Date()),
-
+  date: date("date")
+    .notNull()
+    .default(sql`CURRENT_DATE`),
   sender: varchar("sender")
     .notNull()
     .references(() => fundTransactions.id),
@@ -155,7 +160,9 @@ export const transferProjectToFund = pgTable("transfer_project_to_fund", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())
     .primaryKey(),
-
+  date: date("date")
+    .notNull()
+    .default(sql`CURRENT_DATE`),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
