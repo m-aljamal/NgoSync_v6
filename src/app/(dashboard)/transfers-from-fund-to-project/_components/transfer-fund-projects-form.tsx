@@ -29,10 +29,10 @@ export function TransferFundToProjectsForm({
 }: CreateTransferFundToProjectsFormProps) {
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         <InputGroup>
-          <CurrencyAmountInput form={form} />
           <DateInput form={form} />
+          <CurrencyAmountInput form={form} />
           <FundInput form={form} name="senderId" label="الصندوق المرسل" />
           <ProjectInput form={form} name="receiverId" label="المشروع المستلم" />
           <IsOfficialInput form={form} />

@@ -154,6 +154,10 @@ export type TransferFundToProjectWithRelations =
     amount: number
     currencyId: string
     isOfficial?: boolean
+    currencyCode: string
+    senderName: string
+    receiverName: string
+    transactionStatus: typeof projectsTransactions.$inferSelect.transactionStatus
   }
 // transfer project to fund
 export const transferProjectToFund = pgTable("transfer_project_to_fund", {

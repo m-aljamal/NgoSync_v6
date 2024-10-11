@@ -2,7 +2,13 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { fundTransactions, projectsTransactions } from "@/db/schemas"
+import {
+  currencies,
+  funds,
+  fundTransactions,
+  projects,
+  projectsTransactions,
+} from "@/db/schemas"
 import {
   transferBetweenFunds,
   transferBetweenProjects,
@@ -65,6 +71,7 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
           date: transferBetweenFunds.date,
           amount: senderTransaction.amount,
           currencyId: senderTransaction.currencyId,
+          currencyCode: currencies.code,
         })
         .from(transferBetweenFunds)
         .limit(per_page)
@@ -78,6 +85,7 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
           recipientTransaction,
           eq(transferBetweenFunds.receiver, recipientTransaction.id)
         )
+        .innerJoin(currencies, eq(senderTransaction.currencyId, currencies.id))
         .orderBy(
           column && column in transferBetweenFunds
             ? order === "asc"
@@ -100,6 +108,7 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
           recipientTransaction,
           eq(transferBetweenFunds.receiver, recipientTransaction.id)
         )
+        .innerJoin(currencies, eq(senderTransaction.currencyId, currencies.id))
         .execute()
         .then((res) => res[0]?.count ?? 0)
 
@@ -166,6 +175,7 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
           date: senderTransaction.date,
           amount: senderTransaction.amount,
           currencyId: senderTransaction.currencyId,
+          currencyCode: currencies.code,
         })
         .from(transferBetweenProjects)
         .limit(per_page)
@@ -179,6 +189,7 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
           recipientTransaction,
           eq(transferBetweenProjects.receiver, recipientTransaction.id)
         )
+        .innerJoin(currencies, eq(senderTransaction.currencyId, currencies.id))
         .orderBy(
           column && column in transferBetweenProjects
             ? order === "asc"
@@ -201,6 +212,7 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
           recipientTransaction,
           eq(transferBetweenProjects.receiver, recipientTransaction.id)
         )
+        .innerJoin(currencies, eq(senderTransaction.currencyId, currencies.id))
         .execute()
         .then((res) => res[0]?.count ?? 0)
 
@@ -259,6 +271,10 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
           amount: projectsTransactions.amount,
           currencyId: projectsTransactions.currencyId,
           isOfficial: projectsTransactions.isOfficial,
+          currencyCode: currencies.code,
+          senderName: funds.name,
+          receiverName: projects.name,
+          transactionStatus: projectsTransactions.transactionStatus,
         })
         .from(transferFundToProject)
         .limit(per_page)
@@ -272,6 +288,13 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
           projectsTransactions,
           eq(transferFundToProject.receiver, projectsTransactions.id)
         )
+        .innerJoin(
+          currencies,
+          eq(projectsTransactions.currencyId, currencies.id)
+        )
+
+        .innerJoin(funds, eq(fundTransactions.fundId, funds.id))
+        .innerJoin(projects, eq(projectsTransactions.projectId, projects.id))
         .orderBy(
           column && column in transferFundToProject
             ? order === "asc"
@@ -294,6 +317,12 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
           projectsTransactions,
           eq(transferFundToProject.receiver, projectsTransactions.id)
         )
+        .innerJoin(
+          currencies,
+          eq(projectsTransactions.currencyId, currencies.id)
+        )
+        .innerJoin(funds, eq(fundTransactions.fundId, funds.id))
+        .innerJoin(projects, eq(projectsTransactions.projectId, projects.id))
         .execute()
         .then((res) => res[0]?.count ?? 0)
 
@@ -352,6 +381,7 @@ export async function getTransferProjectToFund(input: GetSearchSchema) {
           amount: fundTransactions.amount,
           currencyId: projectsTransactions.currencyId,
           isOfficial: projectsTransactions.isOfficial,
+          currencyCode: currencies.code,
         })
         .from(transferProjectToFund)
         .limit(per_page)
@@ -364,6 +394,10 @@ export async function getTransferProjectToFund(input: GetSearchSchema) {
         .innerJoin(
           fundTransactions,
           eq(transferProjectToFund.receiver, fundTransactions.id)
+        )
+        .innerJoin(
+          currencies,
+          eq(projectsTransactions.currencyId, currencies.id)
         )
         .orderBy(
           column && column in transferProjectToFund
@@ -386,6 +420,10 @@ export async function getTransferProjectToFund(input: GetSearchSchema) {
         .innerJoin(
           fundTransactions,
           eq(transferProjectToFund.receiver, fundTransactions.id)
+        )
+        .innerJoin(
+          currencies,
+          eq(projectsTransactions.currencyId, currencies.id)
         )
         .execute()
         .then((res) => res[0]?.count ?? 0)

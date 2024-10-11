@@ -413,7 +413,7 @@ export const createTransferFundToProject = actionClient
             proposalAmount,
             amountInUSD,
             officialAmount,
-            transactionStatus: "approved",
+            transactionStatus: "pending",
             date,
             type: "income",
             description,
