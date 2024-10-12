@@ -37,7 +37,7 @@ export const createTransferBetweenFunds = actionClient
       noStore()
 
       const amount = toDecimalFixed(transferAmount)
-      const date = format(transferDate, "yyyy-MM-dd")
+      const date = format(transferDate, "dd-MM-yyyy")
 
       const { amountInUSD, proposalAmount } = await calculateAmounts({
         amount: transferAmount,
@@ -126,7 +126,7 @@ export const updateTransferBetweenFunds = actionClient
 
       if (!transfer) throw new Error("transfer not found")
       const amount = toDecimalFixed(transferAmount)
-      const date = format(transferDate, "yyyy-MM-dd")
+      const date = format(transferDate, "dd-MM-yyyy")
       await db.transaction(async (tx) => {
         await tx
           .update(fundTransactions)
@@ -207,7 +207,7 @@ export const createTransferBetweenProjects = actionClient
         date: transferDate,
       })
 
-      const date = format(transferDate, "yyyy-MM-dd")
+      const date = format(transferDate, "dd-MM-yyyy")
 
       await db.transaction(async (tx) => {
         const [sender] = await tx
@@ -290,7 +290,7 @@ export const updateTransferBetweenProjects = actionClient
 
       const amount = toDecimalFixed(transferAmount)
 
-      const date = format(transferDate, "yyyy-MM-dd")
+      const date = format(transferDate, "dd-MM-yyyy")
 
       const { amountInUSD, proposalAmount } = await calculateAmounts({
         amount: transferAmount,
@@ -377,7 +377,7 @@ export const createTransferFundToProject = actionClient
       noStore()
 
       const amount = toDecimalFixed(transferAmount)
-      const date = format(transferDate, "yyyy-MM-dd")
+      const date = format(transferDate, "dd-MM-yyyy")
 
       const { amountInUSD, proposalAmount, officialAmount } =
         await calculateAmounts({
@@ -477,7 +477,7 @@ export const updateTransferFundToProject = actionClient
           isOfficial,
         })
 
-      const date = format(transferDate, "yyyy-MM-dd")
+      const date = format(transferDate, "dd-MM-yyyy")
       await db.transaction(async (tx) => {
         await tx
           .update(fundTransactions)
@@ -559,7 +559,7 @@ export const createTransferProjectToFund = actionClient
       noStore()
 
       const amount = toDecimalFixed(transferAmount)
-      const date = format(transferDate, "yyyy-MM-dd")
+      const date = format(transferDate, "dd-MM-yyyy")
 
       const { amountInUSD, proposalAmount, officialAmount } =
         await calculateAmounts({
@@ -660,7 +660,7 @@ export const updateTransferProjectToFund = actionClient
           isOfficial,
         })
 
-      const date = format(transferDate, "yyyy-MM-dd")
+      const date = format(transferDate, "dd-MM-yyyy")
       await db.transaction(async (tx) => {
         await tx
           .update(projectsTransactions)

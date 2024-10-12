@@ -386,6 +386,9 @@ export async function getTransferProjectToFund(input: GetSearchSchema) {
           currencyId: projectsTransactions.currencyId,
           isOfficial: projectsTransactions.isOfficial,
           currencyCode: currencies.code,
+          senderName: projects.name,
+          receiverName: funds.name,
+          transactionStatus: projectsTransactions.transactionStatus,
         })
         .from(transferProjectToFund)
         .limit(per_page)
@@ -403,6 +406,8 @@ export async function getTransferProjectToFund(input: GetSearchSchema) {
           currencies,
           eq(projectsTransactions.currencyId, currencies.id)
         )
+        .innerJoin(projects, eq(projectsTransactions.projectId, projects.id))
+        .innerJoin(funds, eq(fundTransactions.fundId, funds.id))
         .orderBy(
           column && column in transferProjectToFund
             ? order === "asc"

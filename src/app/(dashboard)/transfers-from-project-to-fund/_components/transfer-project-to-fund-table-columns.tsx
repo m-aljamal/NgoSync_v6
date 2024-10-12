@@ -6,6 +6,8 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
+import { formatCurrency } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -17,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
+import { transactionStatusTranslation } from "@/app/_lib/translate"
 
 import { DeleteTransferProjectToFundDialog } from "./delete-transfer-project-to-fund-dialog"
 import { UpdateTransferProjectToFundSheet } from "./update-transfer-project-to-fund-sheet"
@@ -58,12 +61,65 @@ export function getColumns(): ColumnDef<TransferProjectToFundWithRelations>[] {
     {
       accessorKey: "amount",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="القيمة" />
+        <DataTableColumnHeader column={column} title="المبلغ" />
       ),
       cell: ({ row }) => (
-        <div>
-          {/* {formatCurrency(row.getValue("amount"), row.original.currencyCode)} */}
-          {row.original.amount}
+        <span>
+          {formatCurrency(row.getValue("amount"), row.original.currencyCode)}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "currencyCode",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="العملة" />
+      ),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("currencyCode")}>
+          {row.getValue("currencyCode")}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
+    },
+    {
+      accessorKey: "senderName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المرسل" />
+      ),
+    },
+    {
+      accessorKey: "receiverName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المستلم" />
+      ),
+    },
+
+    {
+      accessorKey: "transactionStatus",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الحالة" />
+      ),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("transactionStatus")}>
+          {transactionStatusTranslation[row.original.transactionStatus]}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
+    },
+    {
+      accessorKey: "description",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الوصف" />
+      ),
+      cell: ({ row }) => (
+        <div className="max-w-[25rem] truncate">
+          {row.getValue("description")}
         </div>
       ),
     },

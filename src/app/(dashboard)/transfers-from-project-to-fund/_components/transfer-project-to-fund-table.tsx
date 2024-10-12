@@ -27,7 +27,7 @@ export function TransferProjectToFundTable({
   const filterFields: DataTableFilterField<TransferProjectToFundWithRelations>[] =
     [
       {
-        label: "Amount",
+        label: "المبلغ",
         value: "amount",
         placeholder: "بحث عن مبلغ",
       },

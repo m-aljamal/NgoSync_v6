@@ -205,7 +205,11 @@ export type TransferProjectToFundWithRelations =
     senderProjectId: string
     receiverFundId: string
     date: string
-    amount: number
+    amount: string
     currencyId: string
     isOfficial?: boolean
+    currencyCode: string
+    senderName: string
+    receiverName: string
+    transactionStatus: typeof projectsTransactions.$inferSelect.transactionStatus
   }
