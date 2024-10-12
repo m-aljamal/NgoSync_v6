@@ -112,6 +112,17 @@ export function getColumns(): ColumnDef<TransferFundToProjectWithRelations>[] {
         return Array.isArray(value) && value.includes(row.getValue(id))
       },
     },
+    {
+      accessorKey: "description",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الوصف" />
+      ),
+      cell: ({ row }) => (
+        <div className="max-w-[25rem] truncate">
+          {row.getValue("description")}
+        </div>
+      ),
+    },
 
     {
       id: "actions",

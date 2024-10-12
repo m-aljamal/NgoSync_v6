@@ -22,6 +22,7 @@ import type {
   TransferProjectToFund,
 } from "@/db/schemas/transfer"
 import { type DrizzleWhere } from "@/types"
+import Decimal from "decimal.js"
 import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 import { alias } from "drizzle-orm/pg-core"
 
@@ -232,7 +233,7 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
 // Transfer fund to project
 export async function getTransferFundToProject(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, operator, from, to } = input
+  const { page, per_page, sort, operator, from, to, amount } = input
 
   try {
     const offset = calculateOffset(page, per_page)
@@ -245,6 +246,9 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
+      amount
+        ? eq(projectsTransactions.amount, new Decimal(amount).toFixed(4))
+        : undefined,
       fromDay && toDay
         ? and(
             gte(transferFundToProject.date, fromDay),

@@ -151,7 +151,7 @@ export type TransferFundToProjectWithRelations =
     senderFundId: string
     receiverProjectId: string
     date: string
-    amount: number
+    amount: string
     currencyId: string
     isOfficial?: boolean
     currencyCode: string
