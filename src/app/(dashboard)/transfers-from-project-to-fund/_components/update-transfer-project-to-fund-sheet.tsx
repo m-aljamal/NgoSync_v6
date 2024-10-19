@@ -3,6 +3,7 @@
 import * as React from "react"
 import { type TransferProjectToFundWithRelations } from "@/db/schemas/transfer"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Decimal from "decimal.js"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -31,7 +32,7 @@ export function UpdateTransferProjectToFundSheet({
     return {
       date: new Date(transfer.date),
       id: transfer.id,
-      amount: transfer.amount,
+      amount: new Decimal(transfer.amount),
       description: transfer.description ?? "",
       currencyId: transfer.currencyId,
       senderId: transfer.senderProjectId,
@@ -69,7 +70,7 @@ export function UpdateTransferProjectToFundSheet({
   }
   return (
     <UpdateSheet {...props}>
-      <TransferProjectToFundForm form={form} onSubmit={onSubmit} isUpdate>
+      <TransferProjectToFundForm form={form} onSubmit={onSubmit}>
         <UpdateButtons isExecuting={isExecuting} />
       </TransferProjectToFundForm>
     </UpdateSheet>

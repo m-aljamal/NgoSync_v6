@@ -129,7 +129,7 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
 // Transfer between projects
 export async function getTransferBetweenProjects(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, operator, from, to } = input
+  const { page, per_page, sort, operator, from, to, amount } = input
 
   try {
     const offset = calculateOffset(page, per_page)
@@ -145,6 +145,9 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
+      amount
+        ? eq(projectsTransactions.amount, new Decimal(amount).toFixed(4))
+        : undefined,
       fromDay && toDay
         ? and(
             gte(transferBetweenProjects.date, fromDay),
@@ -161,6 +164,8 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
       projectsTransactions,
       "recipientTransaction"
     )
+    const senderProject = alias(projects, "senderProject")
+    const recipientProject = alias(projects, "recipientProject")
 
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
@@ -174,9 +179,11 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
           senderProjectId: senderTransaction.projectId,
           receiverProjectId: recipientTransaction.projectId,
           date: senderTransaction.date,
-          amount: senderTransaction.amount,
+          amount: recipientTransaction.amount,
           currencyId: senderTransaction.currencyId,
           currencyCode: currencies.code,
+          senderName: senderProject.name,
+          receiverName: recipientProject.name,
         })
         .from(transferBetweenProjects)
         .limit(per_page)
@@ -191,6 +198,14 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
           eq(transferBetweenProjects.receiver, recipientTransaction.id)
         )
         .innerJoin(currencies, eq(senderTransaction.currencyId, currencies.id))
+        .innerJoin(
+          senderProject,
+          eq(senderTransaction.projectId, senderProject.id)
+        )
+        .innerJoin(
+          recipientProject,
+          eq(recipientTransaction.projectId, recipientProject.id)
+        )
         .orderBy(
           column && column in transferBetweenProjects
             ? order === "asc"

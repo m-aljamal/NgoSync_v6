@@ -18,21 +18,19 @@ interface CreateTransferBetweenProjectsFormProps
   children: React.ReactNode
   form: UseFormReturn<CreateTransferSchema>
   onSubmit: (data: CreateTransferSchema) => void
-  isUpdate?: boolean
 }
 
 export function TransferBetweenProjectsForm({
   form,
   onSubmit,
   children,
-  isUpdate,
 }: CreateTransferBetweenProjectsFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup isUpdate={isUpdate}>
-          <CurrencyAmountInput form={form} />
+        <InputGroup>
           <DateInput form={form} />
+          <CurrencyAmountInput form={form} />
 
           <ProjectInput form={form} name="senderId" label="المشروع المرسل" />
           <ProjectInput form={form} name="receiverId" label="المشروع المستلم" />

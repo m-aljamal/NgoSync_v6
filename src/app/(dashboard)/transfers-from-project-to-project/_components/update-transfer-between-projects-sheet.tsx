@@ -3,6 +3,7 @@
 import * as React from "react"
 import { type TransferBetweenProjectsWithRelations } from "@/db/schemas/transfer"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Decimal from "decimal.js"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -31,7 +32,7 @@ export function UpdateTransferBetweenProjectsSheet({
     return {
       date: new Date(transfer.date),
       id: transfer.id,
-      amount: transfer.amount,
+      amount: new Decimal(transfer.amount),
       description: transfer.description ?? "",
       currencyId: transfer.currencyId,
       senderId: transfer.senderProjectId,
@@ -71,7 +72,7 @@ export function UpdateTransferBetweenProjectsSheet({
   }
   return (
     <UpdateSheet {...props}>
-      <TransferBetweenProjectsForm form={form} onSubmit={onSubmit} isUpdate>
+      <TransferBetweenProjectsForm form={form} onSubmit={onSubmit}>
         <UpdateButtons isExecuting={isExecuting} />
       </TransferBetweenProjectsForm>
     </UpdateSheet>

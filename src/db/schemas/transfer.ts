@@ -101,8 +101,11 @@ export type TransferBetweenProjectsWithRelations =
     senderProjectId: string
     receiverProjectId: string
     date: string
-    amount: number
+    amount: string
     currencyId: string
+    senderName: string
+    receiverName: string
+    currencyCode: string
   }
 
 // transfer fund to project
