@@ -4,7 +4,6 @@ import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
 import {
   currencies,
-  doners,
   exchangeRates,
   exchnageBetweenFunds,
   exchnageBetweenProjects,
@@ -19,6 +18,7 @@ import { flattenValidationErrors } from "next-safe-action"
 import { convertAmountToMiliunits } from "@/lib/utils"
 import { currencyList } from "@/app/(dashboard)/currencies/_components/currency-list"
 
+import { getOfficialCurrency } from "../queries/currency"
 import { actionClient } from "../safe-action"
 import { toDecimalFixed } from "../utils"
 import {
@@ -33,7 +33,7 @@ export const createCurrency = actionClient
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
-  .action(async ({ parsedInput: { code, official } }) => {
+  .action(async ({ parsedInput: { code, isOfficial } }) => {
     noStore()
     const currencyToAdd = currencyList.find(
       (currency) => currency.code === code
@@ -41,11 +41,18 @@ export const createCurrency = actionClient
     if (!currencyToAdd) {
       throw new Error("العملة غير موجودة")
     }
+    const officialCurrency = await getOfficialCurrency()
+    if (isOfficial && officialCurrency) {
+      await db
+        .update(currencies)
+        .set({ isOfficial: false })
+        .where(eq(currencies.id, officialCurrency.id))
+    }
     await db.insert(currencies).values({
       name: currencyToAdd.name,
       code: currencyToAdd.code,
       locale: currencyToAdd.locale,
-      official,
+      isOfficial,
     })
     revalidatePath("/currencies")
   })
@@ -67,8 +74,6 @@ export const updateCurrency = actionClient
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput: data }) => {
-    console.log(data)
-
     noStore()
     if (!data.id) throw new Error("id is required")
     const currencyToAdd = currencyList.find(
@@ -78,19 +83,17 @@ export const updateCurrency = actionClient
       throw new Error("العملة غير موجودة")
     }
 
-    const officialCurrency = await db.query.currencies.findFirst({
-      where: eq(currencies.official, true),
-    })
+    const officialCurrency = await getOfficialCurrency()
 
     if (officialCurrency && officialCurrency.id !== data.id) {
       await db
         .update(currencies)
-        .set({ official: false })
+        .set({ isOfficial: false })
         .where(eq(currencies.id, officialCurrency.id))
     }
     await db.update(currencies).set(data).where(eq(currencies.id, data.id))
 
-    await db.update(doners).set(data).where(eq(doners.id, data.id))
+    await db.update(currencies).set(data).where(eq(currencies.id, data.id))
     revalidatePath("/currencies")
   })
 

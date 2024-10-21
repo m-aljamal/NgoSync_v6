@@ -106,6 +106,19 @@ export async function getCurrencies(input: GetSearchSchema) {
   }
 }
 
+export async function getOfficialCurrency() {
+  noStore()
+  try {
+    const data = await db.query.currencies.findFirst({
+      where: eq(currencies.isOfficial, true),
+    })
+    return data
+  } catch (error) {
+    console.error(error)
+    return null
+  }
+}
+
 export async function getExchangeRates(input: GetSearchSchema) {
   noStore()
   const { page, per_page, sort, operator, from, to } = input

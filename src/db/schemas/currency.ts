@@ -19,7 +19,7 @@ export const currencies = pgTable("currencies", {
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
     .$onUpdate(() => new Date()),
-  official: boolean("official").default(false),
+  isOfficial: boolean("isOfficial").default(false),
 })
 
 export type Currency = typeof currencies.$inferSelect

@@ -100,7 +100,7 @@ export type CreateFundSchema = z.infer<typeof createFundSchema>
 
 export const createCurrencySchema = z.object({
   code: z.string().min(2),
-  official: z.boolean().optional(),
+  isOfficial: z.boolean().optional(),
   id: z.string().optional(),
 })
 export type CreateCurrencySchema = z.infer<typeof createCurrencySchema>

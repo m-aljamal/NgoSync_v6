@@ -6,6 +6,7 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -61,12 +62,16 @@ export function getColumns(): ColumnDef<Currency>[] {
       enableHiding: false,
     },
     {
-      accessorKey: "official",
+      accessorKey: "isOfficial",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="عملة رسمية" />
       ),
       enableHiding: false,
-      cell: ({ row }) => <span>{row.original.official ? "نعم" : "لا"}</span>,
+      cell: ({ row }) => (
+        <Badge variant={row.original.isOfficial}>
+          {row.original.isOfficial ? "نعم" : "لا"}
+        </Badge>
+      ),
     },
 
     {

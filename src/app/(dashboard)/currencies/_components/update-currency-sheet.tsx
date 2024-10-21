@@ -27,20 +27,22 @@ export function UpdateCurrencySheet({
   currency,
   ...props
 }: UpdateCurrencySheetProps) {
-  const form = useForm<CreateCurrencySchema>({
-    resolver: zodResolver(createCurrencySchema),
-    defaultValues: {
+  const defaultValues: CreateCurrencySchema = React.useMemo(() => {
+    return {
       code: currency.code,
       id: currency.id,
-    },
+      isOfficial: currency.isOfficial || false,
+    }
+  }, [currency])
+
+  const form = useForm<CreateCurrencySchema>({
+    resolver: zodResolver(createCurrencySchema),
+    defaultValues,
   })
 
   React.useEffect(() => {
-    form.reset({
-      code: currency.code,
-      id: currency.id,
-    })
-  }, [currency, form])
+    form.reset(defaultValues)
+  }, [currency, form, defaultValues])
 
   const { executeAsync, isExecuting } = useAction(updateCurrency, {
     onSuccess: () => {
@@ -62,7 +64,7 @@ export function UpdateCurrencySheet({
   }
   return (
     <UpdateSheet {...props}>
-      <CurrencyForm form={form} onSubmit={onSubmit} isUpdate>
+      <CurrencyForm form={form} onSubmit={onSubmit}>
         <UpdateButtons isExecuting={isExecuting} />
       </CurrencyForm>
     </UpdateSheet>
