@@ -57,6 +57,8 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
 
     const senderTransaction = alias(fundTransactions, "senderTransaction")
     const recipientTransaction = alias(fundTransactions, "recipientTransaction")
+    const senderFund = alias(funds, "senderFund")
+    const recipientFund = alias(funds, "recipientFund")
 
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
@@ -70,9 +72,11 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
           senderFundId: senderTransaction.fundId,
           receiverFundId: recipientTransaction.fundId,
           date: transferBetweenFunds.date,
-          amount: senderTransaction.amount,
+          amount: recipientTransaction.amount,
           currencyId: senderTransaction.currencyId,
           currencyCode: currencies.code,
+          senderName: senderFund.name,
+          receiverName: recipientFund.name,
         })
         .from(transferBetweenFunds)
         .limit(per_page)
@@ -85,6 +89,11 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
         .innerJoin(
           recipientTransaction,
           eq(transferBetweenFunds.receiver, recipientTransaction.id)
+        )
+        .innerJoin(senderFund, eq(senderTransaction.fundId, senderFund.id))
+        .innerJoin(
+          recipientFund,
+          eq(recipientTransaction.fundId, recipientFund.id)
         )
         .innerJoin(currencies, eq(senderTransaction.currencyId, currencies.id))
         .orderBy(

@@ -50,8 +50,11 @@ export type TransferBetweenFundsWithRelations =
     senderFundId: string
     receiverFundId: string
     date: string
-    amount: number
+    amount: string
     currencyId: string
+    senderName: string
+    receiverName: string
+    currencyCode: string
   }
 
 export const transferBetweenProjects = pgTable("transfer_between_projects", {
