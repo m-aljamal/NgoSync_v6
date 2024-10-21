@@ -3,6 +3,7 @@
 import * as React from "react"
 import { type ExchangeRate } from "@/db/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Decimal from "decimal.js"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -31,7 +32,7 @@ export function UpdateExchangeRateSheet({
     return {
       date: new Date(exchange.date),
       id: exchange.id,
-      rate: exchange.rate,
+      rate: new Decimal(exchange.rate),
       fromCurrencyId: exchange.fromCurrencyId,
       toCurrencyId: exchange.toCurrencyId,
     }
@@ -66,7 +67,7 @@ export function UpdateExchangeRateSheet({
   }
   return (
     <UpdateSheet {...props}>
-      <ExchangeRateForm form={form} onSubmit={onSubmit} isUpdate>
+      <ExchangeRateForm form={form} onSubmit={onSubmit}>
         <UpdateButtons isExecuting={isExecuting} />
       </ExchangeRateForm>
     </UpdateSheet>

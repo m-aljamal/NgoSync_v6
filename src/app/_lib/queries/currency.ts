@@ -156,11 +156,19 @@ export async function getExchangeRates(input: GetSearchSchema) {
           toCurrencyId: exchangeRates.toCurrencyId,
           createdAt: exchangeRates.createdAt,
           updatedAt: exchangeRates.updatedAt,
+          fromCurrencyCode: fromCurrency.code,
+          toCurrencyCode: toCurrency.code,
+          
         })
         .from(exchangeRates)
         .limit(per_page)
         .offset(offset)
         .where(where)
+        .innerJoin(
+          fromCurrency,
+          eq(exchangeRates.fromCurrencyId, fromCurrency.id)
+        )
+        .innerJoin(toCurrency, eq(exchangeRates.toCurrencyId, toCurrency.id))
         .orderBy(
           column && column in exchangeRates
             ? order === "asc"
@@ -175,6 +183,11 @@ export async function getExchangeRates(input: GetSearchSchema) {
         })
         .from(exchangeRates)
         .where(where)
+        .innerJoin(
+          fromCurrency,
+          eq(exchangeRates.fromCurrencyId, fromCurrency.id)
+        )
+        .innerJoin(toCurrency, eq(exchangeRates.toCurrencyId, toCurrency.id))
         .execute()
         .then((res) => res[0]?.count ?? 0)
 

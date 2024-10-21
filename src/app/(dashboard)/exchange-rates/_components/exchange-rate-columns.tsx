@@ -1,11 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { type ExchangeRate } from "@/db/schemas"
+import { type ExchangeRateWithRelations } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
+import { formatCurrency } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -21,7 +23,7 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { DeleteExchangeRateDialog } from "./delete-exchange-rate-dialog"
 import { UpdateExchangeRateSheet } from "./update-exchange-rate-sheet"
 
-export function getColumns(): ColumnDef<ExchangeRate>[] {
+export function getColumns(): ColumnDef<ExchangeRateWithRelations>[] {
   return [
     {
       id: "select",
@@ -61,11 +63,40 @@ export function getColumns(): ColumnDef<ExchangeRate>[] {
         <DataTableColumnHeader column={column} title="القيمة" />
       ),
       cell: ({ row }) => (
-        <div>
-          {/* {formatCurrency(row.getValue("amount"), row.original.currencyCode)} */}
-          {row.original.rate}
-        </div>
+        <span>
+          {formatCurrency(row.getValue("rate"), row.getValue("toCurrencyCode"))}
+        </span>
       ),
+    },
+    {
+      accessorKey: "fromCurrencyCode",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="من العملة" />
+      ),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("fromCurrencyCode")}>
+          {row.getValue("fromCurrencyCode")}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
+    },
+    {
+      accessorKey: "toCurrencyCode",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الى العملة" />
+      ),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("toCurrencyCode")}>
+          {row.getValue("toCurrencyCode")}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
     },
 
     {

@@ -58,6 +58,10 @@ export const exchangeRates = pgTable("exchange_rates", {
 
 export type ExchangeRate = typeof exchangeRates.$inferSelect
 export type NewExchangeRate = typeof exchangeRates.$inferInsert
+export type ExchangeRateWithRelations = typeof exchangeRates.$inferSelect & {
+  fromCurrencyCode: string
+  toCurrencyCode: string
+}
 
 export const exchangeRatesRelations = relations(exchangeRates, ({ one }) => ({
   fromCurrency: one(currencies, {

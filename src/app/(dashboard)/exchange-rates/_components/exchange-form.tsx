@@ -16,19 +16,17 @@ interface ExchangeRateFormProps
   children: React.ReactNode
   form: UseFormReturn<CreateExchangeRateSchema>
   onSubmit: (data: CreateExchangeRateSchema) => void
-  isUpdate?: boolean
 }
 
 export function ExchangeRateForm({
   form,
   onSubmit,
   children,
-  isUpdate,
 }: ExchangeRateFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup isUpdate={isUpdate}>
+        <InputGroup>
           <DateInput form={form} />
           <CurrencyAmountInput
             form={form}

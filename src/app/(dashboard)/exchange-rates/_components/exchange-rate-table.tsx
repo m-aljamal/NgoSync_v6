@@ -2,7 +2,7 @@
 "use memo"
 
 import * as React from "react"
-import { type ExchangeRate } from "@/db/schemas"
+import { type ExchangeRateWithRelations } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
@@ -22,7 +22,7 @@ export function ExchangeRateTable({ promise }: ExchangeRateTableProps) {
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<ExchangeRate>[] = [
+  const filterFields: DataTableFilterField<ExchangeRateWithRelations>[] = [
     {
       label: "Amount",
       value: "rate",

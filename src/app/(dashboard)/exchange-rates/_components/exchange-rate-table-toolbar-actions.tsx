@@ -1,6 +1,6 @@
 "use client"
 
-import { type ExchangeRate } from "@/db/schemas"
+import { type ExchangeRateWithRelations } from "@/db/schemas"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
@@ -11,7 +11,7 @@ import { CreateExchangeRateDialog } from "./create-exchange-rate-dialog"
 import { DeleteExchangeRateDialog } from "./delete-exchange-rate-dialog"
 
 interface ExchangeRateTableToolbarActionsProps {
-  table: Table<ExchangeRate>
+  table: Table<ExchangeRateWithRelations>
 }
 
 export function ExchangeRateTableToolbarActions({
