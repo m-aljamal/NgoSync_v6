@@ -3,6 +3,7 @@
 import * as React from "react"
 import { type ExchangeBetweenFundsWithRelations } from "@/db/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Decimal from "decimal.js"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -33,12 +34,12 @@ export function UpdateExchangeBetweenFundsSheet({
       id: transfer.id,
       senderId: transfer.senderFundId,
       receiverId: transfer.receiverFundId,
-      fromAmount: transfer.fromAmount,
-      toAmount: transfer.toAmount,
+      fromAmount: new Decimal(transfer.fromAmount),
+      toAmount: new Decimal(transfer.toAmount),
       fromCurrencyId: transfer.fromCurrencyId,
       toCurrencyId: transfer.toCurrencyId,
       description: transfer.description ?? "",
-      rate: transfer.rate,
+      rate: new Decimal(transfer.rate),
     }
   }, [transfer])
 
@@ -71,7 +72,7 @@ export function UpdateExchangeBetweenFundsSheet({
   }
   return (
     <UpdateSheet {...props}>
-      <ExchangeBetweenFundsForm form={form} onSubmit={onSubmit} isUpdate>
+      <ExchangeBetweenFundsForm form={form} onSubmit={onSubmit}>
         <UpdateButtons isExecuting={isExecuting} />
       </ExchangeBetweenFundsForm>
     </UpdateSheet>

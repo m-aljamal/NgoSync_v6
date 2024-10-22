@@ -189,15 +189,15 @@ export const createExchangeRateSchema = z.object({
 export type CreateExchangeRateSchema = z.infer<typeof createExchangeRateSchema>
 
 export const createExchangeSchema = z.object({
+  date,
   id: z.string().optional(),
+  rate: decimalSchema,
+  fromAmount: decimalSchema,
+  fromCurrencyId: currencyId,
   senderId: z.string().min(2),
   receiverId: z.string().min(2),
-  fromAmount: decimalSchema,
   toAmount: decimalSchema,
-  rate: decimalSchema,
-  date,
   description: z.string().optional(),
-  fromCurrencyId: currencyId,
   toCurrencyId: currencyId,
 })
 

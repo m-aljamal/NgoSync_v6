@@ -6,6 +6,8 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
+import { formatCurrency } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -55,15 +57,99 @@ export function getColumns(): ColumnDef<ExchangeBetweenFundsWithRelations>[] {
       ),
       cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
     },
+
+    {
+      accessorKey: "rate",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="سعر الصرف" />
+      ),
+      cell: ({ row }) => (
+        <span>
+          {formatCurrency(row.getValue("rate"), row.original.toCurrencyCode)}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "senderName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المرسل" />
+      ),
+    },
     {
       accessorKey: "fromAmount",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="قيمة المرسل" />
+        <DataTableColumnHeader column={column} title="من المبلغ" />
       ),
       cell: ({ row }) => (
-        <div>
-          {/* {formatCurrency(row.getValue("amount"), row.original.currencyCode)} */}
-          {row.original.fromAmount}
+        <span>
+          {formatCurrency(
+            row.getValue("fromAmount"),
+            row.original.fromCurrencyCode
+          )}
+        </span>
+      ),
+    },
+
+    {
+      accessorKey: "fromCurrencyCode",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="من العملة" />
+      ),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("fromCurrencyCode")}>
+          {row.getValue("fromCurrencyCode")}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
+    },
+    {
+      accessorKey: "receiverName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المستلم" />
+      ),
+    },
+    {
+      accessorKey: "toAmount",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الى المبلغ" />
+      ),
+      cell: ({ row }) => (
+        <span>
+          {formatCurrency(
+            row.getValue("toAmount"),
+            row.original.toCurrencyCode
+          )}
+        </span>
+      ),
+    },
+
+    {
+      accessorKey: "toCurrencyCode",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الى العملة" />
+      ),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("toCurrencyCode")}>
+          {row.getValue("toCurrencyCode")}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
+    },
+
+    {
+      accessorKey: "description",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الوصف" />
+      ),
+      cell: ({ row }) => (
+        <div className="max-w-[25rem] truncate">
+          {row.getValue("description")}
         </div>
       ),
     },

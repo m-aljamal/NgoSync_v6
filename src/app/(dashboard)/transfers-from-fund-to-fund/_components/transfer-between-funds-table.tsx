@@ -19,7 +19,7 @@ interface TransferBetweenFundsTableProps {
 
 export function TransferBetweenFundsTable({ promise }: TransferBetweenFundsTableProps) {
   const { data, pageCount } = React.use(promise)
-
+ 
   const columns = React.useMemo(() => getColumns(), [])
 
   const filterFields: DataTableFilterField<TransferBetweenFundsWithRelations>[] =

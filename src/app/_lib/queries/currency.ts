@@ -3,7 +3,7 @@ import "server-only"
 import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { fundTransactions, projectsTransactions } from "@/db/schemas"
+import { funds, fundTransactions, projectsTransactions } from "@/db/schemas"
 import {
   currencies,
   exchangeRates,
@@ -67,7 +67,6 @@ export async function getCurrencies(input: GetSearchSchema) {
     const where: DrizzleWhere<Currency> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
 
-    // Transaction is used to ensure both queries are executed in a single transaction
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
         .select()
@@ -158,7 +157,6 @@ export async function getExchangeRates(input: GetSearchSchema) {
           updatedAt: exchangeRates.updatedAt,
           fromCurrencyCode: fromCurrency.code,
           toCurrencyCode: toCurrency.code,
-          
         })
         .from(exchangeRates)
         .limit(per_page)
@@ -219,21 +217,15 @@ export async function getExchangeBetweenFunds(input: GetSearchSchema) {
       "desc",
     ]) as [keyof ExchangeBetweenFunds | undefined, "asc" | "desc" | undefined]
 
-    const fromDay = from
-      ? sql`${exchnageBetweenFunds.createdAt} >= ${from}`
-      : undefined
-    const toDay = to
-      ? sql`${exchnageBetweenFunds.createdAt} <= ${to}`
-      : undefined
+    const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
       fromDay && toDay
         ? and(
-            sql`${exchnageBetweenFunds.createdAt} >= ${from}`,
-            sql`${exchnageBetweenFunds.createdAt} <= ${to}`
+            gte(exchnageBetweenFunds.createdAt, fromDay),
+            lte(exchnageBetweenFunds.createdAt, toDay)
           )
         : undefined,
-      fromDay ? fromDay : undefined,
     ]
 
     const where: DrizzleWhere<ExchangeBetweenFunds> =
@@ -241,6 +233,10 @@ export async function getExchangeBetweenFunds(input: GetSearchSchema) {
 
     const senderTransaction = alias(fundTransactions, "senderTransaction")
     const recipientTransaction = alias(fundTransactions, "recipientTransaction")
+    const fromCurrency = alias(currencies, "fromCurrency")
+    const toCurrency = alias(currencies, "toCurrency")
+    const recipientFund = alias(funds, "recipientFund")
+    const senderFund = alias(funds, "senderFund")
 
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
@@ -249,16 +245,20 @@ export async function getExchangeBetweenFunds(input: GetSearchSchema) {
           sender: exchnageBetweenFunds.sender,
           receiver: exchnageBetweenFunds.receiver,
           updatedAt: exchnageBetweenFunds.updatedAt,
+          rate: exchnageBetweenFunds.rate,
           createdAt: exchnageBetweenFunds.createdAt,
           description: senderTransaction.description,
           senderFundId: senderTransaction.fundId,
           receiverFundId: recipientTransaction.fundId,
           date: senderTransaction.date,
-          fromAmount: sql<number>`ABS(${senderTransaction.amount})/1000`,
-          toAmount: sql<number>`ABS(${recipientTransaction.amount})/1000`,
+          fromAmount: sql<string>`ABS(${senderTransaction.amount})`,
+          toAmount: recipientTransaction.amount,
           fromCurrencyId: senderTransaction.currencyId,
           toCurrencyId: recipientTransaction.currencyId,
-          rate: exchnageBetweenFunds.rate,
+          fromCurrencyCode: fromCurrency.code,
+          toCurrencyCode: toCurrency.code,
+          senderName: recipientFund.name,
+          receiverName: senderFund.name,
         })
         .from(exchnageBetweenFunds)
         .limit(per_page)
@@ -272,6 +272,21 @@ export async function getExchangeBetweenFunds(input: GetSearchSchema) {
           recipientTransaction,
           eq(exchnageBetweenFunds.receiver, recipientTransaction.id)
         )
+
+        .innerJoin(
+          fromCurrency,
+          eq(senderTransaction.currencyId, fromCurrency.id)
+        )
+        .innerJoin(
+          toCurrency,
+          eq(recipientTransaction.currencyId, toCurrency.id)
+        )
+        .innerJoin(senderFund, eq(senderTransaction.fundId, senderFund.id))
+        .innerJoin(
+          recipientFund,
+          eq(recipientTransaction.fundId, recipientFund.id)
+        )
+
         .orderBy(
           column && column in exchnageBetweenFunds
             ? order === "asc"
@@ -318,22 +333,15 @@ export async function getExchangeBetweenProjects(input: GetSearchSchema) {
       keyof ExchangeBetweenProjects | undefined,
       "asc" | "desc" | undefined,
     ]
-
-    const fromDay = from
-      ? sql`${exchnageBetweenProjects.createdAt} >= ${from}`
-      : undefined
-    const toDay = to
-      ? sql`${exchnageBetweenProjects.createdAt} <= ${to}`
-      : undefined
+    const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
       fromDay && toDay
         ? and(
-            sql`${exchnageBetweenProjects.createdAt} >= ${from}`,
-            sql`${exchnageBetweenProjects.createdAt} <= ${to}`
+            gte(exchnageBetweenProjects.createdAt, fromDay),
+            lte(exchnageBetweenProjects.createdAt, toDay)
           )
         : undefined,
-      fromDay ? fromDay : undefined,
     ]
 
     const where: DrizzleWhere<ExchangeBetweenProjects> =
@@ -357,8 +365,8 @@ export async function getExchangeBetweenProjects(input: GetSearchSchema) {
           senderProjectId: senderTransaction.projectId,
           receiverProjectId: recipientTransaction.projectId,
           date: senderTransaction.date,
-          fromAmount: sql<number>`ABS(${senderTransaction.amount})/1000`,
-          toAmount: sql<number>`ABS(${recipientTransaction.amount})/1000`,
+          fromAmount: senderTransaction.amount,
+          toAmount: recipientTransaction.amount,
           fromCurrencyId: senderTransaction.currencyId,
           toCurrencyId: recipientTransaction.currencyId,
           rate: exchnageBetweenProjects.rate,
@@ -427,7 +435,7 @@ export const getCurrency = cache(
             : code
               ? eq(currencies.code, code)
               : official
-                ? eq(currencies.official, official)
+                ? eq(currencies.isOfficial, official)
                 : undefined,
       })
 

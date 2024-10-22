@@ -122,8 +122,12 @@ export type ExchangeBetweenFundsWithRelations =
     date: string
     fromCurrencyId: string
     toCurrencyId: string
-    fromAmount: number
-    toAmount: number
+    fromAmount: string
+    toAmount: string
+    fromCurrencyCode: string
+    toCurrencyCode: string
+    senderName: string
+    receiverName: string
   }
 
 export const exchnageBetweenProjects = pgTable("exchnage_between_projects", {
