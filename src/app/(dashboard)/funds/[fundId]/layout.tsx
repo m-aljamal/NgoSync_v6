@@ -3,6 +3,7 @@ import { type PageLinks } from "@/types"
 
 import PageLayout from "@/app/_components/page-layout"
 import { getFund } from "@/app/_lib/queries/funds"
+import AppSidebar from "@/components/app-sidebar"
 
 interface Props {
   children: React.ReactNode
@@ -46,8 +47,10 @@ export default async function layout({ children, params }: Props) {
   ]
 
   return (
-    <PageLayout links={links}>
-      <main>{children}</main>
-    </PageLayout>
+    // <PageLayout links={links}>
+    //   <main>{children}</main>
+    // </PageLayout>
+
+    <AppSidebar/>
   )
 }
