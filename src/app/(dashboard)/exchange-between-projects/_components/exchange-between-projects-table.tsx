@@ -26,11 +26,11 @@ export function ExchangeBetweenProjectsTable({
 
   const filterFields: DataTableFilterField<ExchangeBetweenProjectsWithRelations>[] =
     [
-      {
-        label: "Amount",
-        value: "toAmount",
-        placeholder: "بحث عن مبلغ",
-      },
+      // {
+      //   label: "Amount",
+      //   value: "toAmount",
+      //   placeholder: "بحث عن مبلغ",
+      // },
     ]
 
   const { table } = useDataTable({

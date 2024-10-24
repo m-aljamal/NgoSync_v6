@@ -3,7 +3,12 @@ import "server-only"
 import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { funds, fundTransactions, projectsTransactions } from "@/db/schemas"
+import {
+  funds,
+  fundTransactions,
+  projects,
+  projectsTransactions,
+} from "@/db/schemas"
 import {
   currencies,
   exchangeRates,
@@ -352,7 +357,10 @@ export async function getExchangeBetweenProjects(input: GetSearchSchema) {
       projectsTransactions,
       "recipientTransaction"
     )
-
+    const fromCurrency = alias(currencies, "fromCurrency")
+    const toCurrency = alias(currencies, "toCurrency")
+    const recipientProject = alias(projects, "recipientProject")
+    const senderProject = alias(projects, "senderProject")
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
         .select({
@@ -361,15 +369,19 @@ export async function getExchangeBetweenProjects(input: GetSearchSchema) {
           receiver: exchnageBetweenProjects.receiver,
           updatedAt: exchnageBetweenProjects.updatedAt,
           createdAt: exchnageBetweenProjects.createdAt,
+          rate: exchnageBetweenProjects.rate,
           description: senderTransaction.description,
           senderProjectId: senderTransaction.projectId,
-          receiverProjectId: recipientTransaction.projectId,
           date: senderTransaction.date,
-          fromAmount: senderTransaction.amount,
-          toAmount: recipientTransaction.amount,
+          fromAmount: sql<string>`ABS(${senderTransaction.amount})`,
           fromCurrencyId: senderTransaction.currencyId,
+          receiverProjectId: recipientTransaction.projectId,
+          toAmount: recipientTransaction.amount,
           toCurrencyId: recipientTransaction.currencyId,
-          rate: exchnageBetweenProjects.rate,
+          fromCurrencyCode: fromCurrency.code,
+          toCurrencyCode: toCurrency.code,
+          senderName: recipientProject.name,
+          receiverName: senderProject.name,
         })
         .from(exchnageBetweenProjects)
         .limit(per_page)
@@ -382,6 +394,22 @@ export async function getExchangeBetweenProjects(input: GetSearchSchema) {
         .innerJoin(
           recipientTransaction,
           eq(exchnageBetweenProjects.receiver, recipientTransaction.id)
+        )
+        .innerJoin(
+          fromCurrency,
+          eq(senderTransaction.currencyId, fromCurrency.id)
+        )
+        .innerJoin(
+          toCurrency,
+          eq(recipientTransaction.currencyId, toCurrency.id)
+        )
+        .innerJoin(
+          senderProject,
+          eq(senderTransaction.projectId, senderProject.id)
+        )
+        .innerJoin(
+          recipientProject,
+          eq(recipientTransaction.projectId, recipientProject.id)
         )
         .orderBy(
           column && column in exchnageBetweenProjects

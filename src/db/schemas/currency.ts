@@ -178,6 +178,10 @@ export type ExchangeBetweenProjectsWithRelations =
     date: string
     fromCurrencyId: string
     toCurrencyId: string
-    fromAmount: number
-    toAmount: number
+    fromAmount: string
+    toAmount: string
+    fromCurrencyCode: string
+    toCurrencyCode: string
+    senderName: string
+    receiverName: string
   }
