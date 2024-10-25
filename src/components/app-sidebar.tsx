@@ -1,5 +1,6 @@
 "use client"
 
+import { SidebarLinks } from "@/types"
 import {
   AudioWaveform,
   BookOpen,
@@ -59,28 +60,6 @@ import {
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
       title: "Playground",
@@ -187,10 +166,14 @@ const data = {
   ],
 }
 
-export default function Page() {
+type AppSidebarProps = {
+  children: React.ReactNode
+  links: SidebarLinks
+}
+export default function AppSidebar({ children }: AppSidebarProps) {
   return (
     <SidebarProvider>
-      <Sidebar collapsible="icon" side="right" className="mt-16 pt-3">
+      <Sidebar collapsible="icon" side="right" className="mt-16 pt-2">
         <SidebarContent>
           <SidebarGroup>
             <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -274,8 +257,8 @@ export default function Page() {
 
         <SidebarRail />
       </Sidebar>
-      <SidebarInset>
-        <header className="flex h-10 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+      <SidebarInset className="-mx-8 -mt-5">
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-mr-1" />
             <Separator orientation="vertical" className="ml-2 h-4" />
@@ -294,14 +277,7 @@ export default function Page() {
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-          </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   )

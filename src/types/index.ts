@@ -50,6 +50,42 @@ export type PageLinks = {
   }[]
 }[]
 
+type CollapsibleMenu = {
+  title: string
+  href?: string
+  icon: keyof typeof icons
+  items?: {
+    title: string
+    url: string
+  }[]
+}
+
+type DropdownMenu = {
+  title: string
+  href?: string
+  icon: keyof typeof icons
+  items: {
+    title: string
+    url: string
+    icon?: keyof typeof icons
+  }[]
+}
+
+type LinksGroup = {
+  groupName?: string
+  items: CollapsibleMenu[]
+}
+export type SidebarLinks = {
+  collabsible?: {
+    groupName?: string
+    items: CollapsibleMenu[]
+  }
+  dropdown?: {
+    groupName?: string
+    items: DropdownMenu[]
+  }
+}
+
 export type ViewMoreDataDetails = {
   label: string
   value: string | number

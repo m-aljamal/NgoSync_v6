@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation"
-import { type PageLinks } from "@/types"
+import { SidebarLinks, type PageLinks } from "@/types"
 
+import AppSidebar from "@/components/app-sidebar"
 import PageLayout from "@/app/_components/page-layout"
 import { getFund } from "@/app/_lib/queries/funds"
-import AppSidebar from "@/components/app-sidebar"
 
 interface Props {
   children: React.ReactNode
@@ -21,36 +21,65 @@ export default async function layout({ children, params }: Props) {
     notFound()
   }
 
-  const links: PageLinks = [
-    {
-      href: `/funds/${fund.id}/overview`,
-      title: "بيانات الصندوق",
-      icon: "FileDigit",
-    },
-    {
-      title: "الحركات المالية",
-      children: [
+  // const links: PageLinks = [
+  //   {
+  //     href: `/funds/${fund.id}/overview`,
+  //     title: "بيانات الصندوق",
+  //     icon: "FileDigit",
+  //   },
+  //   {
+  //     title: "الحركات المالية",
+  //     children: [
+  //       {
+  //         href: `/funds/${fund.id}/income`,
+  //         title: "الداخل",
+  //         icon: "ArrowDownNarrowWide",
+  //         roles: ["admin"],
+  //       },
+  //       {
+  //         href: `/funds/${fund.id}/outcome`,
+  //         title: "الخارج",
+  //         icon: "ArrowUpNarrowWide",
+  //         roles: ["admin"],
+  //       },
+  //     ],
+  //   },
+  // ]
+
+  const links: SidebarLinks = {
+    collabsible: {
+      groupName: "الصندوق",
+      items: [
         {
-          href: `/funds/${fund.id}/income`,
-          title: "الداخل",
-          icon: "ArrowDownNarrowWide",
-          roles: ["admin"],
+          title: "بيانات الصندوق",
+          icon: "FileDigit",
+          href: `/funds/${fund.id}/overview`,
         },
         {
-          href: `/funds/${fund.id}/outcome`,
-          title: "الخارج",
-          icon: "ArrowUpNarrowWide",
-          roles: ["admin"],
+          title: "الحركات المالية",
+          icon: "ArrowDownNarrowWide",
+          items: [
+            {
+              title: "الداخل",
+              url: `/funds/${fund.id}/income`,
+            },
+            {
+              title: "الخارج",
+              url: `/funds/${fund.id}/outcome`,
+            },
+          ],
         },
       ],
     },
-  ]
+  }
 
   return (
     // <PageLayout links={links}>
     //   <main>{children}</main>
     // </PageLayout>
 
-    <AppSidebar/>
+    <AppSidebar links={links}>
+      <p>Content is here</p>
+    </AppSidebar>
   )
 }

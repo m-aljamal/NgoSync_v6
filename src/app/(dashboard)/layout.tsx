@@ -6,8 +6,8 @@ export default function layout({ children }: React.PropsWithChildren) {
   return (
     <div>
       <SiteHeader />
-      <main className="mx-auto mt-4 max-w-screen-2xl">
-        <div className="container">{children}</div>
+      <main className="  flex-col">
+        <div className="flex-1 space-y-4 p-8 pt-6">{children}</div>
       </main>
     </div>
   )

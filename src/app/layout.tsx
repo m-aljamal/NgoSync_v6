@@ -10,7 +10,7 @@ import { Tajawal } from "next/font/google"
 import { QueryProvider } from "@/providers/query-provider"
 import { SheetProvider } from "@/providers/sheet-provider"
 
-import { fontMono, fontSans } from "@/lib/fonts"
+import { fontMono } from "@/lib/fonts"
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
@@ -64,7 +64,7 @@ export const viewport: Viewport = {
     { media: "(prefers-color-scheme: dark)", color: "black" },
   ],
 }
-const font = Tajawal({
+const fontSans = Tajawal({
   subsets: ["arabic"],
   display: "block",
   variable: "--font-tajawal",
@@ -78,9 +78,7 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
-          fontMono.variable,
-          font.variable
+          fontSans.variable
         )}
         dir="rtl"
       >
