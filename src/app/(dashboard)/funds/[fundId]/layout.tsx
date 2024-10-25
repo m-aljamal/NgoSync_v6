@@ -46,32 +46,64 @@ export default async function layout({ children, params }: Props) {
   //   },
   // ]
 
-  const links: SidebarLinks = {
-    collabsible: {
+  const links: SidebarLinks = [
+    {
       groupName: "الصندوق",
       items: [
         {
+          type: "collapsible",
           title: "بيانات الصندوق",
           icon: "FileDigit",
           href: `/funds/${fund.id}/overview`,
         },
         {
+          type: "collapsible",
           title: "الحركات المالية",
           icon: "ArrowDownNarrowWide",
-          items: [
+          children: [
             {
               title: "الداخل",
-              url: `/funds/${fund.id}/income`,
+              href: `/funds/${fund.id}/income`,
+              icon: "ArrowDownNarrowWide",
             },
             {
               title: "الخارج",
-              url: `/funds/${fund.id}/outcome`,
+              href: `/funds/${fund.id}/outcome`,
+              icon: "ArrowUpNarrowWide",
             },
           ],
         },
       ],
     },
-  }
+    {
+      groupName: "المشاريع",
+      items: [
+        {
+          type: "dropdown",
+          title: "بيانات  المشروع",
+          icon: "FileDigit",
+          href: `/funds/${fund.id}/overview`,
+        },
+        {
+          type: "dropdown",
+          title: "الحركات ",
+          icon: "ArrowDownNarrowWide",
+          children: [
+            {
+              title: "الداخل",
+              href: `/funds/${fund.id}/income`,
+              icon: "ArrowDownNarrowWide",
+            },
+            {
+              title: "الخارج",
+              href: `/funds/${fund.id}/outcome`,
+              icon: "ArrowUpNarrowWide",
+            },
+          ],
+        },
+      ],
+    },
+  ]
 
   return (
     // <PageLayout links={links}>
@@ -79,7 +111,7 @@ export default async function layout({ children, params }: Props) {
     // </PageLayout>
 
     <AppSidebar links={links}>
-      <p>Content is here</p>
+      <main>{children}</main>
     </AppSidebar>
   )
 }
