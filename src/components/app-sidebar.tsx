@@ -1,24 +1,10 @@
 "use client"
 
+import React from "react"
 import Link from "next/link"
-import { SidebarLinks } from "@/types"
-import {
-  AudioWaveform,
-  BookOpen,
-  Bot,
-  ChevronLeft,
-  Command,
-  Folder,
-  Forward,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  MoreHorizontal,
-  PieChart,
-  Settings2,
-  SquareTerminal,
-  Trash2,
-} from "lucide-react"
+import { usePathname } from "next/navigation"
+import { type SidebarLinks } from "@/types"
+import { ChevronLeft } from "lucide-react"
 
 import {
   Breadcrumb,
@@ -33,13 +19,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
 import {
   Sidebar,
@@ -49,7 +28,6 @@ import {
   SidebarGroupLabel,
   SidebarInset,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -62,119 +40,13 @@ import {
 
 import { icons } from "./layouts/icons"
 
-// This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
-    },
-  ],
-}
-
 type AppSidebarProps = {
   children: React.ReactNode
   links: SidebarLinks
 }
 export default function AppSidebar({ children, links }: AppSidebarProps) {
+  const pathname = usePathname()
+
   return (
     <SidebarProvider>
       <Sidebar collapsible="icon" side="right" className="mt-16 pt-2">
@@ -187,7 +59,8 @@ export default function AppSidebar({ children, links }: AppSidebarProps) {
                   <SidebarMenu>
                     {group.items?.map((item) => {
                       const Icon = icons[item.icon]
-                      const isActive = true
+                      const isActive = item.href === pathname
+
                       return (
                         <div key={item.title}>
                           {!item.children ? (
@@ -203,12 +76,17 @@ export default function AppSidebar({ children, links }: AppSidebarProps) {
                             <Collapsible
                               key={item.title}
                               asChild
-                              defaultOpen={isActive}
+                              defaultOpen={item.children?.some(
+                                (child) => child.href === pathname
+                              )}
                               className="group/collapsible"
                             >
                               <SidebarMenuItem>
                                 <CollapsibleTrigger asChild>
-                                  <SidebarMenuButton tooltip={item.title}>
+                                  <SidebarMenuButton
+                                    tooltip={item.title}
+                                    isActive={isActive}
+                                  >
                                     <Icon />
                                     <span>{item.title}</span>
                                     <ChevronLeft className="mr-auto transition-transform duration-200 group-data-[state=open]/collapsible:-rotate-90" />
@@ -219,9 +97,14 @@ export default function AppSidebar({ children, links }: AppSidebarProps) {
                                     {item.children?.map((subItem) => {
                                       const ChildIcon =
                                         subItem.icon && icons[subItem.icon]
+                                      const isActive = subItem.href === pathname
+
                                       return (
                                         <SidebarMenuSubItem key={subItem.title}>
-                                          <SidebarMenuSubButton asChild>
+                                          <SidebarMenuSubButton
+                                            asChild
+                                            isActive={isActive}
+                                          >
                                             <Link href={subItem.href}>
                                               {ChildIcon && (
                                                 <ChildIcon className="text-muted-foreground" />
@@ -245,49 +128,6 @@ export default function AppSidebar({ children, links }: AppSidebarProps) {
               </SidebarGroup>
             )
           })}
-
-          <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-            <SidebarGroupLabel>Projects</SidebarGroupLabel>
-            <SidebarMenu>
-              {data.projects.map((item) => (
-                <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.name}</span>
-                    </a>
-                  </SidebarMenuButton>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <SidebarMenuAction showOnHover>
-                        <MoreHorizontal />
-                        <span className="sr-only">More</span>
-                      </SidebarMenuAction>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      className="w-48 rounded-lg"
-                      side="bottom"
-                      align="start"
-                    >
-                      <DropdownMenuItem>
-                        <Folder className="text-muted-foreground" />
-                        <span>View Project</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Forward className="text-muted-foreground" />
-                        <span>Share Project</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <Trash2 className="text-muted-foreground" />
-                        <span>Delete Project</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroup>
         </SidebarContent>
 
         <SidebarRail />

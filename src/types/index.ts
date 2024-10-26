@@ -51,7 +51,6 @@ export type PageLinks = {
 }[]
 
 type SidebarLink = {
-  type: "dropdown" | "collapsible"
   title: string
   href?: string
   icon: keyof typeof icons
