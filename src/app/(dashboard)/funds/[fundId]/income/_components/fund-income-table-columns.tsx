@@ -1,7 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { type DonationWithRelations } from "@/db/schemas"
+import {
+  FundTransaction,
+  FundTransactionWithRelations,
+  type DonationWithRelations,
+} from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 
@@ -19,12 +23,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
-import { donationPaymentTranslation } from "@/app/_lib/translate"
+import {
+  donationPaymentTranslation,
+  fundTransactionCategoryTranslation,
+} from "@/app/_lib/translate"
 
-import { DeleteDonationsDialog } from "./delete-donations-dialog"
-import { UpdateDonationSheet } from "./update-donation-sheet"
-
-export function getColumns(): ColumnDef<DonationWithRelations>[] {
+export function getColumns(): ColumnDef<FundTransactionWithRelations>[] {
   return [
     {
       id: "select",
@@ -84,34 +88,16 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
         return Array.isArray(value) && value.includes(row.getValue(id))
       },
     },
-
     {
-      accessorKey: "donerName",
+      accessorKey: "category",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="المتبرع" />
-      ),
-      cell: ({ row }) => <span>{row.getValue("donerName")}</span>,
-    },
-    {
-      size: 0,
-      accessorKey: "donerId",
-      header: undefined,
-      cell: undefined,
-    },
-
-    {
-      accessorKey: "paymentType",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="الدفع" />
+        <DataTableColumnHeader column={column} title="الفئة" />
       ),
       cell: ({ row }) => (
-        <Badge variant={row.getValue("paymentType")}>
-          {donationPaymentTranslation[row.original.paymentType]}
+        <Badge variant={row.original.category}>
+          {fundTransactionCategoryTranslation[row.original.category]}
         </Badge>
       ),
-      filterFn: (row, id, value) => {
-        return Array.isArray(value) && value.includes(row.getValue(id))
-      },
     },
 
     {
@@ -125,7 +111,7 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
 
         return (
           <>
-            <UpdateDonationSheet
+            {/* <UpdateDonationSheet
               open={showUpdateTaskSheet}
               onOpenChange={setShowUpdateTaskSheet}
               donation={row.original}
@@ -136,7 +122,7 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
               donations={[row.original]}
               showTrigger={false}
               onSuccess={() => row.toggleSelected(false)}
-            />
+            /> */}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

@@ -2,6 +2,7 @@ import type {
   donations,
   doners,
   employees,
+  fundTransactions,
   projects,
   projectsTransactions,
 } from "@/db/schemas"
@@ -99,4 +100,16 @@ export const donationPaymentTranslation: Record<
 > = {
   cash: "نقدي",
   debt: "دين",
+}
+
+export const fundTransactionCategoryTranslation: Record<
+  typeof fundTransactions.$inferSelect.category,
+  string
+> = {
+  currency_exchange: "صرف عملة",
+  donation: "تبرع",
+  fund_transaction: "حركة مالية",
+  transfer_between_funds: "تحويل بين الصناديق",
+  transfer_from_project: "تحويل من مشروع",
+  transfer_to_project: "تحويل لمشروع",
 }

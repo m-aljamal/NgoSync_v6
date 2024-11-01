@@ -63,7 +63,10 @@ export const fundTransactions = pgTable("fund_transactions", {
 
 export type FundTransaction = typeof fundTransactions.$inferSelect
 export type NewFundTransaction = typeof fundTransactions.$inferInsert
-
+export type FundTransactionWithRelations =
+  typeof fundTransactions.$inferSelect & {
+    currencyCode: string
+  }
 export const fundTransactionRelations = relations(
   fundTransactions,
   ({ one, many }) => ({

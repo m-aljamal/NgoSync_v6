@@ -3,7 +3,11 @@ import "server-only"
 import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { fundTransactions, type FundTransaction } from "@/db/schemas"
+import {
+  currencies,
+  fundTransactions,
+  type FundTransaction,
+} from "@/db/schemas"
 import { funds, type Fund } from "@/db/schemas/fund"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
@@ -114,6 +118,7 @@ export const getFundIncome = cache(async (input: TransactionSchema) => {
 
     const expressions: (SQL<unknown> | undefined)[] = [
       eq(fundTransactions.fundId, input.id),
+      eq(fundTransactions.type, "income"),
       fromDay && toDay
         ? and(
             gte(fundTransactions.date, fromDay),
@@ -127,11 +132,20 @@ export const getFundIncome = cache(async (input: TransactionSchema) => {
 
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
-        .select()
+        .select({
+          date: fundTransactions.date,
+          amount: fundTransactions.amount,
+          category: fundTransactions.category,
+          description: fundTransactions.description,
+          id: fundTransactions.id,
+          currencyCode: currencies.code,
+          isOfficial: fundTransactions.isOfficial,
+        })
         .from(fundTransactions)
         .limit(per_page)
         .offset(offset)
         .where(where)
+        .innerJoin(currencies, eq(fundTransactions.currencyId, currencies.id))
         .orderBy(
           column && column in fundTransactions
             ? order === "asc"
@@ -146,6 +160,7 @@ export const getFundIncome = cache(async (input: TransactionSchema) => {
         })
         .from(fundTransactions)
         .where(where)
+        .innerJoin(currencies, eq(fundTransactions.currencyId, currencies.id))
         .execute()
         .then((res) => res[0]?.count ?? 0)
 

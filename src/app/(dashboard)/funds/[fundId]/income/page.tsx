@@ -6,25 +6,31 @@ import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getDonations } from "@/app/_lib/queries/donations"
+import { getFundIncome } from "@/app/_lib/queries/funds"
 import { searchParamsSchema } from "@/app/_lib/validations"
 
-import { DonationTable } from "./_components/donation-table"
+import { FundIncomeTable } from "./_components/fund-income-table"
 
 export interface IndexPageProps {
   searchParams: SearchParams
+  params: {
+    fundId: string
+  }
 }
 
-export default function Donations({ searchParams }: IndexPageProps) {
+export default function Donations({ searchParams, params }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
-  const promise = getDonations(search)
+  const promise = getFundIncome({
+    id: params.fundId,
+    searchInput: search,
+  })
 
   return (
     <div>
       <Heading
-        title="التبرعات"
-        description="إدارة التبرعات المالية للمنظمة."
+        title="الداخل"
+        description="الحركات المالية الواردة إلى الصندوق"
         icon="SquareKanban"
       />
       <Shell className="gap-2">
@@ -46,7 +52,7 @@ export default function Donations({ searchParams }: IndexPageProps) {
             />
           }
         >
-          <DonationTable promise={promise} />
+          <FundIncomeTable promise={promise} />
         </React.Suspense>
       </Shell>
     </div>
