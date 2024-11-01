@@ -1,6 +1,7 @@
 import {
     ArrowDownLeft,
     ArrowDownNarrowWide,
+    ArrowDownUp,
     ArrowLeftRight,
     ArrowUpNarrowWide,
     ArrowUpRight,
@@ -56,4 +57,5 @@ import {
     ArrowDownNarrowWide,
     ArrowUpNarrowWide,
     ContactRound,
+    ArrowDownUp
   }

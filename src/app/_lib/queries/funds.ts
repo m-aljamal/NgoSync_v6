@@ -3,6 +3,7 @@ import "server-only"
 import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
+import { fundTransactions, type FundTransaction } from "@/db/schemas"
 import { funds, type Fund } from "@/db/schemas/fund"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
@@ -90,5 +91,74 @@ export const getFund = cache(async ({ id }: { id: string }) => {
     return data
   } catch (error) {
     throw new Error("Failed to get fund")
+  }
+})
+
+interface TransactionSchema {
+  searchInput: GetSearchSchema
+  id: string
+}
+
+export const getFundIncome = cache(async (input: TransactionSchema) => {
+  noStore()
+  const { page, per_page, sort, operator, from, to } = input.searchInput
+  try {
+    const offset = calculateOffset(page, per_page)
+
+    const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+      "createdAt",
+      "desc",
+    ]) as [keyof FundTransaction | undefined, "asc" | "desc" | undefined]
+
+    const { fromDay, toDay } = convertToDate(from, to)
+
+    const expressions: (SQL<unknown> | undefined)[] = [
+      eq(fundTransactions.fundId, input.id),
+      fromDay && toDay
+        ? and(
+            gte(fundTransactions.date, fromDay),
+            lte(fundTransactions.date, toDay)
+          )
+        : undefined,
+    ]
+
+    const where: DrizzleWhere<FundTransaction> =
+      !operator || operator === "and" ? and(...expressions) : or(...expressions)
+
+    const { data, total } = await db.transaction(async (tx) => {
+      const data = await tx
+        .select()
+        .from(fundTransactions)
+        .limit(per_page)
+        .offset(offset)
+        .where(where)
+        .orderBy(
+          column && column in fundTransactions
+            ? order === "asc"
+              ? asc(fundTransactions[column])
+              : desc(fundTransactions[column])
+            : desc(fundTransactions.id)
+        )
+
+      const total = await tx
+        .select({
+          count: count(),
+        })
+        .from(fundTransactions)
+        .where(where)
+        .execute()
+        .then((res) => res[0]?.count ?? 0)
+
+      return {
+        data,
+        total,
+      }
+    })
+
+    const pageCount = calculatePageCount(total, per_page)
+
+    return { data, pageCount }
+  } catch (error) {
+    return { data: [], pageCount: 0 }
   }
 })

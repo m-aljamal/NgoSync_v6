@@ -31,7 +31,7 @@ export default async function layout({ children, params }: Props) {
         },
         {
           title: "الحركات المالية",
-          icon: "ArrowDownNarrowWide",
+          icon: "ArrowDownUp",
           children: [
             {
               title: "الداخل",
