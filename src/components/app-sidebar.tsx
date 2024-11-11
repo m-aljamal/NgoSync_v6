@@ -40,11 +40,18 @@ import {
 
 import { icons } from "./layouts/icons"
 
+type Breadcrumb = {
+  title: string
+  href: string
+}
+
 type AppSidebarProps = {
   children: React.ReactNode
   links: SidebarLinks
+  breadcrumbs: Breadcrumb[]
 }
-export default function AppSidebar({ children, links }: AppSidebarProps) {
+
+export default function AppSidebar({ children, links, breadcrumbs }: AppSidebarProps) {
   const pathname = usePathname()
 
   return (
@@ -139,15 +146,20 @@ export default function AppSidebar({ children, links }: AppSidebarProps) {
             <Separator orientation="vertical" className="ml-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
+                {breadcrumbs.map((crumb, index) => (
+                  <React.Fragment key={crumb.href}>
+                    {index > 0 && <BreadcrumbSeparator />}
+                    <BreadcrumbItem>
+                      {index === breadcrumbs.length - 1 ? (
+                        <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink href={crumb.href}>
+                          {crumb.title}
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                  </React.Fragment>
+                ))}
               </BreadcrumbList>
             </Breadcrumb>
           </div>

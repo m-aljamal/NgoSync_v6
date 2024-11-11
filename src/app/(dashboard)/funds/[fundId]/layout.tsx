@@ -49,8 +49,13 @@ export default async function layout({ children, params }: Props) {
     },
   ]
 
+  const breadcrumbs = [
+    { title: "الصناديق", href: "/funds" },
+    { title: fund.name, href: `/funds/${fund.id}` },
+  ]
+
   return (
-    <AppSidebar links={links}>
+    <AppSidebar links={links} breadcrumbs={breadcrumbs}>
       <main>{children}</main>
     </AppSidebar>
   )
