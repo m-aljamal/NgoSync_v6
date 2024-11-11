@@ -51,7 +51,11 @@ type AppSidebarProps = {
   breadcrumbs: Breadcrumb[]
 }
 
-export default function AppSidebar({ children, links, breadcrumbs }: AppSidebarProps) {
+export default function AppSidebar({
+  children,
+  links,
+  breadcrumbs,
+}: AppSidebarProps) {
   const pathname = usePathname()
 
   return (
@@ -153,8 +157,8 @@ export default function AppSidebar({ children, links, breadcrumbs }: AppSidebarP
                       {index === breadcrumbs.length - 1 ? (
                         <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
                       ) : (
-                        <BreadcrumbLink href={crumb.href}>
-                          {crumb.title}
+                        <BreadcrumbLink href={crumb.href} asChild>
+                          <Link href={crumb.href}>{crumb.title}</Link>
                         </BreadcrumbLink>
                       )}
                     </BreadcrumbItem>
