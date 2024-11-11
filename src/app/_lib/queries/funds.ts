@@ -140,6 +140,7 @@ export const getFundIncome = cache(async (input: TransactionSchema) => {
           id: fundTransactions.id,
           currencyCode: currencies.code,
           isOfficial: fundTransactions.isOfficial,
+          createdAt: fundTransactions.createdAt,
         })
         .from(fundTransactions)
         .limit(per_page)

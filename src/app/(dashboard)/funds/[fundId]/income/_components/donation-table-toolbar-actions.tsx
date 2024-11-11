@@ -1,6 +1,6 @@
 "use client"
 
-import { type DonationWithRelations } from "@/db/schemas"
+import { type FundTransactionWithRelations } from "@/db/schemas"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
@@ -8,7 +8,7 @@ import { exportTableToCSV } from "@/lib/export"
 import { Button } from "@/components/ui/button"
 
 interface FundIncomeTableToolbarActionsProps {
-  table: Table<DonationWithRelations>
+  table: Table<FundTransactionWithRelations>
 }
 
 export function FundIncomeTableToolbarActions({
@@ -31,7 +31,7 @@ export function FundIncomeTableToolbarActions({
         onClick={() =>
           exportTableToCSV(table, {
             filename: "التبرعات",
-            excludeColumns: ["select", "actions", "donerId"],
+            excludeColumns: ["select", "actions"],
           })
         }
       >

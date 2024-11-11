@@ -1,22 +1,14 @@
 "use client"
-"use memo"
 
 import * as React from "react"
-import {
-  donations,
-  FundTransaction,
-  FundTransactionWithRelations,
-  type DonationWithRelations,
-} from "@/db/schemas"
+import { type FundTransactionWithRelations } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
-import { useGetCurrencies, useGetDoners } from "@/hooks/use-get-form-data"
+import { useGetCurrencies } from "@/hooks/use-get-form-data"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { type getDonations } from "@/app/_lib/queries/donations"
-import { getFundIncome } from "@/app/_lib/queries/funds"
-import { donationPaymentTranslation } from "@/app/_lib/translate"
+import { type getFundIncome } from "@/app/_lib/queries/funds"
 
 import { FundIncomeTableToolbarActions } from "./donation-table-toolbar-actions"
 import { getColumns } from "./fund-income-table-columns"

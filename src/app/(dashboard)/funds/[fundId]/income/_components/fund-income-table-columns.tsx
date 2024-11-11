@@ -1,11 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  FundTransaction,
-  FundTransactionWithRelations,
-  type DonationWithRelations,
-} from "@/db/schemas"
+import { type FundTransactionWithRelations } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 
@@ -23,10 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
-import {
-  donationPaymentTranslation,
-  fundTransactionCategoryTranslation,
-} from "@/app/_lib/translate"
+import { fundTransactionCategoryTranslation } from "@/app/_lib/translate"
 
 export function getColumns(): ColumnDef<FundTransactionWithRelations>[] {
   return [
@@ -97,6 +90,12 @@ export function getColumns(): ColumnDef<FundTransactionWithRelations>[] {
         <Badge variant={row.original.category}>
           {fundTransactionCategoryTranslation[row.original.category]}
         </Badge>
+      ),
+    },
+    {
+      accessorKey: "description",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الوصف" />
       ),
     },
 
