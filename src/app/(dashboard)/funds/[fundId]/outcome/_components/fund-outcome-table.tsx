@@ -10,14 +10,14 @@ import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { type getFundPageTransactions } from "@/app/_lib/queries/funds"
 
-import { FundIncomeTableToolbarActions } from "./donation-table-toolbar-actions"
-import { getColumns } from "./fund-income-table-columns"
+import { getColumns } from "./fund-outcome-table-columns"
+import { FundOutcomeTableToolbarActions } from "./fund-table-toolbar-actions"
 
-interface FundIncomeTableProps {
+interface FundOutcomeTableProps {
   promise: ReturnType<typeof getFundPageTransactions>
 }
 
-export function FundIncomeTable({ promise }: FundIncomeTableProps) {
+export function FundOutcomeTable({ promise }: FundOutcomeTableProps) {
   const { data, pageCount } = React.use(promise)
 
   const { data: currencies, isLoading: loadingCurrencies } = useGetCurrencies()
@@ -64,7 +64,7 @@ export function FundIncomeTable({ promise }: FundIncomeTableProps) {
   return (
     <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <FundIncomeTableToolbarActions table={table} />
+        <FundOutcomeTableToolbarActions table={table} />
       </DataTableToolbar>
     </DataTable>
   )

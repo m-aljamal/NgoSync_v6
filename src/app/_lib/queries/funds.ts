@@ -101,9 +101,10 @@ export const getFund = cache(async ({ id }: { id: string }) => {
 interface TransactionSchema {
   searchInput: GetSearchSchema
   id: string
+  type: typeof fundTransactions.$inferSelect.type
 }
 
-export const getFundIncome = cache(async (input: TransactionSchema) => {
+export const getFundPageTransactions = cache(async (input: TransactionSchema) => {
   noStore()
   const { page, per_page, sort, operator, from, to } = input.searchInput
   try {
@@ -118,7 +119,7 @@ export const getFundIncome = cache(async (input: TransactionSchema) => {
 
     const expressions: (SQL<unknown> | undefined)[] = [
       eq(fundTransactions.fundId, input.id),
-      eq(fundTransactions.type, "income"),
+      eq(fundTransactions.type, input.type),
       fromDay && toDay
         ? and(
             gte(fundTransactions.date, fromDay),

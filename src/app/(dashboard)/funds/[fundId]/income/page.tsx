@@ -6,7 +6,7 @@ import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getFundIncome } from "@/app/_lib/queries/funds"
+import { getFundPageTransactions } from "@/app/_lib/queries/funds"
 import { searchParamsSchema } from "@/app/_lib/validations"
 
 import { FundIncomeTable } from "./_components/fund-income-table"
@@ -21,9 +21,10 @@ export interface IndexPageProps {
 export default function Donations({ searchParams, params }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
-  const promise = getFundIncome({
+  const promise = getFundPageTransactions({
     id: params.fundId,
     searchInput: search,
+    type: "income",
   })
 
   return (
