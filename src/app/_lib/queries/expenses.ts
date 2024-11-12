@@ -182,7 +182,7 @@ export const getExpense = cache(async (id: string) => {
       .innerJoin(currencies, eq(projectsTransactions.currencyId, currencies.id))
       .innerJoin(projects, eq(projectsTransactions.projectId, projects.id))
       .leftJoin(proposals, eq(projectsTransactions.proposalId, proposals.id))
-      .leftJoin(officialCurrency, eq(officialCurrency.official, true))
+      .leftJoin(officialCurrency, eq(officialCurrency.isOfficial, true))
       .leftJoin(proposalCurrency, eq(proposalCurrency.id, proposals.currencyId))
       .innerJoin(
         expensesCategories,

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
-import { type PageLinks } from "@/types"
+import { type SidebarLinks } from "@/types"
 
-import PageLayout from "@/app/_components/page-layout"
+import AppSidebar from "@/components/app-sidebar"
 import { getProposal } from "@/app/_lib/queries/proposals"
 
 export default async function ProposalLayout({
@@ -19,30 +19,37 @@ export default async function ProposalLayout({
     notFound()
   }
 
-  const links: PageLinks = [
+  const links: SidebarLinks = [
     {
-      href: `/proposals/${proposal.id}/overview`,
-      title: "بيانات الدراسة",
-      icon: "Presentation",
-    },
-    {
-      title: "الحركات المالية",
-      children: [
+      groupName: "الدراسة",
+      items: [
         {
-          href: `/proposals/${proposal.id}/income`,
-          title: "التبرعات",
-          icon: "HandCoins",
-          roles: ["admin"],
+          title: "بيانات الدراسة",
+          icon: "Presentation",
+          href: `/proposals/${proposal.id}/overview`,
         },
         {
-          href: `/proposals/${proposal.id}/outcome`,
+          title: "التبرعات",
+          icon: "HandCoins",
+          href: `/proposals/${proposal.id}/income`,
+        },
+        {
           title: "المصروفات",
           icon: "ArrowUpRight",
-          roles: ["admin"],
+          href: `/proposals/${proposal.id}/outcome`,
         },
       ],
     },
   ]
 
-  return <PageLayout links={links}>{children}</PageLayout>
+  const breadcrumbs = [
+    { title: "الدراسات", href: "/proposals" },
+    { title: proposal.name, href: `/proposals/${proposal.id}` },
+  ]
+
+  return (
+    <AppSidebar links={links} breadcrumbs={breadcrumbs}>
+      <main>{children}</main>
+    </AppSidebar>
+  )
 }

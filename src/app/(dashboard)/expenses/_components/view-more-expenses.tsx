@@ -17,6 +17,7 @@ function ViewMoreExpenses() {
   if (isLoading) {
     return <ViewMoreLoading />
   }
+   
   if (!data) return <NoDataFound />
   const {
     date,

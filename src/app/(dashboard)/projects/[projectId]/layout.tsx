@@ -17,8 +17,7 @@ export default async function ProjectLayout({
     id: params.projectId,
   })
   const user = await currentUser()
-console.log({project, user});
-
+ 
   if (!project) {
     notFound()
   }

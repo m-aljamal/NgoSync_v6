@@ -21,7 +21,10 @@ import { filterColumn } from "@/lib/filter-column"
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
-export async function getDonations(input: GetSearchSchema) {
+export async function getDonations(
+  input: GetSearchSchema,
+  proposalId?: string
+) {
   noStore()
   const {
     page,
@@ -48,7 +51,7 @@ export async function getDonations(input: GetSearchSchema) {
 
     const expressions: (SQL<unknown> | undefined)[] = [
       amount ? eq(donations.amount, new Decimal(amount).toFixed(4)) : undefined,
-
+      proposalId ? eq(donations.proposalId, proposalId) : undefined,
       !!paymentType
         ? filterColumn({
             column: donations.paymentType,
@@ -187,7 +190,7 @@ export const getDonation = cache(async (id: string) => {
       .innerJoin(doners, eq(donations.donerId, doners.id))
       .innerJoin(funds, eq(fundTransactions.fundId, funds.id))
       .innerJoin(currencies, eq(fundTransactions.currencyId, currencies.id))
-      .leftJoin(officialCurrency, eq(officialCurrency.official, true))
+      .leftJoin(officialCurrency, eq(officialCurrency.isOfficial, true))
       .leftJoin(proposalCurrency, eq(proposalCurrency.id, proposals.currencyId))
     return donation
   } catch (error) {
