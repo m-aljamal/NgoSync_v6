@@ -8,9 +8,9 @@ import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
 import { getExpenses } from "@/app/_lib/queries/expenses"
 import { searchParamsSchema } from "@/app/_lib/validations"
+import { ExpenseTable } from "@/app/(dashboard)/_components/expenses/expense-table"
 
-import { ExpenseTable } from "./_components/expense-table"
-
+ 
 export interface IndexPageProps {
   searchParams: SearchParams
   params: { proposalId: string }

@@ -11,7 +11,7 @@ const ViewMoreDonation = dynamic(
 )
 
 const ViewMoreExpenses = dynamic(
-  () => import("@/app/(dashboard)/expenses/_components/view-more-expenses")
+  () => import("@/app/(dashboard)/_components/expenses/view-more-expenses")
 )
 
 export const SheetProvider = () => {
