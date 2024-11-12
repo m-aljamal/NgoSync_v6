@@ -21,10 +21,17 @@ import { filterColumn } from "@/lib/filter-column"
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
-export async function getDonations(
-  input: GetSearchSchema,
+type GetDonationsResponse = {
+  input: GetSearchSchema
   proposalId?: string
-) {
+  projectId?: string
+}
+
+export async function getDonations({
+  input,
+  proposalId,
+  projectId,
+}: GetDonationsResponse) {
   noStore()
   const {
     page,
@@ -52,6 +59,7 @@ export async function getDonations(
     const expressions: (SQL<unknown> | undefined)[] = [
       amount ? eq(donations.amount, new Decimal(amount).toFixed(4)) : undefined,
       proposalId ? eq(donations.proposalId, proposalId) : undefined,
+      projectId ? eq(donations.projectId, projectId) : undefined,
       !!paymentType
         ? filterColumn({
             column: donations.paymentType,

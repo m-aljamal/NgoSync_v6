@@ -7,7 +7,7 @@ import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
 import { ViewMoreDrawer } from "@/components/view-more"
 
 const ViewMoreDonation = dynamic(
-  () => import("@/app/(dashboard)/donations/_components/view-more-donation")
+  () => import("@/app/(dashboard)/_components/donations/view-more-donation")
 )
 
 const ViewMoreExpenses = dynamic(

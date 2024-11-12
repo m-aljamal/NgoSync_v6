@@ -1,9 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { type DonationWithRelations } from "@/db/schemas"
+import { type ProjectTransactionWithRelations } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
+import { formatDate } from "date-fns"
 
 import { formatCurrency } from "@/lib/utils"
 import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
@@ -15,12 +16,16 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
-import { donationPaymentTranslation } from "@/app/_lib/translate"
+import { transactionStatusTranslation } from "@/app/_lib/translate"
 
-export function getColumns(): ColumnDef<DonationWithRelations>[] {
+import { DeleteExpensesDialog } from "./delete-expenses-dialog"
+import { UpdateExpenseSheet } from "./update-expense-sheet"
+
+export function getColumns(): ColumnDef<ProjectTransactionWithRelations>[] {
   return [
     {
       id: "select",
@@ -46,11 +51,13 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
       enableSorting: false,
       enableHiding: false,
     },
+
     {
       accessorKey: "date",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="التاريخ" />
       ),
+      cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
     },
 
     {
@@ -82,41 +89,52 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
     },
 
     {
-      accessorKey: "donerName",
+      accessorKey: "transactionStatus",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="المتبرع" />
-      ),
-      cell: ({ row }) => <span>{row.getValue("donerName")}</span>,
-    },
-    {
-      size: 0,
-      accessorKey: "donerId",
-      header: undefined,
-      cell: undefined,
-    },
-
-    {
-      accessorKey: "paymentType",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="الدفع" />
+        <DataTableColumnHeader column={column} title="الحالة" />
       ),
       cell: ({ row }) => (
-        <Badge variant={row.getValue("paymentType")}>
-          {donationPaymentTranslation[row.original.paymentType]}
+        <Badge variant={row.original.transactionStatus}>
+          {transactionStatusTranslation[row.original.transactionStatus]}
         </Badge>
       ),
-      filterFn: (row, id, value) => {
-        return Array.isArray(value) && value.includes(row.getValue(id))
-      },
+    },
+    {
+      accessorKey: "projectName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المشروع" />
+      ),
+    },
+    {
+      accessorKey: "expenseCategoryName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الفئة" />
+      ),
     },
 
     {
       id: "actions",
       cell: function Cell({ row }) {
+        const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
+          React.useState(false)
+        const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
+          React.useState(false)
         const { onOpen } = useViewMoreDialog()
 
         return (
           <>
+            <UpdateExpenseSheet
+              open={showUpdateTaskSheet}
+              onOpenChange={setShowUpdateTaskSheet}
+              expense={row.original}
+            />
+            <DeleteExpensesDialog
+              open={showDeleteTaskDialog}
+              onOpenChange={setShowDeleteTaskDialog}
+              expenses={[row.original]}
+              showTrigger={false}
+              onSuccess={() => row.toggleSelected(false)}
+            />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -129,12 +147,21 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
                 <DropdownMenuItem
-                  onSelect={() => onOpen(row.original.id, "donation")}
+                  onSelect={() => onOpen(row.original.id, "expenses")}
                 >
                   التفاصيل
                 </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
+                  تعديل
+                </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onSelect={() => setShowDeleteTaskDialog(true)}
+                >
+                  حذف
+                  <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </>

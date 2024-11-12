@@ -1,8 +1,8 @@
 import { notFound, redirect } from "next/navigation"
 import { type projects } from "@/db/schemas"
-import { type PageLinks } from "@/types"
+import { type SidebarLinks } from "@/types"
 
-import PageLayout from "@/app/_components/page-layout"
+import AppSidebar from "@/components/app-sidebar"
 import { currentUser } from "@/app/_lib/auth"
 import { getProject } from "@/app/_lib/queries/projects"
 
@@ -17,7 +17,7 @@ export default async function ProjectLayout({
     id: params.projectId,
   })
   const user = await currentUser()
- 
+
   if (!project) {
     notFound()
   }
@@ -26,67 +26,75 @@ export default async function ProjectLayout({
     redirect("/projects")
   }
 
-  const schoolSystem: PageLinks = [
+  const schoolSystem: SidebarLinks = [
     {
-      title: "بيانات المدرسة",
-
-      children: [
+      groupName: "المدرسة",
+      items: [
         {
-          href: `/projects/${project.id}/school-system/overview`,
           title: "بيانات المدرسة",
           icon: "Presentation",
-          roles: ["admin"],
+          href: `/projects/${project.id}/school-system/overview`,
         },
         {
-          href: `/projects/${project.id}/school-system/students`,
-          title: "الطلاب",
-          icon: "Users",
-          roles: ["admin", "project_manager"],
-        },
-        {
-          href: `/projects/${project.id}/school-system/teachers`,
-          title: "المعلمين",
-          icon: "Users",
-          roles: ["admin", "project_manager"],
-        },
-        {
-          href: `/projects/${project.id}/school-system/subjects`,
-          title: "المواد",
-          icon: "Users",
-          roles: ["admin", "project_manager"],
-        },
-        {
-          href: `/projects/${project.id}/school-system/classes`,
-          title: "الصفوف",
-          icon: "Users",
-          roles: ["admin", "project_manager"],
+          title: "معلومات المدرسة",
+          icon: "BriefcaseBusiness",
+          children: [
+            {
+              href: `/projects/${project.id}/school-system/students`,
+              title: "الطلاب",
+              icon: "Users",
+            },
+            {
+              href: `/projects/${project.id}/school-system/teachers`,
+              title: "المعلمين",
+              icon: "Users",
+            },
+            {
+              href: `/projects/${project.id}/school-system/subjects`,
+              title: "المواد",
+              icon: "Users",
+            },
+            {
+              href: `/projects/${project.id}/school-system/classes`,
+              title: "الصفوف",
+              icon: "Users",
+            },
+          ],
         },
       ],
     },
   ]
 
-  const culturalCenterSystem: PageLinks = [
+  const culturalCenterSystem: SidebarLinks = [
     {
-      title: "بيانات المركز",
-      children: [
+      groupName: "المركز الثقافي",
+      items: [
         {
-          href: `/projects/${project.id}/cultural-center/courses`,
-          title: "الدورات",
-          icon: "SwatchBook",
-          roles: ["admin", "project_manager"],
+          title: "بيانات المركز",
+          icon: "Presentation",
+          href: `/projects/${project.id}/cultural-center/overview`,
         },
-
         {
-          href: `/projects/${project.id}/cultural-center/students`,
-          title: "الطلاب",
-          icon: "Users",
-          roles: ["admin", "project_manager"],
+          title: "معلومات المركز",
+          icon: "BriefcaseBusiness",
+          children: [
+            {
+              href: `/projects/${project.id}/cultural-center/courses`,
+              title: "الدورات",
+              icon: "SwatchBook",
+            },
+            {
+              href: `/projects/${project.id}/cultural-center/students`,
+              title: "الطلاب",
+              icon: "Users",
+            },
+          ],
         },
       ],
     },
   ]
 
-  const systems: Record<typeof projects.$inferSelect.system, PageLinks> = {
+  const systems: Record<typeof projects.$inferSelect.system, SidebarLinks> = {
     school: schoolSystem,
     cultural_center: culturalCenterSystem,
     relief: [],
@@ -94,55 +102,66 @@ export default async function ProjectLayout({
     office: [],
   }
 
-  const links: PageLinks = [
+  const links: SidebarLinks = [
     {
-      href: `/projects/${project.id}/overview`,
-      title: "بيانات المشروع",
-      icon: "Presentation",
-      roles: ["admin", "project_manager"],
-    },
-    {
-      title: "الحركات المالية",
-      children: [
+      groupName: "المشروع",
+      items: [
         {
-          href: `/projects/${project.id}/income`,
-          title: "الإيرادات",
-          icon: "ArrowDownLeft",
-          roles: ["admin", "project_manager"],
+          title: "بيانات المشروع",
+          icon: "Presentation",
+          href: `/projects/${project.id}/overview`,
+        },
+
+        {
+          title: "الحركات المالية",
+          icon: "ArrowDownUp",
+          children: [
+            {
+              href: `/projects/${project.id}/income`,
+              title: "الإيرادات",
+              icon: "ArrowDownLeft",
+            },
+            {
+              href: `/projects/${project.id}/outcome`,
+              title: "المصروفات",
+              icon: "ArrowUpRight",
+            },
+            {
+              href: `/projects/${project.id}/donations`,
+              title: "التبرعات",
+              icon: "HandCoins",
+            },
+            {
+              href: `/projects/${project.id}/transfers`,
+              title: "الحوالات",
+              icon: "Import",
+            },
+          ],
         },
         {
-          href: `/projects/${project.id}/outcome`,
-          title: "المصروفات",
-          icon: "ArrowUpRight",
-          roles: ["admin", "project_manager"],
-        },
-        {
-          href: `/projects/${project.id}/donations`,
-          title: "التبرعات",
-          icon: "HandCoins",
-          roles: ["admin"],
-        },
-        {
-          href: `/projects/${project.id}/transfers`,
-          title: "الحوالات",
-          icon: "Import",
-          roles: ["admin", "project_manager"],
-        },
-      ],
-    },
-    {
-      title: "الموظفين",
-      children: [
-        {
-          title: "الموظفين  ",
-          href: `/projects/${project.id}/employees`,
+          title: "الموظفين",
           icon: "Users",
-          roles: ["admin", "project_manager"],
+          children: [
+            {
+              title: "الموظفين  ",
+              href: `/projects/${project.id}/employees`,
+              icon: "Users",
+            },
+          ],
         },
       ],
     },
     ...systems[project.system],
   ]
 
-  return <PageLayout links={links}>{children}</PageLayout>
+  const breadcrumbs = [
+    { title: "المشاريع", href: "/projects" },
+    { title: project.name, href: `/projects/${project.id}` },
+  ]
+
+  return (
+    <AppSidebar links={links} breadcrumbs={breadcrumbs}>
+      <main>{children}</main>
+    </AppSidebar>
+  )
 }

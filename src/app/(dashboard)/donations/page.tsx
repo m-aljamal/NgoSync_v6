@@ -9,7 +9,7 @@ import { Shell } from "@/components/shell"
 import { getDonations } from "@/app/_lib/queries/donations"
 import { searchParamsSchema } from "@/app/_lib/validations"
 
-import { DonationTable } from "./_components/donation-table"
+import { DonationTable } from "../_components/donations/donation-table"
 
 export interface IndexPageProps {
   searchParams: SearchParams
@@ -18,7 +18,7 @@ export interface IndexPageProps {
 export default function Donations({ searchParams }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
-  const promise = getDonations(search)
+  const promise = getDonations({ input: search })
 
   return (
     <div>

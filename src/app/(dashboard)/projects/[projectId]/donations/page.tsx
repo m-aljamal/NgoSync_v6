@@ -12,20 +12,20 @@ import { DonationTable } from "@/app/(dashboard)/_components/donations/donation-
 
 export interface IndexPageProps {
   searchParams: SearchParams
-  params: { proposalId: string }
+  params: { projectId: string }
 }
 
 export default function Donations({ searchParams, params }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
-  const promise = getDonations({ input: search, proposalId: params.proposalId })
+  const promise = getDonations({ input: search, projectId: params.projectId })
 
   return (
     <div>
       <Heading
         title="التبرعات"
-        description="التبرعات المالية للدراسة."
-        icon="HandCoins"
+        description="التبرعات المالية للمشروع."
+        icon="SquareKanban"
       />
       <Shell className="gap-2">
         <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
