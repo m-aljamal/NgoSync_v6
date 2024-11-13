@@ -1,6 +1,6 @@
 import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
-import { boolean, decimal, timestamp, varchar } from "drizzle-orm/pg-core"
+import { boolean, date, decimal, timestamp, varchar } from "drizzle-orm/pg-core"
 
 import { generateId } from "@/lib/id"
 
@@ -44,9 +44,9 @@ export const exchangeRates = pgTable("exchange_rates", {
     .default(sql`current_timestamp`)
     .$onUpdate(() => new Date()),
 
-  date: timestamp("date", { mode: "string", withTimezone: true })
+    date: date("date")
     .notNull()
-    .defaultNow(),
+    .default(sql`CURRENT_DATE`),
 
   fromCurrencyId: varchar("from_currency_id")
     .references(() => currencies.id)

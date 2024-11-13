@@ -1,6 +1,6 @@
 "use client"
 
-import {type ProjectTransaction } from "@/db/schemas"
+import { type ProjectIncomeType } from "@/db/schemas"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
@@ -8,7 +8,7 @@ import { exportTableToCSV } from "@/lib/export"
 import { Button } from "@/components/ui/button"
 
 interface IncomeTableToolbarActionsProps {
-  table: Table<ProjectTransaction>
+  table: Table<ProjectIncomeType>
 }
 
 export function IncomeTableToolbarActions({

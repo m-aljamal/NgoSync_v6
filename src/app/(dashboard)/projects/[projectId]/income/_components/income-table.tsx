@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type ProjectTransaction } from "@/db/schemas"
+import { type ProjectIncomeType } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
@@ -21,7 +21,7 @@ export function IncomeTable({ promise }: IncomeTableProps) {
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<ProjectTransaction>[] = [
+  const filterFields: DataTableFilterField<ProjectIncomeType>[] = [
     {
       label: "Amount",
       value: "amount",

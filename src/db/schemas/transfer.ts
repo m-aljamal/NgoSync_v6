@@ -14,7 +14,7 @@ export const transferBetweenFunds = pgTable("transfer_between_funds", {
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
     .$onUpdate(() => new Date()),
-  date: date("date")
+    date: date("date")
     .notNull()
     .default(sql`CURRENT_DATE`),
   sender: varchar("sender")

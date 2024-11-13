@@ -113,3 +113,15 @@ export const fundTransactionCategoryTranslation: Record<
   transfer_from_project: "تحويل من مشروع",
   transfer_to_project: "تحويل لمشروع",
 }
+
+export const projectTransactionCategoryTranslation: Record<
+  typeof projectsTransactions.$inferSelect.category,
+  string
+> = {
+  transfer_between_projects: "تحويل بين المشاريع",
+  expense: "مصروف",
+  transfer_from_fund: "تحويل من الصندوق",
+  transfer_to_fund: "تحويل للصندوق",
+  currency_exchange: "صرف عملة",
+  loan: "قرض",
+}

@@ -1,11 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { type ProjectTransaction } from "@/db/schemas"
+import { type ProjectIncomeType } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
 
+import { formatCurrency } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -17,8 +18,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
+import {
+  projectTransactionCategoryTranslation,
+  transactionStatusTranslation,
+} from "@/app/_lib/translate"
 
-export function getColumns(): ColumnDef<ProjectTransaction>[] {
+export function getColumns(): ColumnDef<ProjectIncomeType>[] {
   return [
     {
       id: "select",
@@ -44,6 +49,12 @@ export function getColumns(): ColumnDef<ProjectTransaction>[] {
       enableSorting: false,
       enableHiding: false,
     },
+    {
+      accessorKey: "date",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="التاريخ" />
+      ),
+    },
 
     {
       accessorKey: "amount",
@@ -51,20 +62,54 @@ export function getColumns(): ColumnDef<ProjectTransaction>[] {
         <DataTableColumnHeader column={column} title="القيمة" />
       ),
       cell: ({ row }) => (
-        <div>
-          {/* {formatCurrency(row.getValue("amount"), row.original.currencyCode)} */}
-          {row.original.amount}
-        </div>
+        <span>
+          {formatCurrency(row.getValue("amount"), row.original.currencyCode)}
+        </span>
       ),
     },
 
     {
-      accessorKey: "date",
+      accessorKey: "currencyCode",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="التاريخ" />
+        <DataTableColumnHeader column={column} title="العملة" />
       ),
-      cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("currencyCode")}>
+          {row.getValue("currencyCode")}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
     },
+    {
+      accessorKey: "transactionStatus",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الحالة" />
+      ),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("transactionStatus")}>
+          {transactionStatusTranslation[row.original.transactionStatus]}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
+    },
+    {
+      accessorKey: "category",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الفئة" />
+      ),
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("category")}>
+          {projectTransactionCategoryTranslation[row.original.category]}
+        </Badge>
+      ),
+    },
+
     {
       accessorKey: "description",
       header: ({ column }) => (

@@ -4,7 +4,6 @@ import * as React from "react"
 import { type TransferFundToProjectWithRelations } from "@/db/schemas/transfer"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
 
 import { formatCurrency } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -56,7 +55,6 @@ export function getColumns(): ColumnDef<TransferFundToProjectWithRelations>[] {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="التاريخ" />
       ),
-      cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
     },
     {
       accessorKey: "amount",
