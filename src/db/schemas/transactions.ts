@@ -137,9 +137,9 @@ export const projectsTransactions = pgTable("projects_transactions", {
   expensesCategoryId: varchar("expenses_category_id").references(
     () => expensesCategories.id
   ),
-  date: date("date")
+  date: timestamp("date", { mode: "string", withTimezone: true })
     .notNull()
-    .default(sql`CURRENT_DATE`),
+    .defaultNow(),
   proposalId: varchar("proposal_id").references(() => proposals.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
