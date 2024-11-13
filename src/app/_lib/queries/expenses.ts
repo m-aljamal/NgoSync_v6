@@ -32,7 +32,17 @@ import { filterColumn } from "@/lib/filter-column"
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, convertToDate } from "./utils"
 
-export async function getExpenses(input: GetSearchSchema, proposalId?: string) {
+type GetExpensesProps = {
+  input: GetSearchSchema
+  proposalId?: string
+  projectId?: string
+}
+
+export async function getExpenses({
+  input,
+  proposalId,
+  projectId,
+}: GetExpensesProps) {
   noStore()
   const { page, per_page, sort, amount, operator, from, to, currencyCode } =
     input
@@ -49,6 +59,7 @@ export async function getExpenses(input: GetSearchSchema, proposalId?: string) {
 
     const expressions: (SQL<unknown> | undefined)[] = [
       proposalId ? eq(projectsTransactions.proposalId, proposalId) : undefined,
+      projectId ? eq(projectsTransactions.projectId, projectId) : undefined,
       amount
         ? or(
             eq(projectsTransactions.amount, new Decimal(amount).toFixed(4)),

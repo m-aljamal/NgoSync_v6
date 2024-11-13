@@ -8,12 +8,12 @@ import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
 import { getExpenses } from "@/app/_lib/queries/expenses"
 import { searchParamsSchema } from "@/app/_lib/validations"
+
 import { ExpenseTable } from "../_components/expenses/expense-table"
 
- 
 export default function Proposals({ searchParams }: SearchParams) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getExpenses(search)
+  const promise = getExpenses({ input: search })
 
   return (
     <div>
