@@ -15,7 +15,7 @@ export default function InputGroup({
   return (
     <div
       className={cn(
-        `grid grid-cols-1 gap-x-5 space-y-5`,
+        `grid grid-cols-1 gap-4 `,
         isDesktop ? cols : "mx-5"
       )}
     >

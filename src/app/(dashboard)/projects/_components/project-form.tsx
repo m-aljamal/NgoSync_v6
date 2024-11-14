@@ -27,21 +27,37 @@ interface CreateTaskFormProps
   children: React.ReactNode
   form: UseFormReturn<CreateProjectSchema>
   onSubmit: (data: CreateProjectSchema) => void
-  isUpdate?: boolean
 }
 
-export function ProjectForm({
-  form,
-  onSubmit,
-  children,
-  isUpdate,
-}: CreateTaskFormProps) {
+export function ProjectForm({ form, onSubmit, children }: CreateTaskFormProps) {
   const { data: users, isLoading } = useGetUsers()
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup isUpdate={isUpdate}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <InputGroup>
+          <FormField
+            control={form.control}
+            name="system"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>النظام</FormLabel>
+
+                <AppSelect
+                  onChange={field.onChange}
+                  value={field.value}
+                  options={projects.system.enumValues.map((system) => ({
+                    value: system,
+                    label: projectSystemTranslation[system],
+                  }))}
+                  placeholder="النظام"
+                />
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <FormField
             control={form.control}
             name="name"
@@ -107,28 +123,6 @@ export function ProjectForm({
                     label: projectStatusTranslation[state],
                   }))}
                   placeholder="الحالة"
-                />
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="system"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>النظام</FormLabel>
-
-                <AppSelect
-                  onChange={field.onChange}
-                  value={field.value}
-                  options={projects.system.enumValues.map((system) => ({
-                    value: system,
-                    label: projectSystemTranslation[system],
-                  }))}
-                  placeholder="النظام"
                 />
 
                 <FormMessage />
