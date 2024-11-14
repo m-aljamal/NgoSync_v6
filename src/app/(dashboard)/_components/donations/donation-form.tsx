@@ -46,7 +46,6 @@ export function DonationForm({
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <InputGroup>
           <DateInput form={form} />
-
           <FormField
             control={form.control}
             name="donerId"
@@ -67,6 +66,7 @@ export function DonationForm({
               </FormItem>
             )}
           />
+
           <CurrencyAmountInput form={form} />
           <FundInput form={form} />
           <FormField

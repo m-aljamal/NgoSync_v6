@@ -30,7 +30,7 @@ export default function DateInput<T extends FieldValues>({
       control={form.control}
       name={name as Path<T>}
       render={({ field }) => (
-        <FormItem className="mt-5">
+        <FormItem>
           <FormLabel>{labelName}</FormLabel>
           <FormControl>
             <DatePicker onChange={field.onChange} value={field.value} />

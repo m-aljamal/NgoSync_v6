@@ -41,7 +41,7 @@ export function DonerForm({ form, onSubmit, children }: CreateDonerFormProps) {
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem className="mt-5">
+              <FormItem>
                 <FormLabel>اسم المتبرع</FormLabel>
                 <FormControl>
                   <Input type="text" placeholder="اسم المتبرع" {...field} />

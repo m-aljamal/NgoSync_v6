@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -15,6 +16,7 @@ import { FundForm } from "./fund-form"
 
 export function CreateFundDialog() {
   const { onClose } = useFormDialog()
+  const queryClient = useQueryClient()
 
   const form = useForm<CreateFundSchema>({
     resolver: zodResolver(createFundSchema),
@@ -37,6 +39,9 @@ export function CreateFundDialog() {
 
   async function onSubmit(input: CreateFundSchema) {
     await executeAsync(input)
+    await queryClient.invalidateQueries({
+      queryKey: ["funds"],
+    })
   }
 
   return (
