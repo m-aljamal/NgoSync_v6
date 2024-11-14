@@ -29,21 +29,16 @@ export default async function layout({ children, params }: Props) {
           icon: "FileDigit",
           href: `/funds/${fund.id}/overview`,
         },
+
         {
-          title: "الحركات المالية",
-          icon: "ArrowDownUp",
-          children: [
-            {
-              title: "الداخل",
-              href: `/funds/${fund.id}/income`,
-              icon: "ArrowDownNarrowWide",
-            },
-            {
-              title: "الخارج",
-              href: `/funds/${fund.id}/outcome`,
-              icon: "ArrowUpNarrowWide",
-            },
-          ],
+          title: "الداخل",
+          href: `/funds/${fund.id}/income`,
+          icon: "ArrowDownNarrowWide",
+        },
+        {
+          title: "الخارج",
+          href: `/funds/${fund.id}/outcome`,
+          icon: "ArrowUpNarrowWide",
         },
       ],
     },
