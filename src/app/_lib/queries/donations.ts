@@ -25,12 +25,14 @@ type GetDonationsResponse = {
   input: GetSearchSchema
   proposalId?: string
   projectId?: string
+  donerId?: string
 }
 
 export async function getDonations({
   input,
   proposalId,
   projectId,
+  donerId,
 }: GetDonationsResponse) {
   noStore()
   const {
@@ -43,7 +45,7 @@ export async function getDonations({
     paymentType,
     amount,
     currencyCode,
-    donerId,
+    donerId: donerIdInput,
   } = input
 
   try {
@@ -58,6 +60,7 @@ export async function getDonations({
 
     const expressions: (SQL<unknown> | undefined)[] = [
       amount ? eq(donations.amount, new Decimal(amount).toFixed(4)) : undefined,
+      donerIdInput ? eq(donations.donerId, donerIdInput) : undefined,
       proposalId ? eq(donations.proposalId, proposalId) : undefined,
       projectId ? eq(donations.projectId, projectId) : undefined,
       !!paymentType

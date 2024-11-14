@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -18,7 +19,7 @@ import { DonerForm } from "./doner-form"
 
 export function CreateDonerDialog() {
   const { onClose } = useFormDialog()
-
+  const queryClient = useQueryClient()
   const form = useForm<CreateDonerSchema>({
     resolver: zodResolver(createDonerSchema),
     defaultValues: {
@@ -41,6 +42,9 @@ export function CreateDonerDialog() {
 
   async function onSubmit(input: CreateDonerSchema) {
     await executeAsync(input)
+    await queryClient.invalidateQueries({
+      queryKey: ["doners"],
+    })
   }
 
   return (
