@@ -131,6 +131,11 @@ export default async function ProjectLayout({
               title: "التبرعات",
               icon: "HandCoins",
             },
+            {
+              href: `/projects/${project.id}/proposals`,
+              title: "الدراسات",
+              icon: "SquareKanban",
+            },
           ],
         },
         {

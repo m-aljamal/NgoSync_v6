@@ -12,7 +12,7 @@ import { filterColumn } from "@/lib/filter-column"
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
-export async function getProposals(input: GetSearchSchema) {
+export async function getProposals(input: GetSearchSchema, projectId?: string) {
   noStore()
   const { page, per_page, sort, name, operator, from, to } = input
 
@@ -27,6 +27,7 @@ export async function getProposals(input: GetSearchSchema) {
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
+      projectId ? eq(proposals.projectId, projectId) : undefined,
       name
         ? filterColumn({
             column: proposals.name,

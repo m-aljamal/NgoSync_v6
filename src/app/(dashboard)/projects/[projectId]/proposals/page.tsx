@@ -8,18 +8,22 @@ import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
 import { getProposals } from "@/app/_lib/queries/proposals"
 import { searchParamsSchema } from "@/app/_lib/validations"
+import { ProposalsTable } from "@/app/(dashboard)/_components/proposals/proposals-table"
 
-import { ProposalsTable } from "../_components/proposals/proposals-table"
+export interface IndexPageProps {
+  searchParams: SearchParams
+  params: { projectId: string }
+}
 
-export default function Proposals({ searchParams }: SearchParams) {
+export default function Proposals({ searchParams, params }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getProposals(search)
+  const promise = getProposals(search, params.projectId)
 
   return (
     <div>
       <Heading
         title="الدراسات المالية"
-        description="إدارة الدراسات المالية للمشاريع."
+        description="الدراسات المالية الخاصة للمشروع."
         icon="SquareKanban"
       />
       <Shell className="gap-2">

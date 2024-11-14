@@ -31,11 +31,6 @@ export default async function DonerLayout({ children, params }: Props) {
           icon: "ArrowDownLeft",
           href: `/doners/${doner.id}/donations`,
         },
-        {
-          title: "الدراسات",
-          icon: "BookText",
-          href: `/doners/${doner.id}/proposals`,
-        },
       ],
     },
   ]
