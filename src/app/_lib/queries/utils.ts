@@ -1,9 +1,9 @@
-import { cache } from "react"
 import { db } from "@/db"
 import { currencies, exchangeRates } from "@/db/schemas"
 import Decimal from "decimal.js"
-import { and, asc, eq, gte, lte, or, sql, type SQL } from "drizzle-orm"
+import { and, eq, sql } from "drizzle-orm"
 import { alias } from "drizzle-orm/pg-core"
+import { cache } from "react"
 
 import { toDecimalFixed } from "../utils"
 import { getCurrency } from "./currency"
@@ -78,7 +78,13 @@ export const getCloseExchangeRate = cache(
               : undefined
           )
         )
-        .orderBy(sql`ABS(EXTRACT(EPOCH FROM ${exchangeRates.date} - ${date}))`)
+
+        .orderBy(
+          sql`ABS(EXTRACT(EPOCH FROM (${exchangeRates.date}::timestamp - ${date}::timestamp)))`
+        )
+
+        // .orderBy(sql`ABS(EXTRACT(EPOCH FROM ${exchangeRates.date} - ${date}))`)
+
         .limit(1)
 
       return data

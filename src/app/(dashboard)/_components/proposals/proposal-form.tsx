@@ -91,7 +91,7 @@ export function ProposalForm({
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem className="mt-5">
+              <FormItem>
                 <FormLabel>اسم الدراسة</FormLabel>
                 <FormControl>
                   <Input type="text" placeholder="اسم الدراسة" {...field} />
