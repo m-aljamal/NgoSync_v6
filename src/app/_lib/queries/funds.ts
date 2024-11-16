@@ -10,7 +10,18 @@ import {
 } from "@/db/schemas"
 import { funds, type Fund } from "@/db/schemas/fund"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  lte,
+  or,
+  sql,
+  type SQL,
+} from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -104,78 +115,102 @@ interface TransactionSchema {
   type: typeof fundTransactions.$inferSelect.type
 }
 
-export const getFundPageTransactions = cache(async (input: TransactionSchema) => {
-  noStore()
-  const { page, per_page, sort, operator, from, to } = input.searchInput
-  try {
-    const offset = calculateOffset(page, per_page)
+export const getFundPageTransactions = cache(
+  async (input: TransactionSchema) => {
+    noStore()
+    const { page, per_page, sort, operator, from, to } = input.searchInput
+    try {
+      const offset = calculateOffset(page, per_page)
 
-    const [column, order] = (sort?.split(".").filter(Boolean) ?? [
-      "createdAt",
-      "desc",
-    ]) as [keyof FundTransaction | undefined, "asc" | "desc" | undefined]
+      const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+        "createdAt",
+        "desc",
+      ]) as [keyof FundTransaction | undefined, "asc" | "desc" | undefined]
 
-    const { fromDay, toDay } = convertToDate(from, to)
+      const { fromDay, toDay } = convertToDate(from, to)
 
-    const expressions: (SQL<unknown> | undefined)[] = [
-      eq(fundTransactions.fundId, input.id),
-      eq(fundTransactions.type, input.type),
-      fromDay && toDay
-        ? and(
-            gte(fundTransactions.date, fromDay),
-            lte(fundTransactions.date, toDay)
+      const expressions: (SQL<unknown> | undefined)[] = [
+        eq(fundTransactions.fundId, input.id),
+        eq(fundTransactions.type, input.type),
+        fromDay && toDay
+          ? and(
+              gte(fundTransactions.date, fromDay),
+              lte(fundTransactions.date, toDay)
+            )
+          : undefined,
+      ]
+
+      const where: DrizzleWhere<FundTransaction> =
+        !operator || operator === "and"
+          ? and(...expressions)
+          : or(...expressions)
+
+      const { data, total } = await db.transaction(async (tx) => {
+        const data = await tx
+          .select({
+            date: fundTransactions.date,
+            amount: fundTransactions.amount,
+            category: fundTransactions.category,
+            description: fundTransactions.description,
+            id: fundTransactions.id,
+            currencyCode: currencies.code,
+            isOfficial: fundTransactions.isOfficial,
+            createdAt: fundTransactions.createdAt,
+          })
+          .from(fundTransactions)
+          .limit(per_page)
+          .offset(offset)
+          .where(where)
+          .innerJoin(currencies, eq(fundTransactions.currencyId, currencies.id))
+          .orderBy(
+            column && column in fundTransactions
+              ? order === "asc"
+                ? asc(fundTransactions[column])
+                : desc(fundTransactions[column])
+              : desc(fundTransactions.id)
           )
-        : undefined,
-    ]
 
-    const where: DrizzleWhere<FundTransaction> =
-      !operator || operator === "and" ? and(...expressions) : or(...expressions)
+        const total = await tx
+          .select({
+            count: count(),
+          })
+          .from(fundTransactions)
+          .where(where)
+          .innerJoin(currencies, eq(fundTransactions.currencyId, currencies.id))
+          .execute()
+          .then((res) => res[0]?.count ?? 0)
 
-    const { data, total } = await db.transaction(async (tx) => {
-      const data = await tx
-        .select({
-          date: fundTransactions.date,
-          amount: fundTransactions.amount,
-          category: fundTransactions.category,
-          description: fundTransactions.description,
-          id: fundTransactions.id,
-          currencyCode: currencies.code,
-          isOfficial: fundTransactions.isOfficial,
-          createdAt: fundTransactions.createdAt,
-        })
-        .from(fundTransactions)
-        .limit(per_page)
-        .offset(offset)
-        .where(where)
-        .innerJoin(currencies, eq(fundTransactions.currencyId, currencies.id))
-        .orderBy(
-          column && column in fundTransactions
-            ? order === "asc"
-              ? asc(fundTransactions[column])
-              : desc(fundTransactions[column])
-            : desc(fundTransactions.id)
-        )
+        return {
+          data,
+          total,
+        }
+      })
 
-      const total = await tx
-        .select({
-          count: count(),
-        })
-        .from(fundTransactions)
-        .where(where)
-        .innerJoin(currencies, eq(fundTransactions.currencyId, currencies.id))
-        .execute()
-        .then((res) => res[0]?.count ?? 0)
+      const pageCount = calculatePageCount(total, per_page)
 
-      return {
-        data,
-        total,
-      }
-    })
+      return { data, pageCount }
+    } catch (error) {
+      return { data: [], pageCount: 0 }
+    }
+  }
+)
 
-    const pageCount = calculatePageCount(total, per_page)
-
-    return { data, pageCount }
+export const getFundAccountSummary = cache(async (fundId: string) => {
+  try {
+    return await db
+      .select({
+        id: currencies.id,
+        currency: currencies.code,
+        currencyName: currencies.name,
+        totalIncome: sql<number>`COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'income' THEN ${fundTransactions.amount} ELSE 0 END), 0)`,
+        totalExpenses: sql<number>`COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'outcome' THEN ABS(${fundTransactions.amount}) ELSE 0 END), 0)`,
+        difference: sql<number>`COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'income' THEN ${fundTransactions.amount} ELSE 0 END), 0) - COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'outcome' THEN ABS(${fundTransactions.amount}) ELSE 0 END), 0)`,
+      })
+      .from(fundTransactions)
+      .where(eq(fundTransactions.fundId, fundId))
+      .innerJoin(currencies, eq(fundTransactions.currencyId, currencies.id))
+      .groupBy(currencies.code, currencies.id)
   } catch (error) {
-    return { data: [], pageCount: 0 }
+    throw new Error("Error fetching fund account summary")
   }
 })
