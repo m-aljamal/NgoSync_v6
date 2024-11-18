@@ -196,6 +196,7 @@ export const getFundPageTransactions = cache(
 )
 
 export const getFundAccountSummary = cache(async (fundId: string) => {
+  noStore()
   try {
     return await db
       .select({
@@ -204,13 +205,16 @@ export const getFundAccountSummary = cache(async (fundId: string) => {
         currencyName: currencies.name,
         totalIncome: sql<number>`COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'income' THEN ${fundTransactions.amount} ELSE 0 END), 0)`,
         totalExpenses: sql<number>`COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'outcome' THEN ABS(${fundTransactions.amount}) ELSE 0 END), 0)`,
-        difference: sql<number>`COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'income' THEN ${fundTransactions.amount} ELSE 0 END), 0) - COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'outcome' THEN ABS(${fundTransactions.amount}) ELSE 0 END), 0)`,
+        difference: sql<number>`COALESCE(SUM(${fundTransactions.amount}), 0)`,
+        // differenceOld: sql<number>`COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'income' THEN ${fundTransactions.amount} ELSE 0 END), 0) - COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'outcome' THEN ABS(${fundTransactions.amount}) ELSE 0 END), 0)`,
       })
       .from(fundTransactions)
       .where(eq(fundTransactions.fundId, fundId))
       .innerJoin(currencies, eq(fundTransactions.currencyId, currencies.id))
       .groupBy(currencies.code, currencies.id)
   } catch (error) {
+    console.log(error)
+
     throw new Error("Error fetching fund account summary")
   }
 })
