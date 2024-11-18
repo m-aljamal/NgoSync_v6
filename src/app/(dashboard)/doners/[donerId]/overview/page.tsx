@@ -12,6 +12,10 @@ import {
 } from "@/components/ui/card"
 import ViewDataCardContent from "@/components/view-data-card-content"
 import { getDoner, getDonerSummary } from "@/app/_lib/queries/doners"
+import {
+  donerStatusTranslation,
+  donerTypeTranslation,
+} from "@/app/_lib/translate"
 
 async function DonerOverview({
   params,
@@ -83,10 +87,17 @@ async function DonerOverview({
             <ViewDataCardContent
               content={[
                 { label: "الاسم", value: doner.name },
-                { label: "نوع المتبرع", value: doner.type },
+                {
+                  label: "نوع المتبرع",
+                  value: donerTypeTranslation[doner.type],
+                },
                 {
                   label: "حالة المتبرع",
-                  value: <Badge variant={doner.status}>{doner.status}</Badge>,
+                  value: (
+                    <Badge variant={doner.status}>
+                      {donerStatusTranslation[doner.status]}
+                    </Badge>
+                  ),
                 },
                 {
                   label: <Phone className="size-5 text-muted-foreground" />,
