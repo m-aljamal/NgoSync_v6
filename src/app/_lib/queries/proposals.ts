@@ -3,9 +3,29 @@ import "server-only"
 import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { currencies, projects, proposals, type Proposal } from "@/db/schemas"
+import {
+  currencies,
+  expensesCategories,
+  projects,
+  projectsTransactions,
+  proposals,
+  proposalsExpenses,
+  type Proposal,
+} from "@/db/schemas"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  lte,
+  or,
+  sql,
+  type SQL,
+} from "drizzle-orm"
+import { alias } from "drizzle-orm/pg-core"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -115,5 +135,48 @@ export const getProposal = cache(async ({ id }: { id: string }) => {
     return proposal
   } catch (error) {
     return null
+  }
+})
+
+export const getProposalStatistics = cache(async (proposalId: string) => {
+  const proposalCurrency = alias(currencies, "proposalCurrency")
+
+  try {
+    return await db
+      .select({
+        expensesCategory: expensesCategories.name,
+        paidAmount: sql<number>`COALESCE(SUM(ABS(${projectsTransactions.proposalAmount})),0)`,
+        expenseTotal: sql<number>`${proposalsExpenses.amount}`,
+        remainingAmount: sql<number>`${proposalsExpenses.amount} - COALESCE(SUM(ABS(${projectsTransactions.proposalAmount})),0)`,
+        proposalCurrency: proposalCurrency.code,
+      })
+      .from(proposalsExpenses)
+      .where(eq(proposalsExpenses.proposalId, proposalId))
+      .innerJoin(
+        expensesCategories,
+        eq(proposalsExpenses.expensesCategoryId, expensesCategories.id)
+      )
+      .leftJoin(
+        projectsTransactions,
+        and(
+          eq(projectsTransactions.proposalId, proposalId),
+          eq(
+            proposalsExpenses.expensesCategoryId,
+            projectsTransactions.expensesCategoryId
+          )
+        )
+      )
+      .innerJoin(
+        proposalCurrency,
+        eq(proposalsExpenses.currencyId, proposalCurrency.id)
+      )
+      .groupBy(
+        projectsTransactions.expensesCategoryId,
+        expensesCategories.name,
+        proposalCurrency.code,
+        proposalsExpenses.amount
+      )
+  } catch (error) {
+    return []
   }
 })
