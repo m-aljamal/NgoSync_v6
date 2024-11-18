@@ -3,9 +3,21 @@ import "server-only"
 import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { doners, type Doner } from "@/db/schemas/donation"
+import { currencies, fundTransactions } from "@/db/schemas"
+import { donations, doners, type Doner } from "@/db/schemas/donation"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  lte,
+  or,
+  sql,
+  type SQL,
+} from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -110,6 +122,52 @@ export const getDoner = cache(
       return data
     } catch (error) {
       throw new Error("Error fetching doner")
+    }
+  }
+)
+
+export const getDonerDonationsCount = cache(async (donerId: string) => {
+  try {
+    const [count] = await db
+      .select({
+        count: sql<number>`cast(count(${donations.id}) as int)`,
+      })
+      .from(donations)
+      .where(eq(donations.donerId, donerId))
+    return count
+  } catch (error) {
+    throw new Error("Error fetching doner donations count")
+  }
+})
+
+export const getDonerSummary = cache(
+  async ({ donerId }: { donerId: string }) => {
+    noStore()
+    try {
+      const totalDonations = await db
+        .select({
+          totalDonations: sql<number>`sum(${fundTransactions.amount})`,
+          currency: currencies.code,
+        })
+        .from(donations)
+        .where(eq(donations.donerId, donerId))
+        .innerJoin(
+          fundTransactions,
+          eq(donations.fundTransactionId, fundTransactions.id)
+        )
+        .innerJoin(currencies, eq(fundTransactions.currencyId, currencies.id))
+        .groupBy(currencies.code)
+
+      const donationsCount = await getDonerDonationsCount(donerId)
+      return {
+        totalDonations,
+        donationsCount: donationsCount ?? { count: 0 },
+      }
+    } catch (error) {
+      return {
+        totalDonations: [],
+        donationsCount: { count: 0 },
+      }
     }
   }
 )
