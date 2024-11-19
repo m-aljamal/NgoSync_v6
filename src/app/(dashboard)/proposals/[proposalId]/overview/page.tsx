@@ -1,11 +1,4 @@
-import React from "react"
-import {
-  CircleCheck,
-  HandCoins,
-  MoveUpRight,
-  SquareKanban,
-  Wallet,
-} from "lucide-react"
+import { CircleCheck } from "lucide-react"
 
 import { formatCurrency } from "@/lib/utils"
 import {
@@ -15,12 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
 import {
   getProposalExpenses,
   getProposalRemainingStatistics,
 } from "@/app/_lib/queries/proposals"
 
+import ProposalStatisticsCards from "./_components/proposal-statistics-cards"
 import ProposalTableStatistics from "./_components/proposal-table-statistics"
 
 async function Overview({
@@ -30,116 +23,16 @@ async function Overview({
     proposalId: string
   }
 }) {
-  const proposalRemainingStatisitcs = await getProposalRemainingStatistics(
+  const proposalStatisitcs = await getProposalRemainingStatistics(
     params.proposalId
   )
 
   const proposalExpenses = await getProposalExpenses(params.proposalId)
- 
+
   return (
     <div className="space-y-4">
       <div className="grid items-start gap-6 rounded-lg lg:grid-cols-2 xl:grid-cols-2">
-        <div className="col-span-2 grid items-start gap-6 lg:col-span-1">
-          <Card>
-            <CardHeader>
-              <CardTitle>الدعم / المصروف</CardTitle>
-              <CardDescription>
-                تفاصيل الدعم المستلم والمصروف على الدراسة
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-8">
-                <div className="flex items-center">
-                  <SquareKanban className="size-6 text-muted-foreground" />
-                  <div className="mr-4 space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      قيمة الدراسة
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      المبلغ المرصود للدراسة
-                    </p>
-                  </div>
-                  <div className="mr-auto font-medium">
-                    {formatCurrency(
-                      proposalRemainingStatisitcs.proposalAmount,
-                      proposalRemainingStatisitcs.proposalCurrency || ""
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <HandCoins className="size-6 text-muted-foreground" />
-                  <div className="mr-4 space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      قيمة الدعم
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      المبلغ المستلم من الداعم
-                    </p>
-                  </div>
-                  <div className="mr-auto font-medium">
-                    {formatCurrency(
-                      proposalRemainingStatisitcs.totalDonations,
-                      proposalRemainingStatisitcs.proposalCurrency || ""
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <MoveUpRight className="size-6 text-muted-foreground" />
-                  <div className="mr-4 space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      إجمالي المدفوعات
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      إجمالي المبلغ المصروف على الدراسة
-                    </p>
-                  </div>
-                  <div className="mr-auto font-medium">
-                    {formatCurrency(
-                      proposalRemainingStatisitcs.totalExpenses,
-                      proposalRemainingStatisitcs.proposalCurrency || ""
-                    )}
-                  </div>
-                </div>
-                <Separator />
-                <div className="flex items-center">
-                  <Wallet className="size-6 text-muted-foreground" />
-                  <div className="mr-4 space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      المتبقي من الدعم
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      المبلغ الباقي من الدعم بعد خصم المصروفات
-                    </p>
-                  </div>
-                  <div className="mr-auto font-medium">
-                    {formatCurrency(
-                      proposalRemainingStatisitcs.remainingDonationAmount,
-                      proposalRemainingStatisitcs.proposalCurrency || ""
-                    )}
-                  </div>
-                </div>
-                <Separator />
-                <div className="flex items-center">
-                  <Wallet className="size-6 text-muted-foreground" />
-                  <div className="mr-4 space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      المتبقي من الدراسة
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      المبلغ الباقي من الدراسة بعد خصم المصروفات
-                    </p>
-                  </div>
-                  <div className="mr-auto font-medium">
-                    {formatCurrency(
-                      proposalRemainingStatisitcs.remainingProposalAmount,
-                      proposalRemainingStatisitcs.proposalCurrency || ""
-                    )}
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <ProposalStatisticsCards {...proposalStatisitcs} />
 
         <div className="col-span-2 grid items-start gap-6 lg:col-span-1">
           <Card>
