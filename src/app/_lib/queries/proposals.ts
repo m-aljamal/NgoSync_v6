@@ -5,7 +5,9 @@ import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import {
   currencies,
+  donations,
   expensesCategories,
+  fundTransactions,
   projects,
   projectsTransactions,
   proposals,
@@ -140,7 +142,7 @@ export const getProposal = cache(async ({ id }: { id: string }) => {
 
 export const getProposalStatistics = cache(async (proposalId: string) => {
   const proposalCurrency = alias(currencies, "proposalCurrency")
-
+  noStore()
   try {
     return await db
       .select({
@@ -175,6 +177,100 @@ export const getProposalStatistics = cache(async (proposalId: string) => {
         expensesCategories.name,
         proposalCurrency.code,
         proposalsExpenses.amount
+      )
+  } catch (error) {
+    return []
+  }
+})
+
+export const getProposalRemainingStatistics = cache(
+  async (proposalId: string) => {
+    noStore()
+    try {
+      // Calculate total donations
+      const totalDonationsResult = await db
+        .select({
+          totalDonations: sql<number>`COALESCE(SUM(${fundTransactions.proposalAmount}), 0)`,
+        })
+        .from(donations)
+        .leftJoin(
+          fundTransactions,
+          eq(fundTransactions.id, donations.fundTransactionId)
+        )
+        .where(eq(donations.proposalId, proposalId))
+
+      const totalDonations = totalDonationsResult[0]?.totalDonations || 0
+
+      // Calculate total expenses
+      const totalExpensesResult = await db
+        .select({
+          totalExpenses: sql<number>`COALESCE(SUM(ABS(${projectsTransactions.proposalAmount})), 0)`,
+        })
+        .from(projectsTransactions)
+        .where(eq(projectsTransactions.proposalId, proposalId))
+
+      const totalExpenses = totalExpensesResult[0]?.totalExpenses || 0
+
+      // Fetch the proposal and currency details
+      const proposalResult = await db
+        .select({
+          proposalAmount: sql<number>`${proposals.amount}`,
+          proposalCurrency: currencies.code,
+        })
+        .from(proposals)
+        .innerJoin(currencies, eq(proposals.currencyId, currencies.id))
+        .where(eq(proposals.id, proposalId))
+
+      const proposalData = proposalResult[0]
+
+      // Ensure proposalAmount is treated as a number
+      const proposalAmount = parseFloat(
+        proposalData?.proposalAmount as unknown as string
+      )
+
+      // Calculate remaining amounts
+      const remainingDonationAmount =
+        totalDonations === 0 ? 0 : totalDonations - totalExpenses
+      const remainingProposalAmount = proposalAmount - totalExpenses
+
+      return {
+        proposalAmount,
+        proposalCurrency: proposalData?.proposalCurrency,
+        totalDonations,
+        totalExpenses,
+        remainingDonationAmount,
+        remainingProposalAmount,
+      }
+    } catch (error) {
+      return {
+        proposalAmount: 0,
+        proposalCurrency: "",
+        totalDonations: 0,
+        totalExpenses: 0,
+        remainingDonationAmount: 0,
+        remainingProposalAmount: 0,
+      }
+    }
+  }
+)
+
+export const getProposalExpenses = cache(async (proposalId: string) => {
+  if (!proposalId) return undefined
+  noStore()
+  try {
+    return await db
+      .select({
+        id: proposalsExpenses.id,
+        amount: sql<number>`${proposalsExpenses.amount}`,
+        currency: currencies.code,
+        expensesCategory: expensesCategories.name,
+      })
+      .from(proposalsExpenses)
+      .where(eq(proposalsExpenses.proposalId, proposalId))
+      .innerJoin(currencies, eq(proposalsExpenses.currencyId, currencies.id))
+      .innerJoin(
+        expensesCategories,
+        eq(proposalsExpenses.expensesCategoryId, expensesCategories.id)
       )
   } catch (error) {
     return []
