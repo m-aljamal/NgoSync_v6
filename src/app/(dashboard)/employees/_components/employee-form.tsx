@@ -1,27 +1,13 @@
 "use client"
 
+import * as React from "react"
 import { employees } from "@/db/schemas/employee"
 import { useQueryClient } from "@tanstack/react-query"
 import { useAction } from "next-safe-action/hooks"
-import * as React from "react"
 import { type UseFormReturn } from "react-hook-form"
 import { toast } from "sonner"
 
-import { createEmployeeJobTitle } from "@/app/_lib/actions/employee"
-import {
-  employeePosisionTranslation,
-  employeeStatusTranslation,
-  genderTranslation,
-} from "@/app/_lib/translate"
-import { type CreateEmployeeSchema } from "@/app/_lib/validations"
-import {
-  CurrencyAmountInput,
-  DateInput,
-  DescriptionInput,
-  ProjectInput,
-} from "@/components/form-components"
-import InputGroup from "@/components/form-components/InputGroup"
-import { AppSelect } from "@/components/form-components/select"
+import { useGetjobTitle } from "@/hooks/use-get-form-data"
 import {
   Form,
   FormControl,
@@ -31,21 +17,33 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { useGetjobTitle } from "@/hooks/use-get-form-data"
+import {
+  CurrencyAmountInput,
+  DateInput,
+  DescriptionInput,
+  ProjectInput,
+} from "@/components/form-components"
+import InputGroup from "@/components/form-components/InputGroup"
+import { AppSelect } from "@/components/form-components/select"
+import { createEmployeeJobTitle } from "@/app/_lib/actions/employee"
+import {
+  employeePosisionTranslation,
+  employeeStatusTranslation,
+  genderTranslation,
+} from "@/app/_lib/translate"
+import { type CreateEmployeeSchema } from "@/app/_lib/validations"
 
 interface CreateEmployeeFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode
   form: UseFormReturn<CreateEmployeeSchema>
   onSubmit: (data: CreateEmployeeSchema) => void
-  isUpdate?: boolean
 }
 
 export function EmployeeForm({
   form,
   onSubmit,
   children,
-  isUpdate,
 }: CreateEmployeeFormProps) {
   const queryClient = useQueryClient()
 
@@ -72,7 +70,7 @@ export function EmployeeForm({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup isUpdate={isUpdate}>
+        <InputGroup>
           <FormField
             control={form.control}
             name="name"

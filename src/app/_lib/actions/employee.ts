@@ -7,6 +7,7 @@ import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { actionClient } from "../safe-action"
+import { toDecimalFixed } from "../utils"
 import {
   createEmployeeSchema,
   createJobTitleSchema,
@@ -41,7 +42,7 @@ export const createEmployee = actionClient
       await db.insert(employees).values({
         name,
         projectId,
-        salary,
+        salary: toDecimalFixed(salary),
         currencyId,
         birthDate,
         position,
@@ -76,7 +77,13 @@ export const updateEmployee = actionClient
   .action(async ({ parsedInput: data }) => {
     noStore()
     if (!data.id) throw new Error("id is required")
-    await db.update(employees).set(data).where(eq(employees.id, data.id))
+    await db
+      .update(employees)
+      .set({
+        ...data,
+        salary: toDecimalFixed(data.salary),
+      })
+      .where(eq(employees.id, data.id))
     revalidatePath("/employees")
   })
 
