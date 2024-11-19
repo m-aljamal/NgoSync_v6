@@ -39,80 +39,49 @@ async function ProposalStatisticsCards({
         </CardHeader>
         <CardContent>
           <div className="space-y-8">
-            <div className="flex items-center">
-              <SquareKanban className="size-6 text-muted-foreground" />
-              <div className="mr-4 space-y-1">
-                <p className="text-sm font-medium leading-none">قيمة الدراسة</p>
-                <p className="text-sm text-muted-foreground">
-                  المبلغ المرصود للدراسة
-                </p>
-              </div>
-              <div className="mr-auto font-medium">
-                {formatCurrency(proposalAmount, proposalCurrency || "")}
-              </div>
-            </div>
-            <div className="flex items-center">
-              <HandCoins className="size-6 text-muted-foreground" />
-              <div className="mr-4 space-y-1">
-                <p className="text-sm font-medium leading-none">قيمة الدعم</p>
-                <p className="text-sm text-muted-foreground">
-                  المبلغ المستلم من الداعم
-                </p>
-              </div>
-              <div className="mr-auto font-medium">
-                {formatCurrency(totalDonations, proposalCurrency || "")}
-              </div>
-            </div>
-            <div className="flex items-center">
-              <MoveUpRight className="size-6 text-muted-foreground" />
-              <div className="mr-4 space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  إجمالي المدفوعات
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  إجمالي المبلغ المصروف على الدراسة
-                </p>
-              </div>
-              <div className="mr-auto font-medium">
-                {formatCurrency(totalExpenses, proposalCurrency || "")}
-              </div>
-            </div>
+            <Item
+              icon={SquareKanban}
+              title="قيمة الدراسة"
+              description="المبلغ المرصود للدراسة"
+              amount={proposalAmount}
+              currency={proposalCurrency || ""}
+            />
+
+            <Item
+              icon={HandCoins}
+              title="قيمة الدعم"
+              description="المبلغ المستلم من الداعم"
+              amount={totalDonations}
+              currency={proposalCurrency || ""}
+            />
+
+            <Item
+              icon={MoveUpRight}
+              title="إجمالي المدفوعات"
+              description="إجمالي المبلغ المصروف على الدراسة"
+              amount={totalExpenses}
+              currency={proposalCurrency || ""}
+            />
+
             <Separator />
-            <div className="flex items-center">
-              <Wallet className="size-6 text-muted-foreground" />
-              <div className="mr-4 space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  المتبقي من الدعم
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  المبلغ الباقي من الدعم بعد خصم المصروفات
-                </p>
-              </div>
-              <div className="mr-auto font-medium">
-                {formatCurrency(
-                  remainingDonationAmount,
-                  proposalCurrency || ""
-                )}
-              </div>
-            </div>
+
+            <Item
+              icon={Wallet}
+              title="المتبقي من الدعم"
+              description="المبلغ الباقي من الدعم بعد خصم المصروفات"
+              amount={remainingDonationAmount}
+              currency={proposalCurrency || ""}
+            />
+
             <Separator />
-            <div className="flex items-center">
-              <Wallet className="size-6 text-muted-foreground" />
-              <div className="mr-4 space-y-1">
-                <p className="text-sm font-medium leading-none">
-                  المتبقي من الدراسة
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  المبلغ الباقي من الدراسة بعد خصم المصروفات
-                </p>
-              </div>
-              <div className="mr-auto font-medium">
-                {formatCurrency(
-                  remainingProposalAmount,
-                  proposalCurrency || ""
-                )}
-              </div>
-            </div>
+
+            <Item
+              icon={Wallet}
+              title="المتبقي من الدراسة"
+              description="المبلغ الباقي من الدراسة بعد خصم المصروفات"
+              amount={remainingProposalAmount}
+              currency={proposalCurrency || ""}
+            />
           </div>
         </CardContent>
       </Card>
@@ -121,3 +90,27 @@ async function ProposalStatisticsCards({
 }
 
 export default ProposalStatisticsCards
+
+type ItemProps = {
+  icon: React.ElementType
+  title: string
+  description: string
+  amount: number
+  currency: string
+}
+
+const Item = ({ icon, title, description, amount, currency }: ItemProps) => {
+  const Icon = icon
+  return (
+    <div className="flex items-center">
+      <Icon className="size-6 text-muted-foreground" />
+      <div className="mr-4 space-y-1">
+        <p className="text-sm font-medium leading-none">{title}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+      <div className="mr-auto font-medium">
+        {formatCurrency(amount, currency)}
+      </div>
+    </div>
+  )
+}
