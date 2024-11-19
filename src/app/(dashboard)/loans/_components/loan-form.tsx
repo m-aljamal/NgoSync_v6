@@ -1,49 +1,39 @@
 "use client"
 
 import * as React from "react"
+import { loans } from "@/db/schemas/loan"
 import { type UseFormReturn } from "react-hook-form"
 
-import { loanTypeTranslation } from "@/app/_lib/translate"
-import {
-  type CreateLoanSchema
-} from "@/app/_lib/validations"
-import { DateInput } from "@/components/form-components"
-import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
-import FundInput from "@/components/form-components/fund-input"
-import InputGroup from "@/components/form-components/InputGroup"
-import ProjectInput from "@/components/form-components/project-input"
-import { AppSelect } from "@/components/form-components/select"
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { loans } from "@/db/schemas/loan"
+import { DateInput } from "@/components/form-components"
+import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
+import FundInput from "@/components/form-components/fund-input"
+import InputGroup from "@/components/form-components/InputGroup"
+import ProjectInput from "@/components/form-components/project-input"
+import { AppSelect } from "@/components/form-components/select"
+import { loanTypeTranslation } from "@/app/_lib/translate"
+import { type CreateLoanSchema } from "@/app/_lib/validations"
 
 interface CreateLoanFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode
   form: UseFormReturn<CreateLoanSchema>
   onSubmit: (data: CreateLoanSchema) => void
-  isUpdate?: boolean
 }
 
-export function LoanForm({
-  form,
-  onSubmit,
-  children,
-  isUpdate,
-}: CreateLoanFormProps) {
-
+export function LoanForm({ form, onSubmit, children }: CreateLoanFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <InputGroup isUpdate={isUpdate}>
-
+        <InputGroup>
           <FormField
             control={form.control}
             name="type"
@@ -51,7 +41,6 @@ export function LoanForm({
               <FormItem>
                 <FormLabel>نوع الحركة</FormLabel>
                 <AppSelect
-
                   onChange={field.onChange}
                   value={field.value?.toString()}
                   options={loans.type.enumValues?.map((loan) => ({
@@ -67,7 +56,7 @@ export function LoanForm({
           <DateInput form={form} />
           <CurrencyAmountInput form={form} />
           <FundInput form={form} />
-          <ProjectInput form={form} withProposals withEmployees />
+          <ProjectInput form={form} withEmployees />
 
           <FormField
             control={form.control}
