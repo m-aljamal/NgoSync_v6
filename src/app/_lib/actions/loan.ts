@@ -5,12 +5,12 @@ import { db } from "@/db"
 import { projectsTransactions } from "@/db/schemas"
 import { loans } from "@/db/schemas/loan"
 import { format } from "date-fns"
-import { eq, inArray } from "drizzle-orm"
+import { eq, inArray, sql } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
-import { convertAmountToMiliunits } from "@/lib/utils"
-
+import { calculateAmounts } from "../queries/utils"
 import { actionClient } from "../safe-action"
+import { toDecimalFixed } from "../utils"
 import { createLoanSchema, deleteArraySchema } from "../validations"
 
 export const createLoan = actionClient
@@ -31,19 +31,25 @@ export const createLoan = actionClient
       },
     }) => {
       noStore()
-      // todo add the amounts
-      const amount = convertAmountToMiliunits(loanAmount)
+
+      const amount = toDecimalFixed(loanAmount)
       const date = format(loanDate, "yyyy-MM-dd")
+      const { amountInUSD } = await calculateAmounts({
+        amount: loanAmount,
+        currencyId,
+        date: loanDate,
+      })
+
       await db.transaction(async (tx) => {
         const [transaction] = await tx
           .insert(projectsTransactions)
           .values({
             projectId,
             currencyId,
-            amount: type === "loan" ? -amount : amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            amount: type === "loan" ? sql`${-amount}` : amount,
+            proposalAmount: "0",
+            amountInUSD: type === "loan" ? sql`${-amountInUSD}` : amountInUSD,
+            officialAmount: "0",
             date,
             type: type === "loan" ? "outcome" : "income",
             description,
@@ -82,10 +88,17 @@ export const updateLoan = actionClient
     }) => {
       noStore()
       if (!id) throw new Error("id is required")
+
+      const amount = toDecimalFixed(loanAmount)
+      const date = format(loanDate, "yyyy-MM-dd")
+      const { amountInUSD } = await calculateAmounts({
+        amount: loanAmount,
+        currencyId,
+        date: loanDate,
+      })
+
       const [loanInDb] = await db.select().from(loans).where(eq(loans.id, id))
       if (!loanInDb?.projectTransactionId) throw new Error("loan not found")
-      const amount = convertAmountToMiliunits(loanAmount)
-      const date = format(loanDate, "yyyy-MM-dd")
 
       await db.transaction(async (tx) => {
         await tx
@@ -93,10 +106,10 @@ export const updateLoan = actionClient
           .set({
             projectId,
             currencyId,
-            amount: type === "loan" ? -amount : amount,
-            proposalAmount: 0,
-            amountInUSD: 0,
-            officialAmount: 0,
+            amount: type === "loan" ? sql`${-amount}` : amount,
+            proposalAmount: "0",
+            amountInUSD,
+            officialAmount: "0",
             date,
             type: type === "loan" ? "outcome" : "income",
             description,
