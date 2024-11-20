@@ -1,5 +1,6 @@
 import React from "react"
 import { notFound } from "next/navigation"
+import { formatDate } from "date-fns"
 import { LucideIcon, Mail, Phone } from "lucide-react"
 
 import {
@@ -14,7 +15,6 @@ import {
   employeePosisionTranslation,
   genderTranslation,
 } from "@/app/_lib/translate"
-import { formatDate } from "date-fns"
 
 async function Employee({ params }: { params: { employeeId: string } }) {
   const employee = await getEmployee({ id: params.employeeId })
@@ -45,7 +45,7 @@ async function Employee({ params }: { params: { employeeId: string } }) {
               },
               {
                 label: "تاريخ الولادة",
-                value: "employee.birthDate" ,
+                value: "employee.birthDate",
               },
               {
                 label: "مكان العمل",
@@ -78,37 +78,55 @@ async function Employee({ params }: { params: { employeeId: string } }) {
 export default Employee
 
 type ViewDataCardContentProps = {
-  content: {
-    label: string | number | LucideIcon | React.ReactNode
-    value: string | number | React.ReactNode
-  }[]
+  title: string
+  icon: React.ElementType
+  description: string
 }
 
-function ViewDataCardContent({ content = [] }: ViewDataCardContentProps) {
+function ViewDataCardContent({
+  title,
+  icon,
+  description,
+}: ViewDataCardContentProps) {
+  const Icon = icon
   return (
     <div className="mt-6 border-t border-gray-100">
       <dl className="divide-y divide-gray-100">
-        {content.map((item, index) => (
-          <div
-            className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-            key={index}
-          >
-            <dt className="text-sm font-medium leading-6 text-gray-900">
-              {typeof item.label === "string" ||
-              typeof item.label === "number" ? (
-                item.label
-              ) : typeof item.label === "function" ? (
-                <item.label className="size-5" />
-              ) : (
-                item.label
-              )}
-            </dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-              {item.value}
-            </dd>
-          </div>
-        ))}
+        <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt className="text-sm font-medium leading-6 text-gray-900">
+            <Icon className="size-5" />
+
+            {title}
+          </dt>
+          <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {description}
+          </dd>
+        </div>
       </dl>
     </div>
+    // <div className="mt-6 border-t border-gray-100">
+    //   <dl className="divide-y divide-gray-100">
+    //     {content.map((item, index) => (
+    //       <div
+    //         className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+    //         key={index}
+    //       >
+    //         <dt className="text-sm font-medium leading-6 text-gray-900">
+    //           {typeof item.label === "string" ||
+    //           typeof item.label === "number" ? (
+    //             item.label
+    //           ) : typeof item.label === "function" ? (
+    //             <item.label className="size-5" />
+    //           ) : (
+    //             item.label
+    //           )}
+    //         </dt>
+    //         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+    //           {item.value}
+    //         </dd>
+    //       </div>
+    //     ))}
+    //   </dl>
+    // </div>
   )
 }
