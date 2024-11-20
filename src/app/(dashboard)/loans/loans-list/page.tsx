@@ -8,7 +8,6 @@ import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
 import { getLoans } from "@/app/_lib/queries/loans"
 import { searchParamsSchema } from "@/app/_lib/validations"
-
 import { LoanTable } from "../_components/loans-table"
 
 export default function Proposals({ searchParams }: SearchParams) {

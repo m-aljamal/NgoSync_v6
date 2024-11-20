@@ -15,7 +15,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { DateInput } from "@/components/form-components"
 import CurrencyAmountInput from "@/components/form-components/currency-amount-input"
-import FundInput from "@/components/form-components/fund-input"
 import InputGroup from "@/components/form-components/InputGroup"
 import ProjectInput from "@/components/form-components/project-input"
 import { AppSelect } from "@/components/form-components/select"
@@ -55,7 +54,7 @@ export function LoanForm({ form, onSubmit, children }: CreateLoanFormProps) {
           />
           <DateInput form={form} />
           <CurrencyAmountInput form={form} />
-          <FundInput form={form} />
+
           <ProjectInput form={form} withEmployees />
 
           <FormField

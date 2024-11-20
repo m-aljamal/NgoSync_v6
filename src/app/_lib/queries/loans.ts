@@ -2,7 +2,12 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { projectsTransactions } from "@/db/schemas"
+import {
+  currencies,
+  employees,
+  projects,
+  projectsTransactions,
+} from "@/db/schemas"
 import { loans, type Loan } from "@/db/schemas/loan"
 import { type DrizzleWhere } from "@/types"
 import {
@@ -37,12 +42,12 @@ export async function getLoans(input: GetSearchSchema) {
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
-      //   name
-      //     ? filterColumn({
-      //         column: doners.name,
-      //         value: name,
-      //       })
-      //     : undefined,
+      // name
+      //   ? filterColumn({
+      //       column: doners.name,
+      //       value: name,
+      //     })
+      //   : undefined,
 
       // Filter by createdAt
       fromDay && toDay
@@ -56,17 +61,19 @@ export async function getLoans(input: GetSearchSchema) {
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
         .select({
-          date: projectsTransactions.date,
           id: loans.id,
+          employeeId: loans.employeeId,
+
+          type: loans.type,
           projectTransactionId: loans.projectTransactionId,
-          amount: sql<number>`${projectsTransactions.amount}/1000`,
+          amount: sql<number>`ABS(${projectsTransactions.amount})`,
+          date: projectsTransactions.date,
           projectId: projectsTransactions.projectId,
           description: projectsTransactions.description,
           currencyId: projectsTransactions.currencyId,
-          employeeId: loans.employeeId,
-          createdAt: loans.createdAt,
-          updatedAt: loans.updatedAt,
-          type: loans.type,
+          currencyCode: currencies.code,
+          projectName: projects.name,
+          employeeName: employees.name,
         })
         .from(loans)
         .limit(per_page)
@@ -76,6 +83,12 @@ export async function getLoans(input: GetSearchSchema) {
           projectsTransactions,
           eq(loans.projectTransactionId, projectsTransactions.id)
         )
+        .innerJoin(
+          currencies,
+          eq(projectsTransactions.currencyId, currencies.id)
+        )
+        .innerJoin(projects, eq(projectsTransactions.projectId, projects.id))
+        .innerJoin(employees, eq(loans.employeeId, employees.id))
         .orderBy(
           column && column in loans
             ? order === "asc"

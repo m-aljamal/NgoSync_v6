@@ -84,7 +84,8 @@ export async function getExpenses({
             lte(projectsTransactions.date, toDay)
           )
         : undefined,
-      eq(projectsTransactions.category, "expense"),
+
+      eq(projectsTransactions.type, "outcome"),
     ]
 
     const where: DrizzleWhere<ProjectTransaction> =

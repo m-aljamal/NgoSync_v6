@@ -1,18 +1,18 @@
 "use client"
 
+import * as React from "react"
+import { type LoanWithRelations } from "@/db/schemas/loan"
 import { type Row } from "@tanstack/react-table"
 import { useAction } from "next-safe-action/hooks"
-import * as React from "react"
 import { toast } from "sonner"
 
-import { deleteLoans } from "@/app/_lib/actions/loan"
-import DeleteDialog from "@/components/delete-dialog"
 import { type Dialog } from "@/components/ui/dialog"
-import { type Loan } from "@/db/schemas/loan"
+import DeleteDialog from "@/components/delete-dialog"
+import { deleteLoans } from "@/app/_lib/actions/loan"
 
 interface DeleteLoanDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  loans: Row<Loan>["original"][]
+  loans: Row<LoanWithRelations>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }

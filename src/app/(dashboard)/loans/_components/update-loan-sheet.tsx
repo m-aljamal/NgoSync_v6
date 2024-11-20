@@ -1,21 +1,19 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useAction } from "next-safe-action/hooks"
 import * as React from "react"
+import { type LoanWithRelations } from "@/db/schemas/loan"
+import { zodResolver } from "@hookform/resolvers/zod"
+import Decimal from "decimal.js"
+import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
-import {
-  createLoanSchema,
-  type CreateLoanSchema
-} from "@/app/_lib/validations"
+import { type Sheet } from "@/components/ui/sheet"
 import UpdateButtons from "@/components/form-components/update-buttons"
 import { UpdateSheet } from "@/components/form-components/update-sheet"
-import { type Sheet } from "@/components/ui/sheet"
-
 import { updateLoan } from "@/app/_lib/actions/loan"
-import { type LoanWithRelations } from "@/db/schemas/loan"
+import { createLoanSchema, type CreateLoanSchema } from "@/app/_lib/validations"
+
 import { LoanForm } from "./loan-form"
 
 interface UpdateLoanSheetProps
@@ -23,22 +21,17 @@ interface UpdateLoanSheetProps
   loan: LoanWithRelations
 }
 
-export function UpdateLoanSheet({
-  loan,
-  ...props
-}: UpdateLoanSheetProps) {
+export function UpdateLoanSheet({ loan, ...props }: UpdateLoanSheetProps) {
   const defaultValues: CreateLoanSchema = React.useMemo(() => {
     return {
       id: loan.id,
       date: new Date(loan.date),
-      amount: loan.amount,
+      amount: new Decimal(loan.amount),
       currencyId: loan.currencyId,
       employeeId: loan.employeeId,
       projectId: loan.projectId,
       description: loan.description ?? undefined,
       type: loan.type,
-
-
     }
   }, [loan])
 
@@ -71,7 +64,7 @@ export function UpdateLoanSheet({
   }
   return (
     <UpdateSheet {...props}>
-      <LoanForm form={form} onSubmit={onSubmit} isUpdate>
+      <LoanForm form={form} onSubmit={onSubmit}>
         <UpdateButtons isExecuting={isExecuting} />
       </LoanForm>
     </UpdateSheet>

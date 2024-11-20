@@ -44,7 +44,7 @@ const badgeVariants = cva(
         approved: colorSchemes.green,
         rejected: colorSchemes.red,
         loan: colorSchemes.blue,
-        REPAYMENT: colorSchemes.green,
+        repayment: colorSchemes.green,
         true: colorSchemes.green,
         false: colorSchemes.red,
         PRESENT: colorSchemes.green,
@@ -62,7 +62,6 @@ const badgeVariants = cva(
         orgnization: colorSchemes.blue,
         transfer_from_project: colorSchemes.yellow,
         transfer_between_projects: colorSchemes.blue,
-
       },
     },
     defaultVariants: {

@@ -18,7 +18,7 @@ export const loans = pgTable("loans", {
     .default(sql`current_timestamp`)
     .$onUpdate(() => new Date()),
   projectTransactionId: varchar("project_transaction_id")
-    .references(() => projectsTransactions.id)
+    .references(() => projectsTransactions.id, { onDelete: "cascade" })
     .notNull(),
   employeeId: varchar("employee_id")
     .references(() => employees.id)
@@ -39,10 +39,17 @@ export const loansRelations = relations(loans, ({ one }) => ({
 
 export type Loan = typeof loans.$inferSelect
 export type NewLoan = typeof loans.$inferInsert
-export type LoanWithRelations = typeof loans.$inferSelect & {
-  date: string
+export type LoanWithRelations = {
+  id: string
+  employeeId: string
+  type: "loan" | "repayment"
+  projectTransactionId: string
   amount: number
-  currencyId: string
-  description?: string | null
+  date: string
   projectId: string
+  description: string | null
+  currencyId: string
+  currencyCode: string
+  projectName: string
+  employeeName: string
 }

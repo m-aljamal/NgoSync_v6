@@ -1,11 +1,14 @@
 "use client"
 
+import * as React from "react"
+import Link from "next/link"
+import { type LoanWithRelations } from "@/db/schemas/loan"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
-import * as React from "react"
 
-import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
+import { formatCurrency } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -16,8 +19,9 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
+import { loanTypeTranslation } from "@/app/_lib/translate"
 
-import { type LoanWithRelations } from "@/db/schemas/loan"
 import { DeleteLoanDialog } from "./delete-loan-dialog"
 import { UpdateLoanSheet } from "./update-loan-sheet"
 
@@ -49,25 +53,74 @@ export function getColumns(): ColumnDef<LoanWithRelations>[] {
     },
 
     {
-      accessorKey: "amount",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="القيمة" />
-      ),
-      cell: ({ row }) => (
-        <div>
-          {/* {formatCurrency(row.getValue("amount"), row.original.currencyCode)} */}
-          {row.original.amount}
-        </div>
-      ),
-    },
-
-    {
       accessorKey: "date",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="التاريخ" />
       ),
       cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
     },
+
+    {
+      accessorKey: "amount",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المبلغ" />
+      ),
+      cell: ({ row }) => (
+        <span>
+          {formatCurrency(row.getValue("amount"), row.getValue("currencyCode"))}
+        </span>
+      ),
+    },
+
+    {
+      accessorKey: "currencyCode",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="العملة" />
+      ),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("currencyCode")}>
+          {row.getValue("currencyCode")}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
+    },
+
+    {
+      accessorKey: "employee",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الموظف" />
+      ),
+      cell: ({ row }) => (
+        <Link
+          className="hover:text-muted-foreground hover:underline"
+          href={`/employees/${row.original.employeeId}/loans`}
+        >
+          {row.original.employeeName}
+        </Link>
+      ),
+    },
+
+    {
+      accessorKey: "type",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="النوع" />
+      ),
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("type")}>
+          {loanTypeTranslation[row.original.type]}
+        </Badge>
+      ),
+    },
+    {
+      accessorKey: "projectName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المشروع" />
+      ),
+    },
+
     {
       id: "actions",
       cell: function Cell({ row }) {

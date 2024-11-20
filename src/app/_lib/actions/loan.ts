@@ -2,7 +2,7 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { projectsTransactions } from "@/db/schemas"
+import { expensesCategories, projectsTransactions } from "@/db/schemas"
 import { loans } from "@/db/schemas/loan"
 import { format } from "date-fns"
 import { eq, inArray, sql } from "drizzle-orm"
@@ -40,6 +40,23 @@ export const createLoan = actionClient
         date: loanDate,
       })
 
+      let expenseCategoryId = await db.query.expensesCategories.findFirst({
+        where: eq(expensesCategories.name, "قروض"),
+        columns: {
+          id: true,
+        },
+      })
+      if (!expenseCategoryId) {
+        ;[expenseCategoryId] = await db
+          .insert(expensesCategories)
+          .values({
+            name: "قروض",
+            projectId,
+          })
+          .returning()
+      }
+      if (!expenseCategoryId) throw new Error("expense category not created")
+
       await db.transaction(async (tx) => {
         const [transaction] = await tx
           .insert(projectsTransactions)
@@ -55,6 +72,7 @@ export const createLoan = actionClient
             description,
             category: "loan",
             transactionStatus: "approved",
+            expensesCategoryId: expenseCategoryId.id,
           })
           .returning({ id: projectsTransactions.id })
         if (!transaction) throw new Error("project transaction not created")
@@ -114,7 +132,7 @@ export const updateLoan = actionClient
             type: type === "loan" ? "outcome" : "income",
             description,
           })
-          .where(eq(projectsTransactions.id, id))
+          .where(eq(projectsTransactions.id, loanInDb.projectTransactionId))
 
         await tx
           .update(loans)
@@ -122,7 +140,7 @@ export const updateLoan = actionClient
             employeeId,
             type,
           })
-          .where(eq(loans.id, loanInDb?.projectTransactionId))
+          .where(eq(loans.id, loanInDb.id))
       })
 
       revalidatePath("/loans")
@@ -136,6 +154,8 @@ export const deleteLoans = actionClient
   })
   .action(async ({ parsedInput: { ids } }) => {
     noStore()
+    console.log(ids)
+    console.log("delete loans", ids)
 
     await db.transaction(async (ex) => {
       await ex

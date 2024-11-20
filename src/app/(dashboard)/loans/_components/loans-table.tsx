@@ -1,15 +1,14 @@
 "use client"
-"use memo"
 
-import { type DataTableFilterField } from "@/types"
 import * as React from "react"
+import { type LoanWithRelations } from "@/db/schemas/loan"
+import { type DataTableFilterField } from "@/types"
 
+import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { useDataTable } from "@/hooks/use-data-table"
-
 import { type getLoans } from "@/app/_lib/queries/loans"
-import { type Loan } from "@/db/schemas/loan"
+
 import { getColumns } from "./loan-table-columns"
 import { LoanTableToolbarActions } from "./loan-table-toolbar-actions"
 
@@ -22,7 +21,7 @@ export function LoanTable({ promise }: LoansTableProps) {
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<Loan>[] = [
+  const filterFields: DataTableFilterField<LoanWithRelations>[] = [
     {
       label: "Name",
       value: "employeeId",
@@ -36,7 +35,7 @@ export function LoanTable({ promise }: LoansTableProps) {
     pageCount,
     filterFields,
     state: {
-      sorting: [{ id: "createdAt", desc: true }],
+      sorting: [{ id: "date", desc: true }],
       pagination: { pageIndex: 0, pageSize: 10 },
       columnPinning: { right: ["actions"] },
     },

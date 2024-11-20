@@ -71,7 +71,7 @@ export function UpdateEmployeeSheet({
   }
   return (
     <UpdateSheet {...props}>
-      <EmployeeForm form={form} onSubmit={onSubmit} isUpdate>
+      <EmployeeForm form={form} onSubmit={onSubmit}>
         <UpdateButtons isExecuting={isExecuting} />
       </EmployeeForm>
     </UpdateSheet>
