@@ -1,12 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { type Employee } from "@/db/schemas"
+import { type EmployeeWithRelations } from "@/db/schemas"
 import { doners } from "@/db/schemas/donation"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
+import { formatCurrency } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -19,12 +20,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
-import { donerStatusTranslation } from "@/app/_lib/translate"
+import {
+  donerStatusTranslation,
+  employeePosisionTranslation,
+} from "@/app/_lib/translate"
 
 import { DeleteEmployeesDialog } from "./delete-employee-dialog"
 import { UpdateEmployeeSheet } from "./update-employee-sheet"
 
-export function getColumns(): ColumnDef<Employee>[] {
+export function getColumns(): ColumnDef<EmployeeWithRelations>[] {
   return [
     {
       id: "select",
@@ -50,6 +54,7 @@ export function getColumns(): ColumnDef<Employee>[] {
       enableSorting: false,
       enableHiding: false,
     },
+
     {
       accessorKey: "name",
       header: ({ column }) => (
@@ -62,12 +67,6 @@ export function getColumns(): ColumnDef<Employee>[] {
       ),
       enableSorting: false,
       enableHiding: false,
-    },
-    {
-      accessorKey: "type",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="النوع" />
-      ),
     },
 
     {
@@ -82,13 +81,58 @@ export function getColumns(): ColumnDef<Employee>[] {
 
         if (!status) return null
 
-        return <Badge variant="outline">{donerStatusTranslation[status]}</Badge>
+        return <Badge variant={status}>{donerStatusTranslation[status]}</Badge>
       },
       filterFn: (row, id, value) => {
         return Array.isArray(value) && value.includes(row.getValue(id))
       },
     },
 
+    {
+      accessorKey: "salary",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الراتب" />
+      ),
+      cell: ({ row }) => (
+        <span>
+          {formatCurrency(row.getValue("salary"), row.original.currencyCode)}
+        </span>
+      ),
+    },
+
+    {
+      accessorKey: "currencyCode",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="العملة" />
+      ),
+
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("currencyCode")}>
+          {row.getValue("currencyCode")}
+        </Badge>
+      ),
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
+    },
+
+    {
+      accessorKey: "projectName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المشروع" />
+      ),
+    },
+    {
+      accessorKey: "position",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="الوظيفة" />
+      ),
+      cell: ({ row }) => (
+        <Badge variant={row.getValue("position")}>
+          {employeePosisionTranslation[row.original.position]}
+        </Badge>
+      ),
+    },
     {
       accessorKey: "createdAt",
       header: ({ column }) => (

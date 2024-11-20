@@ -2,7 +2,7 @@
 "use memo"
 
 import * as React from "react"
-import { type Employee } from "@/db/schemas"
+import { type EmployeeWithRelations } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
@@ -22,7 +22,7 @@ export function EmployeesTable({ promise }: EmployeesTableProps) {
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<Employee>[] = [
+  const filterFields: DataTableFilterField<EmployeeWithRelations>[] = [
     {
       label: "الاسم",
       value: "name",

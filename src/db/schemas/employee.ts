@@ -1,7 +1,9 @@
 import { pgTable } from "@/db/utils"
 import { relations, sql } from "drizzle-orm"
 import { decimal, pgEnum, timestamp, varchar } from "drizzle-orm/pg-core"
+
 import { generateId } from "@/lib/id"
+
 import { currencies } from "./currency"
 import { genders } from "./enums"
 import { loans } from "./loan"
@@ -18,13 +20,13 @@ export const employees = pgTable("employees", {
     .$defaultFn(() => generateId())
     .primaryKey(),
   name: varchar("name", { length: 120 }).notNull(),
+  status: employeeStatus("employee_status").notNull(),
   projectId: varchar("project_id", { length: 30 })
     .references(() => projects.id)
     .notNull(),
   gender: genders("genders").notNull(),
   email: varchar("email", { length: 120 }).unique(),
   phone: varchar("phone", { length: 20 }),
-  status: employeeStatus("employee_status").notNull(),
   description: varchar("description", { length: 200 }),
   salary: decimal("salary", { precision: 19, scale: 4 }).notNull(),
   currencyId: varchar("currency_id").references(() => currencies.id),
@@ -61,7 +63,10 @@ export const employeesRelations = relations(employees, ({ one, many }) => ({
 
 export type Employee = typeof employees.$inferSelect
 export type NewEmployee = typeof employees.$inferInsert
-
+export type EmployeeWithRelations = Employee & {
+  projectName: string
+  currencyCode: string
+}
 export const employeesJobTitles = pgTable("employees_job_titles", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())

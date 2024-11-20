@@ -2,9 +2,10 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
+import { currencies, projects } from "@/db/schemas"
 import { employees, type Employee } from "@/db/schemas/employee"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, gte, lte, or, type SQL } from "drizzle-orm"
+import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -49,11 +50,32 @@ export async function getEmployees(input: GetSearchSchema) {
     // Transaction is used to ensure both queries are executed in a single transaction
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
-        .select()
+        .select({
+          name: employees.name,
+          projectName: projects.name,
+          status: employees.status,
+          createdAt: employees.createdAt,
+          updatedAt: employees.updatedAt,
+          description: employees.description,
+          salary: employees.salary,
+          currencyId: employees.currencyId,
+          id: employees.id,
+          position: employees.position,
+          jobTitleId: employees.jobTitleId,
+          projectId: employees.projectId,
+          gender: employees.gender,
+          email: employees.email,
+          phone: employees.phone,
+          address: employees.address,
+          birthDate: employees.birthDate,
+          currencyCode: currencies.code,
+        })
         .from(employees)
         .limit(per_page)
         .offset(offset)
         .where(where)
+        .innerJoin(projects, eq(projects.id, employees.projectId))
+        .innerJoin(currencies, eq(currencies.id, employees.currencyId))
         .orderBy(
           column && column in employees
             ? order === "asc"

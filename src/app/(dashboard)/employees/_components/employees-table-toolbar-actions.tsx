@@ -1,6 +1,6 @@
 "use client"
 
-import { type Employee } from "@/db/schemas"
+import { type EmployeeWithRelations } from "@/db/schemas"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
@@ -11,7 +11,7 @@ import { CreateEmployeeDialog } from "./create-employee-dialog"
 import { DeleteEmployeesDialog } from "./delete-employee-dialog"
 
 interface EmployeesTableToolbarActionsProps {
-  table: Table<Employee>
+  table: Table<EmployeeWithRelations>
 }
 
 export function EmployeesTableToolbarActions({
