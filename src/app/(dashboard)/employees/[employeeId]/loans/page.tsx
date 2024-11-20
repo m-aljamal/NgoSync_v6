@@ -8,12 +8,18 @@ import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
 import { getLoans } from "@/app/_lib/queries/loans"
 import { searchParamsSchema } from "@/app/_lib/validations"
+import { LoanTable } from "@/app/(dashboard)/_components/loans/loans-table"
 
-import { LoanTable } from "../../_components/loans/loans-table"
+type Props = {
+  searchParams: SearchParams
+  params: {
+    employeeId: string
+  }
+}
 
-export default function Loans({ searchParams }: SearchParams) {
+export default function Loans({ searchParams, params }: Props) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getLoans(search)
+  const promise = getLoans(search, params.employeeId)
 
   return (
     <div>

@@ -27,6 +27,7 @@ import {
 
 import { DeleteEmployeesDialog } from "./delete-employee-dialog"
 import { UpdateEmployeeSheet } from "./update-employee-sheet"
+import Link from "next/link"
 
 export function getColumns(): ColumnDef<EmployeeWithRelations>[] {
   return [
@@ -61,9 +62,9 @@ export function getColumns(): ColumnDef<EmployeeWithRelations>[] {
         <DataTableColumnHeader column={column} title="الاسم" />
       ),
       cell: ({ row }) => (
-        <div className="max-w-[31.25rem] truncate font-medium">
+        <Link href={`/employees/${row.original.id}/overview`} className="max-w-[31.25rem] truncate font-medium">
           {row.getValue("name")}
-        </div>
+        </Link>
       ),
       enableSorting: false,
       enableHiding: false,

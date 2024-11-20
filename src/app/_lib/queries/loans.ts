@@ -27,7 +27,7 @@ import {
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
-export async function getLoans(input: GetSearchSchema) {
+export async function getLoans(input: GetSearchSchema, employeeId?: string) {
   noStore()
   const { page, per_page, sort, operator, from, to } = input
 
@@ -39,18 +39,10 @@ export async function getLoans(input: GetSearchSchema) {
       "desc",
     ]) as [keyof Loan | undefined, "asc" | "desc" | undefined]
 
-    // Convert the date strings to date objects
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
-      // name
-      //   ? filterColumn({
-      //       column: doners.name,
-      //       value: name,
-      //     })
-      //   : undefined,
-
-      // Filter by createdAt
+      employeeId ? eq(loans.employeeId, employeeId) : undefined,
       fromDay && toDay
         ? and(gte(loans.createdAt, fromDay), lte(loans.createdAt, toDay))
         : undefined,
@@ -64,7 +56,6 @@ export async function getLoans(input: GetSearchSchema) {
         .select({
           id: loans.id,
           employeeId: loans.employeeId,
-
           type: loans.type,
           projectTransactionId: loans.projectTransactionId,
           amount: sql<number>`ABS(${projectsTransactions.amount})`,

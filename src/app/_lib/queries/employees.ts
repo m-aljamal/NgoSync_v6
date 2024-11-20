@@ -1,9 +1,14 @@
 import "server-only"
 
+import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import { currencies, projects } from "@/db/schemas"
-import { employees, type Employee } from "@/db/schemas/employee"
+import {
+  employees,
+  employeesJobTitles,
+  type Employee,
+} from "@/db/schemas/employee"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 
@@ -106,3 +111,66 @@ export async function getEmployees(input: GetSearchSchema) {
     return { data: [], pageCount: 0 }
   }
 }
+
+export const getEmployee = cache(
+  async ({ id, name }: { id?: string; name?: string }) => {
+    if (!id && !name) return
+    try {
+      const [employee] = await db
+        .select({
+          id: employees.id,
+          name: employees.name,
+          status: employees.status,
+          projectId: employees.projectId,
+          gender: employees.gender,
+          email: employees.email,
+          phone: employees.phone,
+          description: employees.description,
+          salary: employees.salary,
+          currencyId: employees.currencyId,
+          address: employees.address,
+          birthDate: employees.birthDate,
+          createdAt: employees.createdAt,
+          updatedAt: employees.updatedAt,
+          jobTitle: employeesJobTitles.name,
+          position: employees.position,
+          project: projects.name,
+          currency: currencies.code,
+          jobTitleId: employees.jobTitleId,
+        })
+        .from(employees)
+        .where(
+          and(
+            id ? eq(employees.id, id) : undefined,
+            name ? eq(employees.name, name) : undefined
+          )
+        )
+        .innerJoin(projects, eq(employees.projectId, projects.id))
+        .innerJoin(currencies, eq(employees.currencyId, currencies.id))
+        .innerJoin(
+          employeesJobTitles,
+          eq(employees.jobTitleId, employeesJobTitles.id)
+        )
+
+      return employee
+    } catch (error) {
+      return null
+    }
+  }
+)
+
+export const getEmployeeName = cache(async (id: string) => {
+  try {
+    const [employee] = await db
+      .select({
+        name: employees.name,
+        id: employees.id,
+      })
+      .from(employees)
+      .where(eq(employees.id, id))
+
+    return employee
+  } catch (error) {
+    return null
+  }
+})
