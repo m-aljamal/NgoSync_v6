@@ -154,8 +154,6 @@ export const deleteLoans = actionClient
   })
   .action(async ({ parsedInput: { ids } }) => {
     noStore()
-    console.log(ids)
-    console.log("delete loans", ids)
 
     await db.transaction(async (ex) => {
       await ex
@@ -165,3 +163,6 @@ export const deleteLoans = actionClient
     })
     revalidatePath("/loans")
   })
+
+
+  

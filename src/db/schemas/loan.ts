@@ -13,10 +13,8 @@ export const loans = pgTable("loans", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())
     .primaryKey(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .default(sql`current_timestamp`)
-    .$onUpdate(() => new Date()),
+   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").default(sql`current_timestamp`),
   projectTransactionId: varchar("project_transaction_id")
     .references(() => projectsTransactions.id, { onDelete: "cascade" })
     .notNull(),

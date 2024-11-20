@@ -1,5 +1,6 @@
 import "server-only"
 
+import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import {
@@ -94,7 +95,7 @@ export async function getLoans(input: GetSearchSchema) {
             ? order === "asc"
               ? asc(loans[column])
               : desc(loans[column])
-            : desc(loans.id)
+            : desc(loans.createdAt)
         )
 
       const total = await tx
@@ -119,3 +120,62 @@ export async function getLoans(input: GetSearchSchema) {
     return { data: [], pageCount: 0 }
   }
 }
+
+interface LoanBalance {
+  totalLoan: number
+  currencyCode: string
+  totalRepayment: number
+  balance: number
+}
+
+export interface EmployeeLoan {
+  employee: string
+  loans: LoanBalance[]
+}
+
+export const getLoansBalance = cache(async (): Promise<EmployeeLoan[]> => {
+  try {
+    const results = await db
+      .select({
+        employee: employees.name,
+        currencyCode: currencies.code,
+        totalLoan: sql<number>`SUM(CASE WHEN ${loans.type} = 'loan' THEN ABS(${projectsTransactions.amount}) ELSE 0 END)`,
+        totalRepayment: sql<number>`SUM(CASE WHEN ${loans.type} = 'repayment' THEN ABS(${projectsTransactions.amount}) ELSE 0 END)`,
+      })
+      .from(loans)
+      .innerJoin(employees, sql`${loans.employeeId} = ${employees.id}`)
+      .innerJoin(
+        projectsTransactions,
+        sql`${loans.projectTransactionId} = ${projectsTransactions.id}`
+      )
+      .innerJoin(
+        currencies,
+        sql`${projectsTransactions.currencyId} = ${currencies.id}`
+      )
+      .groupBy(employees.name, currencies.code)
+
+    const employeeLoansMap = new Map<string, LoanBalance[]>()
+
+    for (const row of results) {
+      const loan: LoanBalance = {
+        totalLoan: Number(row.totalLoan),
+        currencyCode: row.currencyCode,
+        totalRepayment: Number(row.totalRepayment),
+        balance: Number(row.totalLoan) - Number(row.totalRepayment),
+      }
+
+      if (!employeeLoansMap.has(row.employee)) {
+        employeeLoansMap.set(row.employee, [])
+      }
+      employeeLoansMap.get(row.employee)!.push(loan)
+    }
+
+    return Array.from(employeeLoansMap, ([employee, loans]) => ({
+      employee,
+      loans,
+    }))
+  } catch (error) {
+    console.error("Error in getLoansBalance:", error)
+    return []
+  }
+})
