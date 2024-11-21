@@ -13,8 +13,6 @@ import {
 } from "@/components/ui/table"
 import { DataTablePagination } from "@/components/data-table/data-table-pagination"
 
-import { ScrollArea } from "../ui/scroll-area"
-
 interface DataTableProps<TData> extends React.HTMLAttributes<HTMLDivElement> {
   /**
    * The table instance returned from useDataTable hook with pagination, sorting, filtering, etc.

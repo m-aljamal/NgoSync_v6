@@ -56,6 +56,7 @@ export function getColumns(): ColumnDef<TransferFundToProjectWithRelations>[] {
         <DataTableColumnHeader column={column} title="التاريخ" />
       ),
     },
+
     {
       accessorKey: "amount",
       header: ({ column }) => (

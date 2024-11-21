@@ -1,5 +1,4 @@
 "use client"
-"use memo"
 
 import * as React from "react"
 import type { TransferFundToProjectWithRelations } from "@/db/schemas/transfer"
@@ -11,7 +10,8 @@ import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { type getTransferFundToProject } from "@/app/_lib/queries/transfers"
 
 import { getColumns } from "./transfer-fund-to-projects-table-columns"
-import { TransferFundToProjectTableToolbarActions } from "./transfer-fund-to-projects-table-toolbar-actions"
+import { TransferFundToProjectTableToolbarActions } from "@/app/(dashboard)/_components/transfer-fund-to-project/transfer-fund-to-projects-table-toolbar-actions"
+ 
 
 interface TransferFundToProjectTableProps {
   promise: ReturnType<typeof getTransferFundToProject>

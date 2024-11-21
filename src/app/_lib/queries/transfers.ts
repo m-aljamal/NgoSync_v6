@@ -255,7 +255,10 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
 }
 
 // Transfer fund to project
-export async function getTransferFundToProject(input: GetSearchSchema) {
+export async function getTransferFundToProject(
+  input: GetSearchSchema,
+  isOfficial?: boolean
+) {
   noStore()
   const { page, per_page, sort, operator, from, to, amount } = input
 
@@ -270,6 +273,7 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
+      isOfficial ? eq(projectsTransactions.isOfficial, isOfficial) : undefined,
       amount
         ? eq(projectsTransactions.amount, new Decimal(amount).toFixed(4))
         : undefined,
@@ -297,6 +301,7 @@ export async function getTransferFundToProject(input: GetSearchSchema) {
           receiverProjectId: projectsTransactions.projectId,
           date: fundTransactions.date,
           amount: projectsTransactions.amount,
+          officialAmount: projectsTransactions.officialAmount,
           currencyId: projectsTransactions.currencyId,
           isOfficial: projectsTransactions.isOfficial,
           currencyCode: currencies.code,
