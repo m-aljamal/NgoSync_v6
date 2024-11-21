@@ -8,12 +8,18 @@ import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
 import { getEmployees } from "@/app/_lib/queries/employees"
 import { searchParamsSchema } from "@/app/_lib/validations"
-import { EmployeesTable } from "../_components/employees/employees-table"
+import { EmployeesTable } from "@/app/(dashboard)/_components/employees/employees-table"
 
- 
-export default function Employees({ searchParams }: SearchParams) {
+type SearchParamsProps = {
+  searchParams: SearchParams
+  params: {
+    projectId: string
+  }
+}
+
+export default function Employees({ searchParams, params }: SearchParamsProps) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getEmployees(search)
+  const promise = getEmployees(search, params.projectId)
 
   return (
     <div>
