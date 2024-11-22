@@ -19,10 +19,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 import { transactionStatusTranslation } from "@/app/_lib/translate"
-import { UpdateTransferFundToProjectsSheet } from "@/app/(dashboard)/_components/transfer-fund-to-project/update-transfer-fund-to-projects-sheet"
 import { DeleteTransferFundToProjectsDialog } from "@/app/(dashboard)/_components/transfer-fund-to-project/delete-transfer-fund-to-projects-dialog"
-
- 
+import { UpdateTransferFundToProjectsSheet } from "@/app/(dashboard)/_components/transfer-fund-to-project/update-transfer-fund-to-projects-sheet"
 
 export function getColumns(): ColumnDef<TransferFundToProjectWithRelations>[] {
   return [
@@ -58,6 +56,21 @@ export function getColumns(): ColumnDef<TransferFundToProjectWithRelations>[] {
       ),
     },
 
+    {
+      accessorKey: "officialAmount",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المبلغ الرسمي" />
+      ),
+      cell: ({ row }) => (
+        <span>
+          {row.original.officialCurrency &&
+            formatCurrency(
+              row.getValue("officialAmount"),
+              row.original.officialCurrency
+            )}
+        </span>
+      ),
+    },
     {
       accessorKey: "amount",
       header: ({ column }) => (

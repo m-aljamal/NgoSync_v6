@@ -14,7 +14,7 @@ export const transferBetweenFunds = pgTable("transfer_between_funds", {
   updatedAt: timestamp("updated_at")
     .default(sql`current_timestamp`)
     .$onUpdate(() => new Date()),
-    date: date("date")
+  date: date("date")
     .notNull()
     .default(sql`CURRENT_DATE`),
   sender: varchar("sender")
@@ -164,6 +164,7 @@ export type TransferFundToProjectWithRelations =
     senderName: string
     receiverName: string
     transactionStatus: typeof projectsTransactions.$inferSelect.transactionStatus
+    officialCurrency?: string | null
   }
 // transfer project to fund
 export const transferProjectToFund = pgTable("transfer_project_to_fund", {

@@ -8,8 +8,9 @@ import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
 import { getTransferFundToProject } from "@/app/_lib/queries/transfers"
 import { searchParamsSchema } from "@/app/_lib/validations"
+import { TransferFundToProjectTable } from "./_components/transfer-fund-to-projects-table"
 
-import { TransferFundToProjectTable } from "../../_components/transfer-fund-to-project/transfer-fund-to-projects-table"
+ 
 
 export default function TransferFundToProject({ searchParams }: SearchParams) {
   const search = searchParamsSchema.parse(searchParams)

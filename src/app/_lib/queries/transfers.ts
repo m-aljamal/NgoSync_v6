@@ -261,7 +261,7 @@ export async function getTransferFundToProject(
 ) {
   noStore()
   const { page, per_page, sort, operator, from, to, amount } = input
-
+  const officialCurrency = alias(currencies, "officialCurrency")
   try {
     const offset = calculateOffset(page, per_page)
 
@@ -287,7 +287,6 @@ export async function getTransferFundToProject(
 
     const where: DrizzleWhere<TransferFundToProject> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
-
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
         .select({
@@ -308,11 +307,13 @@ export async function getTransferFundToProject(
           senderName: funds.name,
           receiverName: projects.name,
           transactionStatus: projectsTransactions.transactionStatus,
+          officialCurrency: officialCurrency.code,
         })
         .from(transferFundToProject)
         .limit(per_page)
         .offset(offset)
         .where(where)
+        .leftJoin(officialCurrency, eq(officialCurrency.isOfficial, true))
         .innerJoin(
           fundTransactions,
           eq(transferFundToProject.sender, fundTransactions.id)
@@ -335,6 +336,7 @@ export async function getTransferFundToProject(
               : desc(transferFundToProject[column])
             : desc(transferFundToProject.id)
         )
+      console.log(data)
 
       const total = await tx
         .select({
