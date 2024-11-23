@@ -3,7 +3,7 @@
 import * as React from "react"
 import { type ProjectTransactionWithRelations } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
-import { type ColumnDef } from "@tanstack/react-table"
+import type { Column, ColumnDef, Row } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
 import { formatCurrency } from "@/lib/utils"
@@ -25,7 +25,9 @@ import { transactionStatusTranslation } from "@/app/_lib/translate"
 import { DeleteExpensesDialog } from "./delete-expenses-dialog"
 import { UpdateExpenseSheet } from "./update-expense-sheet"
 
-export function getColumns(): ColumnDef<ProjectTransactionWithRelations>[] {
+export function getColumns(
+  isOfficial?: boolean
+): ColumnDef<ProjectTransactionWithRelations>[] {
   return [
     {
       id: "select",
@@ -59,6 +61,30 @@ export function getColumns(): ColumnDef<ProjectTransactionWithRelations>[] {
       ),
       cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
     },
+
+    ...(isOfficial
+      ? [
+          {
+            accessorKey: "officialAmount",
+            header: ({
+              column,
+            }: {
+              column: Column<ProjectTransactionWithRelations>
+            }) => (
+              <DataTableColumnHeader column={column} title="المبلغ الرسمي" />
+            ),
+            cell: ({ row }: { row: Row<ProjectTransactionWithRelations> }) => (
+              <span>
+                {row.original.officialCurrencyCode &&
+                  formatCurrency(
+                    row.getValue("officialAmount"),
+                    row.original.officialCurrencyCode
+                  )}
+              </span>
+            ),
+          },
+        ]
+      : []),
 
     {
       accessorKey: "amount",

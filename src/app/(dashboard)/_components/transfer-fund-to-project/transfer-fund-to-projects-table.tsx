@@ -14,14 +14,16 @@ import { TransferFundToProjectTableToolbarActions } from "./transfer-fund-to-pro
 
 interface TransferFundToProjectTableProps {
   promise: ReturnType<typeof getTransferFundToProject>
+  isOfficial?: boolean
 }
 
 export function TransferFundToProjectTable({
   promise,
+  isOfficial,
 }: TransferFundToProjectTableProps) {
   const { data, pageCount } = React.use(promise)
 
-  const columns = React.useMemo(() => getColumns(), [])
+  const columns = React.useMemo(() => getColumns(isOfficial), [isOfficial])
 
   const filterFields: DataTableFilterField<TransferFundToProjectWithRelations>[] =
     [

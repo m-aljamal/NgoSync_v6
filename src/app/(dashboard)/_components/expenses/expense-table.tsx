@@ -16,12 +16,13 @@ import { ExpensesTableToolbarActions } from "./expenses-table-toolbar-actions"
 
 interface ExpenseTableProps {
   promise: ReturnType<typeof getExpenses>
+  isOfficial?: boolean
 }
 
-export function ExpenseTable({ promise }: ExpenseTableProps) {
+export function ExpenseTable({ promise, isOfficial }: ExpenseTableProps) {
   const { data, pageCount } = React.use(promise)
 
-  const columns = React.useMemo(() => getColumns(), [])
+  const columns = React.useMemo(() => getColumns(isOfficial), [isOfficial])
   const { data: currencies, isLoading: loadingCurrencies } = useGetCurrencies()
   const filterFields: DataTableFilterField<ProjectTransactionWithRelations>[] =
     [

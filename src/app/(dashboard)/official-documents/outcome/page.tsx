@@ -6,22 +6,21 @@ import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getTransferFundToProject } from "@/app/_lib/queries/transfers"
+import { getExpenses } from "@/app/_lib/queries/expenses"
 import { searchParamsSchema } from "@/app/_lib/validations"
-import { TransferFundToProjectTable } from "../../_components/transfer-fund-to-project/transfer-fund-to-projects-table"
 
- 
+import { ExpenseTable } from "../../_components/expenses/expense-table"
 
-export default function TransferFundToProject({ searchParams }: SearchParams) {
+export default function Proposals({ searchParams }: SearchParams) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getTransferFundToProject(search, true)
+  const promise = getExpenses({ input: search, isOfficial: true })
 
   return (
     <div>
       <Heading
-        title="حوالات من الصناديق إلى المشاريع"
-        description="تحويل مالي من صندوق إلى مشروع."
-        icon="MoveUpRight"
+        title="المصاريف"
+        description="إدارة المصاريف المالية للمشاريع."
+        icon="Redo"
       />
       <Shell className="gap-2">
         <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
@@ -42,7 +41,7 @@ export default function TransferFundToProject({ searchParams }: SearchParams) {
             />
           }
         >
-          <TransferFundToProjectTable promise={promise} isOfficial />
+          <ExpenseTable promise={promise}  isOfficial/>
         </React.Suspense>
       </Shell>
     </div>

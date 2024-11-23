@@ -336,7 +336,6 @@ export async function getTransferFundToProject(
               : desc(transferFundToProject[column])
             : desc(transferFundToProject.id)
         )
-      console.log(data)
 
       const total = await tx
         .select({

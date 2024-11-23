@@ -3,7 +3,7 @@
 import * as React from "react"
 import { type TransferFundToProjectWithRelations } from "@/db/schemas/transfer"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
-import { type ColumnDef } from "@tanstack/react-table"
+import type { Column, ColumnDef, Row } from "@tanstack/react-table"
 
 import { formatCurrency } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -23,7 +23,9 @@ import { transactionStatusTranslation } from "@/app/_lib/translate"
 import { DeleteTransferFundToProjectsDialog } from "./delete-transfer-fund-to-projects-dialog"
 import { UpdateTransferFundToProjectsSheet } from "./update-transfer-fund-to-projects-sheet"
 
-export function getColumns(): ColumnDef<TransferFundToProjectWithRelations>[] {
+export function getColumns(
+  isOfficial?: boolean
+): ColumnDef<TransferFundToProjectWithRelations>[] {
   return [
     {
       id: "select",
@@ -56,6 +58,34 @@ export function getColumns(): ColumnDef<TransferFundToProjectWithRelations>[] {
         <DataTableColumnHeader column={column} title="التاريخ" />
       ),
     },
+
+    ...(isOfficial
+      ? [
+          {
+            accessorKey: "officialAmount",
+            header: ({
+              column,
+            }: {
+              column: Column<TransferFundToProjectWithRelations>
+            }) => (
+              <DataTableColumnHeader column={column} title="المبلغ الرسمي" />
+            ),
+            cell: ({
+              row,
+            }: {
+              row: Row<TransferFundToProjectWithRelations>
+            }) => (
+              <span>
+                {row.original.officialCurrency &&
+                  formatCurrency(
+                    row.getValue("officialAmount"),
+                    row.original.officialCurrency
+                  )}
+              </span>
+            ),
+          },
+        ]
+      : []),
 
     {
       accessorKey: "amount",

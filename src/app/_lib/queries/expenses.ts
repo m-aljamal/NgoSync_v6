@@ -36,12 +36,14 @@ type GetExpensesProps = {
   input: GetSearchSchema
   proposalId?: string
   projectId?: string
+  isOfficial?: boolean
 }
 
 export async function getExpenses({
   input,
   proposalId,
   projectId,
+  isOfficial,
 }: GetExpensesProps) {
   noStore()
   const { page, per_page, sort, amount, operator, from, to, currencyCode } =
@@ -60,6 +62,7 @@ export async function getExpenses({
     const expressions: (SQL<unknown> | undefined)[] = [
       proposalId ? eq(projectsTransactions.proposalId, proposalId) : undefined,
       projectId ? eq(projectsTransactions.projectId, projectId) : undefined,
+      isOfficial ? eq(projectsTransactions.isOfficial, isOfficial) : undefined,
       amount
         ? or(
             eq(projectsTransactions.amount, new Decimal(amount).toFixed(4)),
@@ -91,6 +94,8 @@ export async function getExpenses({
     const where: DrizzleWhere<ProjectTransaction> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
 
+      const officialCurrency = alias(currencies, "officialCurrency")
+
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
         .select({
@@ -114,6 +119,7 @@ export async function getExpenses({
           officialAmount: projectsTransactions.officialAmount,
           proposalAmount: projectsTransactions.proposalAmount,
           category: projectsTransactions.category,
+          officialCurrencyCode: officialCurrency.code,
         })
         .from(projectsTransactions)
         .limit(per_page)
@@ -123,6 +129,7 @@ export async function getExpenses({
           currencies,
           eq(projectsTransactions.currencyId, currencies.id)
         )
+        .leftJoin(officialCurrency, eq(officialCurrency.isOfficial, true))
         .innerJoin(projects, eq(projectsTransactions.projectId, projects.id))
         .innerJoin(
           expensesCategories,

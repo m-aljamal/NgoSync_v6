@@ -182,6 +182,7 @@ export type ProjectTransactionWithRelations =
     currencyCode: string
     projectName: string
     expenseCategoryName: string
+    officialCurrencyCode?: string | null
   }
 export type NewProjectTransaction = typeof projectsTransactions.$inferInsert
 export type ProjectIncomeType = Pick<
