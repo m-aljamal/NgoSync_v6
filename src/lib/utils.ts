@@ -17,3 +17,8 @@ export function formatCurrency(value: string | number, currency: string) {
     maximumFractionDigits: 3,
   }).format(numericValue)
 }
+
+export const months = Array.from({ length: 12 }, (_, index) => {
+  const value = String(index + 1).padStart(2, "0")
+  return { value, label: value }
+})

@@ -1,16 +1,19 @@
 import "server-only"
 
+import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import {
   currencies,
   expensesCategories,
   funds,
+  projects,
   projectsTransactions,
   type ExpensesCategory,
   type ProjectTransaction,
 } from "@/db/schemas"
 import { type DrizzleWhere } from "@/types"
+import { format } from "date-fns"
 import {
   and,
   asc,
@@ -279,3 +282,28 @@ export async function getProjectIncome(
     return { data: [], pageCount: 0 }
   }
 }
+
+export const getOfficialMonthlyAccountSummary = cache(
+  async (month: string | undefined = format(new Date(), "MM")) => {
+    try {
+      return await db
+        .select
+        //   {
+        //   id: projects.id,
+        //   project: projects.name,
+        //   projectId: projectsTransactions.projectId,
+        //   month: sql<number>`strftime('%m', ${projectsTransactions.date})`,
+        //   totalTransfer: sql<number>`COALESCE(SUM(CASE WHEN ${projectsTransactions.type} = 'income' AND ${projectsTransactions.category} = 'TRANSFER_FROM_FUND' THEN ${projectsTransactions.officialAmount} ELSE 0 END), 0)`,
+        //   totalExpenses: sql<number>`COALESCE(SUM(CASE WHEN ${projectsTransactions.type} = 'outcome' AND ${projectsTransactions.category} = 'EXPENSE' THEN ABS(${projectsTransactions.officialAmount}) ELSE 0 END), 0)`,
+        //   difference: sql<number>`COALESCE(SUM(CASE WHEN ${projectsTransactions.type} = 'income' AND ${projectsTransactions.category} = 'TRANSFER_FROM_FUND' THEN ${projectsTransactions.officialAmount} ELSE 0 END), 0) - COALESCE(SUM(CASE WHEN ${projectsTransactions.type} = 'outcome' AND ${projectsTransactions.category} = 'expense' THEN ABS(${projectsTransactions.officialAmount}) ELSE 0 END), 0)`,
+        // }
+        ()
+        .from(projectsTransactions)
+        .where(eq(projectsTransactions.isOfficial, true))
+        .innerJoin(projects, eq(projects.id, projectsTransactions.projectId))
+        .groupBy(projectsTransactions.projectId, projects.name)
+    } catch (error) {
+      return []
+    }
+  }
+)
