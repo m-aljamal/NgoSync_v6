@@ -26,6 +26,7 @@ type GetDonationsResponse = {
   proposalId?: string
   projectId?: string
   donerId?: string
+  isOfficial?: boolean
 }
 
 export async function getDonations({
@@ -33,6 +34,7 @@ export async function getDonations({
   proposalId,
   projectId,
   donerId,
+  isOfficial,
 }: GetDonationsResponse) {
   noStore()
   const {
@@ -63,6 +65,7 @@ export async function getDonations({
       donerIdInput ? eq(donations.donerId, donerIdInput) : undefined,
       proposalId ? eq(donations.proposalId, proposalId) : undefined,
       projectId ? eq(donations.projectId, projectId) : undefined,
+      isOfficial ? eq(donations.isOfficial, isOfficial) : undefined,
       !!paymentType
         ? filterColumn({
             column: donations.paymentType,
