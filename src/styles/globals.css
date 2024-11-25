@@ -134,3 +134,8 @@
     @apply px-4;
   }
 }
+
+
+.rdp-vhidden {
+  @apply hidden;
+}

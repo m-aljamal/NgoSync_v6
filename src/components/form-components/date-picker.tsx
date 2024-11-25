@@ -37,6 +37,9 @@ export const DatePicker = ({ value, onChange, disabled }: Props) => {
           onSelect={onChange}
           disabled={disabled}
           initialFocus
+          captionLayout="dropdown-buttons"
+          fromYear={1920}
+          toYear={new Date().getFullYear()}
         />
       </PopoverContent>
     </Popover>

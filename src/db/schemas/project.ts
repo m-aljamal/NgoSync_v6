@@ -9,6 +9,7 @@ import { proposals } from "./proposal"
 import { expensesCategories, projectsTransactions } from "./transactions"
 import { users } from "./user"
 import { employees } from "./employee"
+import { students } from "./student"
 
 export const statusEnum = pgEnum("status_enum", [
   "in-progress",
@@ -53,8 +54,8 @@ export const projectRelations = relations(projects, ({ one, many }) => ({
   proposals: many(proposals),
   expensesCategories: many(expensesCategories),
   employees: many(employees),
+  students: many(students),
   // courses: many(courses),
-  // students: many(students),
 }))
 
 export type Project = typeof projects.$inferSelect
