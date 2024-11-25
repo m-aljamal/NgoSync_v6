@@ -14,8 +14,6 @@ import { getOfficialMonthlyAccountSummary } from "@/app/_lib/queries/project-tra
 async function Overview() {
   const monthlySummary = await getOfficialMonthlyAccountSummary()
 
-  console.log(monthlySummary)
-
   return (
     <div className="grid items-start gap-6 space-y-5 rounded-lg lg:grid-cols-2 xl:grid-cols-2">
       <div className="col-span-2 grid items-start gap-6 xl:col-span-3">
