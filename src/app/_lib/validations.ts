@@ -1,6 +1,7 @@
 import { donations, doners, projects, tasks } from "@/db/schemas"
 import { employees } from "@/db/schemas/employee"
 import { loans } from "@/db/schemas/loan"
+import { students } from "@/db/schemas/student"
 import Decimal from "decimal.js"
 import * as z from "zod"
 
@@ -241,3 +242,20 @@ export const createLoanSchema = z.object({
 })
 
 export type CreateLoanSchema = z.infer<typeof createLoanSchema>
+
+export const createStudentSchema = z.object({
+  name: z.string().min(2).max(120),
+  projectId: z.string().min(2),
+  gender: z.enum(students.gender.enumValues),
+  status: z.enum(students.status.enumValues),
+  phone: z.string().min(6).max(20),
+  description: z.string().optional(),
+  address: z.string().optional(),
+  dateOfBirth: date,
+  fatherName: z.string().min(2).max(120),
+  motherName: z.string().min(2).max(120),
+  ID_number: z.string().optional(),
+  registrationDate: date,
+})
+
+export type CreateStudentSchema = z.infer<typeof createStudentSchema>

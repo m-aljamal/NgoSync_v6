@@ -1,5 +1,6 @@
 import { pgTable } from "@/db/utils"
-import { pgEnum, varchar } from "drizzle-orm/pg-core"
+import { relations, sql } from "drizzle-orm"
+import { date, pgEnum, timestamp, varchar } from "drizzle-orm/pg-core"
 
 import { generateId } from "@/lib/id"
 
@@ -25,5 +26,24 @@ export const students = pgTable("students", {
   phone: varchar("phone", { length: 20 }).notNull(),
   description: varchar("description", { length: 200 }),
   address: varchar("address", { length: 200 }),
- 
+  dateOfBirth: date("date")
+    .notNull()
+    .default(sql`CURRENT_DATE`),
+  fatherName: varchar("father_name", { length: 120 }).notNull(),
+  motherName: varchar("mother_name", { length: 120 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  ID_number: varchar("ID_number", { length: 120 }),
+  registrationDate: date("registration_date")
+    .default(sql`CURRENT_DATE`)
+    .notNull(),
+  updatedAt: timestamp("updated_at").default(sql`current_timestamp`),
 })
+
+export const studentsRelations = relations(students, ({ one }) => ({
+  project: one(projects, {
+    fields: [students.projectId],
+    references: [projects.id],
+  }),
+}))
+
+export type Student = typeof students.$inferSelect
