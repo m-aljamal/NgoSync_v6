@@ -43,14 +43,14 @@ export const createStudent = actionClient
     }) => {
       noStore()
       await db.insert(students).values({
-        name:"name",
-        gender:"female",
-        projectId:"projectId",
+        name,
+        gender,
+        projectId,
         dateOfBirth,
-        status:"active",
+        status,
         fatherName,
-        phone:"phone",
-        description:"description",
+        phone,
+        description,
         address,
         motherName,
         registrationDate,
