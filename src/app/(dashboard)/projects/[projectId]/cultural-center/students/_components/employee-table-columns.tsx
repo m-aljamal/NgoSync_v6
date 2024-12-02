@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { type EmployeeWithRelations } from "@/db/schemas"
 import { doners } from "@/db/schemas/donation"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
@@ -25,9 +26,8 @@ import {
   employeePosisionTranslation,
 } from "@/app/_lib/translate"
 
-import { DeleteEmployeesDialog } from "./delete-employee-dialog"
+import { DeleteEmployeesDialog } from "./delete-student-dialog"
 import { UpdateEmployeeSheet } from "./update-employee-sheet"
-import Link from "next/link"
 
 export function getColumns(): ColumnDef<EmployeeWithRelations>[] {
   return [
@@ -62,7 +62,10 @@ export function getColumns(): ColumnDef<EmployeeWithRelations>[] {
         <DataTableColumnHeader column={column} title="الاسم" />
       ),
       cell: ({ row }) => (
-        <Link href={`/employees/${row.original.id}/overview`} className="max-w-[31.25rem] truncate font-medium">
+        <Link
+          href={`/employees/${row.original.id}/overview`}
+          className="max-w-[31.25rem] truncate font-medium"
+        >
           {row.getValue("name")}
         </Link>
       ),

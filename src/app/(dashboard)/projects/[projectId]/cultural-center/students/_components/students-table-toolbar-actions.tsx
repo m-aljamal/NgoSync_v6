@@ -1,6 +1,7 @@
 "use client"
 
 import { type EmployeeWithRelations } from "@/db/schemas"
+import { Student } from "@/db/schemas/student"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
@@ -8,15 +9,15 @@ import { exportTableToCSV } from "@/lib/export"
 import { Button } from "@/components/ui/button"
 
 import { CreateEmployeeDialog } from "./create-employee-dialog"
-import { DeleteEmployeesDialog } from "./delete-employee-dialog"
+import { DeleteEmployeesDialog } from "./delete-student-dialog"
 
-interface EmployeesTableToolbarActionsProps {
-  table: Table<EmployeeWithRelations>
+interface StudentsTableToolbarActionsProps {
+  table: Table<Student>
 }
 
-export function EmployeesTableToolbarActions({
+export function StudentTableToolbarActions({
   table,
-}: EmployeesTableToolbarActionsProps) {
+}: StudentsTableToolbarActionsProps) {
   return (
     <div className="flex items-center gap-2">
       {table.getFilteredSelectedRowModel().rows.length > 0 ? (

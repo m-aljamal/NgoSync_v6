@@ -1,13 +1,24 @@
 "use client"
 
-import * as React from "react"
 import { employees } from "@/db/schemas/employee"
-import { useQueryClient } from "@tanstack/react-query"
-import { useAction } from "next-safe-action/hooks"
+import * as React from "react"
 import { type UseFormReturn } from "react-hook-form"
-import { toast } from "sonner"
 
-import { useGetjobTitle } from "@/hooks/use-get-form-data"
+import {
+  employeeStatusTranslation,
+  genderTranslation
+} from "@/app/_lib/translate"
+import {
+ type CreateStudentSchema
+} from "@/app/_lib/validations"
+import {
+  DateInput,
+  DescriptionInput,
+  ProjectInput
+} from "@/components/form-components"
+import InputGroup from "@/components/form-components/InputGroup"
+import NameInput from "@/components/form-components/name-input"
+import { AppSelect } from "@/components/form-components/select"
 import {
   Form,
   FormControl,
@@ -17,25 +28,6 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import {
-  CurrencyAmountInput,
-  DateInput,
-  DescriptionInput,
-  ProjectInput,
-} from "@/components/form-components"
-import InputGroup from "@/components/form-components/InputGroup"
-import NameInput from "@/components/form-components/name-input"
-import { AppSelect } from "@/components/form-components/select"
-import { createEmployeeJobTitle } from "@/app/_lib/actions/employee"
-import {
-  employeePosisionTranslation,
-  employeeStatusTranslation,
-  genderTranslation,
-} from "@/app/_lib/translate"
-import {
-  CreateStudentSchema,
-  type CreateEmployeeSchema,
-} from "@/app/_lib/validations"
 
 interface CreateStudentFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -58,9 +50,9 @@ export function StudentForm({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>اسم الموظف</FormLabel>
+                <FormLabel>اسم الطالب</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="اسم الموظف" {...field} />
+                  <Input type="text" placeholder="اسم الطالب" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

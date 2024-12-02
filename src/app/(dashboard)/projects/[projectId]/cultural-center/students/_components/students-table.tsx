@@ -3,6 +3,7 @@
 
 import * as React from "react"
 import { type EmployeeWithRelations } from "@/db/schemas"
+import { type Student } from "@/db/schemas/student"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
@@ -11,18 +12,18 @@ import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { type getEmployees } from "@/app/_lib/queries/employees"
 
 import { getColumns } from "./employee-table-columns"
-import { EmployeesTableToolbarActions } from "./employees-table-toolbar-actions"
+import { EmployeesTableToolbarActions } from "./students-table-toolbar-actions"
 
-interface EmployeesTableProps {
+interface StudentsTableProps {
   promise: ReturnType<typeof getEmployees>
 }
 
-export function EmployeesTable({ promise }: EmployeesTableProps) {
+export function StudentsTable({ promise }: StudentsTableProps) {
   const { data, pageCount } = React.use(promise)
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<EmployeeWithRelations>[] = [
+  const filterFields: DataTableFilterField<Student>[] = [
     {
       label: "الاسم",
       value: "name",

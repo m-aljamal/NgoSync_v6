@@ -1,28 +1,28 @@
 "use client"
 
 import * as React from "react"
-import { type Employee } from "@/db/schemas"
-import { type Row } from "@tanstack/react-table"
+ import { type Row } from "@tanstack/react-table"
 import { useAction } from "next-safe-action/hooks"
 import { toast } from "sonner"
 
 import { type Dialog } from "@/components/ui/dialog"
 import DeleteDialog from "@/components/delete-dialog"
 import { deleteEmployee } from "@/app/_lib/actions/employee"
+import { Student } from "@/db/schemas/student"
 
-interface DeleteEmployeeDialogProps
+interface DeleteStudentsDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  employees: Row<Employee>["original"][]
+  students: Row<Student>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }
 
-export function DeleteEmployeesDialog({
-  employees,
+export function DeleteStudentsDialog({
+  students,
   showTrigger = true,
   onSuccess,
   ...props
-}: DeleteEmployeeDialogProps) {
+}: DeleteStudentsDialogProps) {
   const { executeAsync, isExecuting } = useAction(deleteEmployee, {
     onSuccess: () => {
       toast.success("تم الحذف بنجاح")
