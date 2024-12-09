@@ -254,12 +254,8 @@ export const createStudentSchema = z.object({
   dateOfBirth: date,
   fatherName: z.string().min(2).max(120),
   motherName: z.string().min(2).max(120),
-  ID_number: z.string().optional(),
   registrationDate: date,
   id: z.string().optional(),
 })
 
 export type CreateStudentSchema = z.infer<typeof createStudentSchema>
-
-
-

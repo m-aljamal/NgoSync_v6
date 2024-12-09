@@ -9,32 +9,32 @@ import { toast } from "sonner"
 import { useFormDialog } from "@/hooks/use-form-dialog"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
-import { createEmployee } from "@/app/_lib/actions/employee"
+import { createStudent } from "@/app/_lib/actions/student"
 import {
-  createEmployeeSchema,
-  type CreateEmployeeSchema,
+  createStudentSchema,
+  type CreateStudentSchema,
 } from "@/app/_lib/validations"
 
-import { EmployeeForm } from "./student-form"
+import { StudentForm } from "./student-form"
 
-export function CreateEmployeeDialog() {
+export function CreateStudentDialog() {
   const { onClose } = useFormDialog()
 
   const queryClient = useQueryClient()
 
-  const form = useForm<CreateEmployeeSchema>({
-    resolver: zodResolver(createEmployeeSchema),
+  const form = useForm<CreateStudentSchema>({
+    resolver: zodResolver(createStudentSchema),
     defaultValues: {
       status: "active",
       name: "",
     },
   })
 
-  const { executeAsync, isExecuting } = useAction(createEmployee, {
+  const { executeAsync, isExecuting } = useAction(createStudent, {
     onSuccess: async () => {
-      toast.success("تم إنشاء الموظف")
+      toast.success("تم إنشاء الطالب")
       await queryClient.invalidateQueries({
-        queryKey: ["employees"],
+        queryKey: ["students"],
       })
       form.reset()
       toast.dismiss()
@@ -45,15 +45,15 @@ export function CreateEmployeeDialog() {
     },
   })
 
-  async function onSubmit(input: CreateEmployeeSchema) {
+  async function onSubmit(input: CreateStudentSchema) {
     await executeAsync(input)
   }
 
   return (
     <FormDialog>
-      <EmployeeForm form={form} onSubmit={onSubmit}>
+      <StudentForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
-      </EmployeeForm>
+      </StudentForm>
     </FormDialog>
   )
 }

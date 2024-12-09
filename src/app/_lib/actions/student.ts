@@ -3,6 +3,7 @@
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
 import { students } from "@/db/schemas/student"
+import { format } from "date-fns"
 import { inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
@@ -42,18 +43,19 @@ export const createStudent = actionClient
       },
     }) => {
       noStore()
+
       await db.insert(students).values({
         name,
-        gender,
         projectId,
-        dateOfBirth,
+        gender,
+        dateOfBirth: format(dateOfBirth, "yyyy-MM-dd"),
         status,
         fatherName,
         phone,
         description,
         address,
         motherName,
-        registrationDate,
+        registrationDate: format(registrationDate, "yyyy-MM-dd"),
       })
       revalidatePath("/students")
     }

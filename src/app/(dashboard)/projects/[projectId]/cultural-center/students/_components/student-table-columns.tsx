@@ -2,14 +2,11 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { type EmployeeWithRelations } from "@/db/schemas"
-import { doners } from "@/db/schemas/donation"
+import { type Student } from "@/db/schemas/student"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
 
-import { formatCurrency } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -21,15 +18,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
-import {
-  donerStatusTranslation,
-  employeePosisionTranslation,
-} from "@/app/_lib/translate"
 
-import { DeleteEmployeesDialog } from "./delete-student-dialog"
-import { UpdateEmployeeSheet } from "./update-employee-sheet"
+import { DeleteStudentsDialog } from "./delete-student-dialog"
+import { UpdateStudentSheet } from "./update-student-sheet"
 
-export function getColumns(): ColumnDef<EmployeeWithRelations>[] {
+export function getColumns(): ColumnDef<Student>[] {
   return [
     {
       id: "select",
@@ -73,70 +66,32 @@ export function getColumns(): ColumnDef<EmployeeWithRelations>[] {
       enableHiding: false,
     },
 
-    {
-      accessorKey: "status",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="الحالة" />
-      ),
-      cell: ({ row }) => {
-        const status = doners.status.enumValues.find(
-          (status) => status === row.original.status
-        )
+    // {
+    //   accessorKey: "status",
+    //   header: ({ column }) => (
+    //     <DataTableColumnHeader column={column} title="الحالة" />
+    //   ),
+    //   cell: ({ row }) => {
+    //     const status = doners.status.enumValues.find(
+    //       (status) => status === row.original.status
+    //     )
 
-        if (!status) return null
+    //     if (!status) return null
 
-        return <Badge variant={status}>{donerStatusTranslation[status]}</Badge>
-      },
-      filterFn: (row, id, value) => {
-        return Array.isArray(value) && value.includes(row.getValue(id))
-      },
-    },
+    //     return <Badge variant={status}>{donerStatusTranslation[status]}</Badge>
+    //   },
+    //   filterFn: (row, id, value) => {
+    //     return Array.isArray(value) && value.includes(row.getValue(id))
+    //   },
+    // },
 
-    {
-      accessorKey: "salary",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="الراتب" />
-      ),
-      cell: ({ row }) => (
-        <span>
-          {formatCurrency(row.getValue("salary"), row.original.currencyCode)}
-        </span>
-      ),
-    },
+    // {
+    //   accessorKey: "projectName",
+    //   header: ({ column }) => (
+    //     <DataTableColumnHeader column={column} title="المشروع" />
+    //   ),
+    // },
 
-    {
-      accessorKey: "currencyCode",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="العملة" />
-      ),
-
-      cell: ({ row }) => (
-        <Badge variant={row.getValue("currencyCode")}>
-          {row.getValue("currencyCode")}
-        </Badge>
-      ),
-      filterFn: (row, id, value) => {
-        return Array.isArray(value) && value.includes(row.getValue(id))
-      },
-    },
-
-    {
-      accessorKey: "projectName",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="المشروع" />
-      ),
-    },
-    {
-      accessorKey: "position",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="الوظيفة" />
-      ),
-      cell: ({ row }) => (
-        <Badge variant={row.getValue("position")}>
-          {employeePosisionTranslation[row.original.position]}
-        </Badge>
-      ),
-    },
     {
       accessorKey: "createdAt",
       header: ({ column }) => (
@@ -147,22 +102,20 @@ export function getColumns(): ColumnDef<EmployeeWithRelations>[] {
     {
       id: "actions",
       cell: function Cell({ row }) {
-        const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
-          React.useState(false)
-        const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
-          React.useState(false)
+        const [showUpdateSheet, setShowUpdateSheet] = React.useState(false)
+        const [showDeleteDialog, setShowDeleteDialog] = React.useState(false)
 
         return (
           <>
-            <UpdateEmployeeSheet
-              open={showUpdateTaskSheet}
-              onOpenChange={setShowUpdateTaskSheet}
-              employee={row.original}
+            <UpdateStudentSheet
+              open={showUpdateSheet}
+              onOpenChange={setShowUpdateSheet}
+              student={row.original}
             />
-            <DeleteEmployeesDialog
-              open={showDeleteTaskDialog}
-              onOpenChange={setShowDeleteTaskDialog}
-              employees={[row.original]}
+            <DeleteStudentsDialog
+              open={showDeleteDialog}
+              onOpenChange={setShowDeleteDialog}
+              students={[row.original]}
               showTrigger={false}
               onSuccess={() => row.toggleSelected(false)}
             />
@@ -177,14 +130,12 @@ export function getColumns(): ColumnDef<EmployeeWithRelations>[] {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-40">
-                <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
+                <DropdownMenuItem onSelect={() => setShowUpdateSheet(true)}>
                   تعديل
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onSelect={() => setShowDeleteTaskDialog(true)}
-                >
+                <DropdownMenuItem onSelect={() => setShowDeleteDialog(true)}>
                   حذف
                   <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
                 </DropdownMenuItem>

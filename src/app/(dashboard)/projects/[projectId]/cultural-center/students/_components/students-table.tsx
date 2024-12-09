@@ -2,7 +2,6 @@
 "use memo"
 
 import * as React from "react"
-import { type EmployeeWithRelations } from "@/db/schemas"
 import { type Student } from "@/db/schemas/student"
 import { type DataTableFilterField } from "@/types"
 
@@ -11,7 +10,7 @@ import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import { type getEmployees } from "@/app/_lib/queries/employees"
 
-import { getColumns } from "./employee-table-columns"
+import { getColumns } from "./student-table-columns"
 import { EmployeesTableToolbarActions } from "./students-table-toolbar-actions"
 
 interface StudentsTableProps {

@@ -9,7 +9,7 @@ import { genders } from "./enums"
 import { loans } from "./loan"
 import { projects } from "./project"
 
-export const employeeStatus = pgEnum("doner_status", ["active", "inactive"])
+export const employeeStatus = pgEnum("employee_status", ["active", "inactive"])
 export const positions = pgEnum("positions", [
   "manager",
   "teacher",
