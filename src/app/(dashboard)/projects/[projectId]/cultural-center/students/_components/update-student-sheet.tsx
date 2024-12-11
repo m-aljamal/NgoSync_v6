@@ -51,7 +51,7 @@ export function UpdateStudentSheet({
 
   const { executeAsync, isExecuting } = useAction(updateStudent, {
     onSuccess: () => {
-      toast.success("تم تعديل الموظف")
+      toast.success("تم تعديل الطالب")
       props.onOpenChange?.(false)
       form.reset()
     },
@@ -59,7 +59,7 @@ export function UpdateStudentSheet({
       toast.error(error.serverError)
     },
     onExecute: () => {
-      toast.loading("جاري تعديل الموظف")
+      toast.loading("جاري تعديل الطالب")
     },
   })
 

@@ -6,9 +6,10 @@ import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getEmployees } from "@/app/_lib/queries/employees"
+import { getStudents } from "@/app/_lib/queries/student"
 import { searchParamsSchema } from "@/app/_lib/validations"
-import { EmployeesTable } from "@/app/(dashboard)/_components/employees/employees-table"
+
+import { StudentsTable } from "./_components/students-table"
 
 type SearchParamsProps = {
   searchParams: SearchParams
@@ -19,7 +20,7 @@ type SearchParamsProps = {
 
 export default function Students({ searchParams, params }: SearchParamsProps) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getEmployees(search, params.projectId)
+  const promise = getStudents(search, params.projectId)
 
   return (
     <div>
@@ -43,7 +44,7 @@ export default function Students({ searchParams, params }: SearchParamsProps) {
             />
           }
         >
-          <EmployeesTable promise={promise} />
+          <StudentsTable promise={promise} />
         </React.Suspense>
       </Shell>
     </div>
