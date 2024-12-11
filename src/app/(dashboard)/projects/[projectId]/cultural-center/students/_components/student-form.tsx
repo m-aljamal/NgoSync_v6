@@ -1,24 +1,10 @@
 "use client"
 
-import { employees } from "@/db/schemas/employee"
 import * as React from "react"
+import { employees } from "@/db/schemas/employee"
+import { students } from "@/db/schemas/student"
 import { type UseFormReturn } from "react-hook-form"
 
-import {
-  employeeStatusTranslation,
-  genderTranslation
-} from "@/app/_lib/translate"
-import {
- type CreateStudentSchema
-} from "@/app/_lib/validations"
-import {
-  DateInput,
-  DescriptionInput,
-  ProjectInput
-} from "@/components/form-components"
-import InputGroup from "@/components/form-components/InputGroup"
-import NameInput from "@/components/form-components/name-input"
-import { AppSelect } from "@/components/form-components/select"
 import {
   Form,
   FormControl,
@@ -28,6 +14,19 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import {
+  DateInput,
+  DescriptionInput,
+  ProjectInput,
+} from "@/components/form-components"
+import InputGroup from "@/components/form-components/InputGroup"
+import NameInput from "@/components/form-components/name-input"
+import { AppSelect } from "@/components/form-components/select"
+import {
+  genderTranslation,
+  studentStatusTranslation,
+} from "@/app/_lib/translate"
+import { type CreateStudentSchema } from "@/app/_lib/validations"
 
 interface CreateStudentFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -45,21 +44,47 @@ export function StudentForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <InputGroup>
+          <NameInput
+            form={form}
+            name="name"
+            placeholder="اسم الطالب"
+            labelName="اسم الطالب"
+          />
+
+          <NameInput
+            form={form}
+            name="fatherName"
+            placeholder="اسم الأب"
+            labelName="اسم الأب"
+          />
+          <NameInput
+            form={form}
+            name="motherName"
+            placeholder="اسم الأم"
+            labelName="اسم الأم"
+          />
+          <ProjectInput form={form} />
+
           <FormField
             control={form.control}
-            name="name"
+            name="status"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>اسم الطالب</FormLabel>
-                <FormControl>
-                  <Input type="text" placeholder="اسم الطالب" {...field} />
-                </FormControl>
+                <FormLabel>حالة الطالب</FormLabel>
+                <AppSelect
+                  onChange={field.onChange}
+                  value={field.value?.toString()}
+                  options={students.status.enumValues?.map((status) => ({
+                    value: status,
+                    label: studentStatusTranslation[status],
+                  }))}
+                  placeholder="حالة الطالب"
+                />
                 <FormMessage />
               </FormItem>
             )}
           />
-          <NameInput form={form} name="name" placeholder="اسم الطالب" />
-          <ProjectInput form={form} />
+
           <FormField
             control={form.control}
             name="gender"
@@ -108,27 +133,12 @@ export function StudentForm({
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>حالة الموظف</FormLabel>
-                <AppSelect
-                  onChange={field.onChange}
-                  value={field.value?.toString()}
-                  options={employees.status.enumValues?.map((status) => ({
-                    value: status,
-                    label: employeeStatusTranslation[status],
-                  }))}
-                  placeholder="حالة الموظف"
-                />
-                <FormMessage />
-              </FormItem>
-            )}
+          <DateInput form={form} name="dateOfBirth" labelName="تاريخ الولادة" />
+          <DateInput
+            form={form}
+            name="registrationDate"
+            labelName="تاريخ التسجيل"
           />
-          <DateInput form={form} name="birthDate" labelName="تاريخ الولادة" />
-
           <DescriptionInput form={form} />
         </InputGroup>
         {children}

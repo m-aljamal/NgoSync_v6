@@ -4,7 +4,7 @@ import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
 import { students } from "@/db/schemas/student"
 import { format } from "date-fns"
-import { inArray } from "drizzle-orm"
+import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { actionClient } from "../safe-action"
@@ -66,7 +66,41 @@ export const updateStudent = actionClient
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
-  .action(async ({ parsedInput: data }) => {
-    noStore()
-    if (!data.id) throw new Error()
-  })
+  .action(
+    async ({
+      parsedInput: {
+        name,
+        projectId,
+        status,
+        gender,
+        phone,
+        description,
+        address,
+        dateOfBirth,
+        fatherName,
+        motherName,
+        registrationDate,
+        id,
+      },
+    }) => {
+      noStore()
+      if (!id) throw new Error("id is required")
+      await db
+        .update(students)
+        .set({
+          name,
+          projectId,
+          gender,
+          dateOfBirth: format(dateOfBirth, "yyyy-MM-dd"),
+          status,
+          fatherName,
+          phone,
+          description,
+          address,
+          motherName,
+          registrationDate: format(registrationDate, "yyyy-MM-dd"),
+        })
+        .where(eq(students.id, id))
+      revalidatePath("/students")
+    }
+  )

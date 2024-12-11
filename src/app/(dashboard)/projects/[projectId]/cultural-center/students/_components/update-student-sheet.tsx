@@ -31,6 +31,7 @@ export function UpdateStudentSheet({
     resolver: zodResolver(createStudentSchema),
     defaultValues: {},
   })
+  console.log(student)
 
   React.useEffect(() => {
     form.reset({

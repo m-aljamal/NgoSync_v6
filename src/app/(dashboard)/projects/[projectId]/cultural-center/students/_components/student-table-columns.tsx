@@ -2,11 +2,11 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { type Student } from "@/db/schemas/student"
+import { students, type Student } from "@/db/schemas/student"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
-import { formatDate } from "date-fns"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -18,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
+import { studentStatusTranslation } from "@/app/_lib/translate"
 
 import { DeleteStudentsDialog } from "./delete-student-dialog"
 import { UpdateStudentSheet } from "./update-student-sheet"
@@ -65,40 +66,34 @@ export function getColumns(): ColumnDef<Student>[] {
       enableSorting: false,
       enableHiding: false,
     },
-
-    // {
-    //   accessorKey: "status",
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader column={column} title="الحالة" />
-    //   ),
-    //   cell: ({ row }) => {
-    //     const status = doners.status.enumValues.find(
-    //       (status) => status === row.original.status
-    //     )
-
-    //     if (!status) return null
-
-    //     return <Badge variant={status}>{donerStatusTranslation[status]}</Badge>
-    //   },
-    //   filterFn: (row, id, value) => {
-    //     return Array.isArray(value) && value.includes(row.getValue(id))
-    //   },
-    // },
-
-    // {
-    //   accessorKey: "projectName",
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader column={column} title="المشروع" />
-    //   ),
-    // },
+    {
+      accessorKey: "fatherName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="اسم الأب" />
+      ),
+    },
 
     {
-      accessorKey: "createdAt",
+      accessorKey: "status",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="تاريخ الانشاء" />
+        <DataTableColumnHeader column={column} title="الحالة" />
       ),
-      cell: ({ cell }) => formatDate(cell.getValue() as Date, "dd-MM-yyyy"),
+      cell: ({ row }) => {
+        const status = students.status.enumValues.find(
+          (status) => status === row.original.status
+        )
+
+        if (!status) return null
+
+        return (
+          <Badge variant={status}>{studentStatusTranslation[status]}</Badge>
+        )
+      },
+      filterFn: (row, id, value) => {
+        return Array.isArray(value) && value.includes(row.getValue(id))
+      },
     },
+
     {
       id: "actions",
       cell: function Cell({ row }) {

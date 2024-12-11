@@ -17,21 +17,27 @@ export const students = pgTable("students", {
   id: varchar("id", { length: 30 })
     .$defaultFn(() => generateId())
     .primaryKey(),
+  name: varchar("name", { length: 120 }).notNull(),
+  fatherName: varchar("father_name", { length: 120 }).notNull(),
+  motherName: varchar("mother_name", { length: 120 }).notNull(),
   projectId: varchar("project_id", { length: 30 })
     .references(() => projects.id)
     .notNull(),
-  name: varchar("name", { length: 120 }).notNull(),
+
   status: studentStatus("student_status").notNull(),
+
   gender: genders("genders").notNull(),
+
   phone: varchar("phone", { length: 20 }).notNull(),
-  description: varchar("description", { length: 200 }),
+
   address: varchar("address", { length: 200 }),
 
   dateOfBirth: date("date")
     .notNull()
     .default(sql`CURRENT_DATE`),
-  fatherName: varchar("father_name", { length: 120 }).notNull(),
-  motherName: varchar("mother_name", { length: 120 }).notNull(),
+
+  description: varchar("description", { length: 200 }),
+
   registrationDate: date("registration_date")
     .default(sql`CURRENT_DATE`)
     .notNull(),

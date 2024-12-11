@@ -7,6 +7,7 @@ import type {
   projectsTransactions,
 } from "@/db/schemas"
 import { type loans } from "@/db/schemas/loan"
+import { students } from "@/db/schemas/student"
 
 export const projectStatusTranslation: Record<
   typeof projects.$inferSelect.status,
@@ -75,6 +76,14 @@ export const employeeStatusTranslation: Record<
 > = {
   active: "نشط",
   inactive: "غير نشط",
+}
+export const studentStatusTranslation: Record<
+  typeof students.$inferSelect.status,
+  string
+> = {
+  active: "نشط",
+  inactive: "غير نشط",
+  graduated: "متخرج",
 }
 
 export const employeePosisionTranslation: Record<

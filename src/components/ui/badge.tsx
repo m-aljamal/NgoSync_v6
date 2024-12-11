@@ -40,6 +40,7 @@ const badgeVariants = cva(
         debt: colorSchemes.red,
         active: colorSchemes.green,
         inactive: colorSchemes.red,
+        graduated: colorSchemes.blue,
         pending: colorSchemes.yellow,
         approved: colorSchemes.green,
         rejected: colorSchemes.red,

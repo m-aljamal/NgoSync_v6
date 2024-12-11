@@ -27,7 +27,6 @@ export async function getStudents(input: GetSearchSchema, projectId?: string) {
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
-      projectId ? eq(students.projectId, projectId) : undefined,
       name
         ? filterColumn({
             column: students.name,
@@ -52,7 +51,6 @@ export async function getStudents(input: GetSearchSchema, projectId?: string) {
         .limit(per_page)
         .offset(offset)
         .where(where)
-
         .orderBy(
           column && column in students
             ? order === "asc"
