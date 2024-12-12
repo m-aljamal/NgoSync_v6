@@ -3,9 +3,25 @@ import "server-only"
 import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
+import {
+  currencies,
+  expensesCategories,
+  projectsTransactions,
+} from "@/db/schemas"
 import { projects, type Project } from "@/db/schemas/project"
 import { type DrizzleWhere } from "@/types"
-import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  gte,
+  lte,
+  or,
+  sql,
+  type SQL,
+} from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -117,3 +133,69 @@ export const getProject = cache(async ({ id }: { id: string }) => {
     return null
   }
 })
+
+export const getProjectRemainingBudget = cache(async (projectId: string) => {
+  if (!projectId) return undefined
+  try {
+    return await db
+      .select({
+        amount: sql<number>`SUM(${projectsTransactions.amount})`,
+        currency: currencies.code,
+      })
+      .from(projectsTransactions)
+      .where(eq(projectsTransactions.projectId, projectId))
+      .innerJoin(currencies, eq(projectsTransactions.currencyId, currencies.id))
+      .groupBy(currencies.code)
+  } catch (error) {
+    throw new Error("Error fetching project remaining budget")
+  }
+})
+
+interface ProjectExpensesByMonth {
+  projectId: string
+  currencyCode?: string
+  month: string | undefined
+}
+
+export const getProjectExpensesByMonth = cache(
+  async ({ projectId, currencyCode, month }: ProjectExpensesByMonth) => {
+    if (!projectId) return undefined
+    try {
+      return await db
+        .select({
+          month: sql<number>`EXTRACT(MONTH FROM ${projectsTransactions.date})::integer`,
+          amount: sql<number>`SUM(ABS(${projectsTransactions.amount}))`,
+          amountInUSD: sql<number>`SUM(ABS(${projectsTransactions.amountInUSD}))`,
+          currency: currencies.code,
+          expensesCategory: expensesCategories.name,
+        })
+        .from(projectsTransactions)
+        .innerJoin(
+          currencies,
+          eq(projectsTransactions.currencyId, currencies.id)
+        )
+        .leftJoin(
+          expensesCategories,
+          eq(projectsTransactions.expensesCategoryId, expensesCategories.id)
+        )
+        .groupBy(
+          sql`EXTRACT(MONTH FROM ${projectsTransactions.date})::integer`,
+          currencies.code,
+          expensesCategories.name
+        )
+        .where(
+          and(
+            eq(projectsTransactions.projectId, projectId),
+            eq(projectsTransactions.type, "outcome"),
+            month
+              ? sql`EXTRACT(MONTH FROM ${projectsTransactions.date})::integer = ${parseInt(month, 10)}`
+              : undefined,
+            currencyCode ? eq(currencies.code, currencyCode) : undefined
+          )
+        )
+    } catch (error) {
+      console.log(error)
+      throw new Error("Error fetching project expenses by month")
+    }
+  }
+)
