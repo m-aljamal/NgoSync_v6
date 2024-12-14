@@ -1,4 +1,4 @@
-import { getProject, getProjectExpensesByMonth, getProjectRemainingBudget } from '@/app/_lib/queries/projects'
+import { getEmployeesCounts, getProject, getProjectExpensesByMonth, getProjectMonthlyExpenses, getProjectRemainingBudget } from '@/app/_lib/queries/projects'
 import { notFound } from 'next/navigation'
 import React from 'react'
 
@@ -27,8 +27,18 @@ import React from 'react'
    projectId: project.id,
    month: searchParams?.month,
  })) || [];
+
+ const employeesCounts = await getEmployeesCounts({
+  projectId: project.id,
+});
  
-  console.log(expensesByMonth);
+
+const monthlyExpenses = (await getProjectMonthlyExpenses(project.id)) || [];
+
+
+console.log(monthlyExpenses);
+
+  
   
   return (
     <div>pageddddddddd</div>

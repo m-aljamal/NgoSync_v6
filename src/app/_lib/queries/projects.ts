@@ -5,6 +5,7 @@ import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import {
   currencies,
+  employees,
   expensesCategories,
   projectsTransactions,
 } from "@/db/schemas"
@@ -199,3 +200,49 @@ export const getProjectExpensesByMonth = cache(
     }
   }
 )
+
+export const getEmployeesCounts = cache(
+  async ({ projectId }: { projectId?: string }) => {
+    try {
+      const [data] = await db
+        .select({
+          total: sql<number>`count(*)`,
+          male: sql<number>`sum(case when ${employees.gender} = 'male' then 1 else 0 end)`,
+          female: sql<number>`sum(case when ${employees.gender} = 'female' then 1 else 0 end)`,
+        })
+        .from(employees)
+        .where(projectId ? eq(employees.projectId, projectId) : undefined)
+      return data
+    } catch (error) {
+      console.error(error)
+    }
+  }
+)
+
+export const getProjectMonthlyExpenses = cache(async (projectId: string) => {
+  if (!projectId) return undefined
+  try {
+    return await db
+      .select({
+        month: sql<number>`EXTRACT(MONTH FROM ${projectsTransactions.date})::integer`,
+        amount: sql<number>`SUM(ABS(${projectsTransactions.amount}))`,
+        amountInUSD: sql<number>`SUM(ABS(${projectsTransactions.amountInUSD}))`,
+        currency: currencies.code,
+      })
+      .from(projectsTransactions)
+      .innerJoin(currencies, eq(projectsTransactions.currencyId, currencies.id))
+      .groupBy(
+        sql`EXTRACT(MONTH FROM ${projectsTransactions.date})::integer`,
+        currencies.code
+      )
+      .where(
+        and(
+          eq(projectsTransactions.projectId, projectId),
+          eq(projectsTransactions.type, "outcome")
+        )
+      )
+  } catch (error) {
+    console.error("Error fetching project monthly expenses:", error)
+    throw new Error("Error fetching project monthly expenses")
+  }
+})
