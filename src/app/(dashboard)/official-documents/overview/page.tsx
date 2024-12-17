@@ -9,15 +9,12 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import CardSelect from "@/components/CardSelect"
-import { getOfficialMonthlyAccountSummary } from "@/app/_lib/queries/project-transactions"
 
 async function Overview() {
-  const monthlySummary = await getOfficialMonthlyAccountSummary()
-
   return (
     <div className="grid items-start gap-6 space-y-5 rounded-lg lg:grid-cols-2 xl:grid-cols-2">
       <div className="col-span-2 grid items-start gap-6 xl:col-span-3">
-        <Card>
+        {/* <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle> التحويل / المصروف</CardTitle>
@@ -28,7 +25,7 @@ async function Overview() {
             <CardSelect items={months} name="month" />
           </CardHeader>
           <CardContent></CardContent>
-        </Card>
+        </Card> */}
       </div>
     </div>
   )

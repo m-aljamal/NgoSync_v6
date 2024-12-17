@@ -283,27 +283,4 @@ export async function getProjectIncome(
   }
 }
 
-export const getOfficialMonthlyAccountSummary = cache(
-  async (month: string | undefined = format(new Date(), "MM")) => {
-    try {
-      return await db
-        .select
-        //   {
-        //   id: projects.id,
-        //   project: projects.name,
-        //   projectId: projectsTransactions.projectId,
-        //   month: sql<number>`strftime('%m', ${projectsTransactions.date})`,
-        //   totalTransfer: sql<number>`COALESCE(SUM(CASE WHEN ${projectsTransactions.type} = 'income' AND ${projectsTransactions.category} = 'TRANSFER_FROM_FUND' THEN ${projectsTransactions.officialAmount} ELSE 0 END), 0)`,
-        //   totalExpenses: sql<number>`COALESCE(SUM(CASE WHEN ${projectsTransactions.type} = 'outcome' AND ${projectsTransactions.category} = 'EXPENSE' THEN ABS(${projectsTransactions.officialAmount}) ELSE 0 END), 0)`,
-        //   difference: sql<number>`COALESCE(SUM(CASE WHEN ${projectsTransactions.type} = 'income' AND ${projectsTransactions.category} = 'TRANSFER_FROM_FUND' THEN ${projectsTransactions.officialAmount} ELSE 0 END), 0) - COALESCE(SUM(CASE WHEN ${projectsTransactions.type} = 'outcome' AND ${projectsTransactions.category} = 'expense' THEN ABS(${projectsTransactions.officialAmount}) ELSE 0 END), 0)`,
-        // }
-        ()
-        .from(projectsTransactions)
-        .where(eq(projectsTransactions.isOfficial, true))
-        .innerJoin(projects, eq(projects.id, projectsTransactions.projectId))
-        .groupBy(projectsTransactions.projectId, projects.name)
-    } catch (error) {
-      return []
-    }
-  }
-)
+ 
