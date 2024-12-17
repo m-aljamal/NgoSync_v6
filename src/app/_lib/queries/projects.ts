@@ -246,3 +246,75 @@ export const getProjectMonthlyExpenses = cache(async (projectId: string) => {
     throw new Error("Error fetching project monthly expenses")
   }
 })
+
+export const getProjectMonthlyIncome = cache(async (projectId: string) => {
+  if (!projectId) return undefined
+  try {
+    return await db
+      .select({
+        month: sql<number>`EXTRACT(MONTH FROM ${projectsTransactions.date})::integer`,
+        amount: sql<number>`SUM(ABS(${projectsTransactions.amount}))`,
+        amountInUSD: sql<number>`SUM(ABS(${projectsTransactions.amountInUSD}))`,
+        currency: currencies.code,
+      })
+      .from(projectsTransactions)
+      .innerJoin(currencies, eq(projectsTransactions.currencyId, currencies.id))
+      .groupBy(
+        sql`EXTRACT(MONTH FROM ${projectsTransactions.date})::integer`,
+        currencies.code
+      )
+      .where(
+        and(
+          eq(projectsTransactions.projectId, projectId),
+          eq(projectsTransactions.type, "income")
+        )
+      )
+  } catch (error) {
+    console.error("Error fetching project monthly income:", error)
+    throw new Error("Error fetching project monthly income")
+  }
+})
+
+export const getProjectTotalSummary = cache(
+  async ({
+    projectId,
+    type,
+  }: {
+    projectId: string
+    type: typeof projectsTransactions.$inferSelect.type
+  }) => {
+    if (!projectId) return undefined
+    try {
+      const totals = await db
+        .select({
+          amount: sql<number>`SUM(ABS(${projectsTransactions.amount}))`,
+          amountInUSD: sql<number>`SUM(ABS(${projectsTransactions.amountInUSD}))`,
+          currency: currencies.code,
+        })
+        .from(projectsTransactions)
+        .innerJoin(
+          currencies,
+          eq(projectsTransactions.currencyId, currencies.id)
+        )
+        .where(
+          and(
+            eq(projectsTransactions.projectId, projectId),
+            eq(projectsTransactions.type, type)
+          )
+        )
+        .groupBy(currencies.code)
+
+      const totalUSD = totals.reduce(
+        (sum, { amountInUSD }) => +sum + +amountInUSD,
+        0
+      )
+
+      return {
+        totalCurrencies: totals,
+        totalUSD,
+      }
+    } catch (error) {
+      throw new Error("Error fetching project total summary")
+    }
+  }
+)
