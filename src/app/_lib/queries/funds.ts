@@ -196,7 +196,7 @@ export const getFundPageTransactions = cache(
 )
 
 export const getFundAccountSummary = cache(async (fundId: string) => {
-  noStore()
+  // noStore()
   try {
     return await db
       .select({
@@ -206,7 +206,6 @@ export const getFundAccountSummary = cache(async (fundId: string) => {
         totalIncome: sql<number>`COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'income' THEN ${fundTransactions.amount} ELSE 0 END), 0)`,
         totalExpenses: sql<number>`COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'outcome' THEN ABS(${fundTransactions.amount}) ELSE 0 END), 0)`,
         difference: sql<number>`COALESCE(SUM(${fundTransactions.amount}), 0)`,
-        // differenceOld: sql<number>`COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'income' THEN ${fundTransactions.amount} ELSE 0 END), 0) - COALESCE(SUM(CASE WHEN ${fundTransactions.type} = 'outcome' THEN ABS(${fundTransactions.amount}) ELSE 0 END), 0)`,
       })
       .from(fundTransactions)
       .where(eq(fundTransactions.fundId, fundId))
@@ -214,7 +213,6 @@ export const getFundAccountSummary = cache(async (fundId: string) => {
       .groupBy(currencies.code, currencies.id)
   } catch (error) {
     console.log(error)
-
     throw new Error("Error fetching fund account summary")
   }
 })
