@@ -34,7 +34,6 @@ interface CreateProposalFormProps
   children: React.ReactNode
   form: UseFormReturn<CreateProposalSchema>
   onSubmit: (data: CreateProposalSchema) => void
-  isUpdate?: boolean
 }
 
 export function ProposalForm({

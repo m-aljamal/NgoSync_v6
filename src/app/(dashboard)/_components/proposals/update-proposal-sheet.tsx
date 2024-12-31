@@ -42,7 +42,7 @@ export function UpdateProposalSheet({
       })) || [],
     [data]
   )
-
+ 
   const defaultValues: CreateProposalSchema = React.useMemo(() => {
     return {
       id: proposal.id,
@@ -86,7 +86,7 @@ export function UpdateProposalSheet({
   }
   return (
     <UpdateSheet {...props}>
-      <ProposalForm form={form} onSubmit={onSubmit} isUpdate>
+      <ProposalForm form={form} onSubmit={onSubmit}  >
         <UpdateButtons isExecuting={isExecuting} />
       </ProposalForm>
     </UpdateSheet>

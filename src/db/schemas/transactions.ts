@@ -138,8 +138,8 @@ export const projectsTransactions = pgTable("projects_transactions", {
     () => expensesCategories.id
   ),
   date: date("date")
-  .notNull()
-  .default(sql`CURRENT_DATE`),
+    .notNull()
+    .default(sql`CURRENT_DATE`),
   // date: timestamp("date", { mode: "string", withTimezone: true })
   //   .notNull()
   //   .defaultNow(),
@@ -220,3 +220,7 @@ export const expensesCategoriesRelations = relations(
 
 export type ExpensesCategory = typeof expensesCategories.$inferSelect
 export type NewExpensesCategory = typeof expensesCategories.$inferInsert
+export type ExpensesCategoryWithRelation =
+  typeof expensesCategories.$inferSelect & {
+    projectName: string
+  }

@@ -87,6 +87,7 @@ export async function getProposals(input: GetSearchSchema, projectId?: string) {
         .where(where)
         .innerJoin(projects, eq(proposals.projectId, projects.id))
         .innerJoin(currencies, eq(proposals.currencyId, currencies.id))
+
         .orderBy(
           column && column in proposals
             ? order === "asc"

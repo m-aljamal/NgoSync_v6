@@ -1,6 +1,6 @@
 "use client"
 
-import { type ExpensesCategory } from "@/db/schemas/transactions"
+import { type ExpensesCategoryWithRelation } from "@/db/schemas/transactions"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
@@ -11,7 +11,7 @@ import { CreateExpenseCategoryDialog } from "./create-expense-dialog"
 import { DeleteExpenseCategoryDialog } from "./delete-expense-category-dialog"
 
 interface ExpenseCategoryTableToolbarActionsProps {
-  table: Table<ExpensesCategory>
+  table: Table<ExpensesCategoryWithRelation>
 }
 
 export function ExpenseCategoryTableToolbarActions({

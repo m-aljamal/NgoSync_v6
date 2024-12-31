@@ -154,11 +154,19 @@ export async function getExpensesCategories(input: GetSearchSchema) {
 
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
-        .select()
+        .select({
+          id: expensesCategories.id,
+          name: expensesCategories.name,
+          projectName: projects.name,
+          createdAt: expensesCategories.createdAt,
+          updatedAt: expensesCategories.updatedAt,
+          projectId: expensesCategories.projectId,
+        })
         .from(expensesCategories)
         .limit(per_page)
         .offset(offset)
         .where(where)
+        .innerJoin(projects, eq(projects.id, expensesCategories.projectId))
         .orderBy(
           column && column in expensesCategories
             ? order === "asc"
@@ -282,5 +290,3 @@ export async function getProjectIncome(
     return { data: [], pageCount: 0 }
   }
 }
-
- 

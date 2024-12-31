@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { type ExpensesCategory } from "@/db/schemas/transactions"
+import { type ExpensesCategoryWithRelation } from "@/db/schemas/transactions"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "date-fns"
@@ -21,7 +21,7 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 import { DeleteExpenseCategoryDialog } from "./delete-expense-category-dialog"
 import { UpdateExpenseCategorySheet } from "./update-expense-category-sheet"
 
-export function getColumns(): ColumnDef<ExpensesCategory>[] {
+export function getColumns(): ColumnDef<ExpensesCategoryWithRelation>[] {
   return [
     {
       id: "select",
@@ -59,6 +59,12 @@ export function getColumns(): ColumnDef<ExpensesCategory>[] {
       ),
       enableSorting: false,
       enableHiding: false,
+    },
+    {
+      accessorKey: "projectName",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="المشروع" />
+      ),
     },
 
     {

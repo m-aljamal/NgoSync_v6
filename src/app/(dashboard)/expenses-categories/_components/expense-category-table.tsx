@@ -1,8 +1,7 @@
 "use client"
-"use memo"
 
 import * as React from "react"
-import { type Fund } from "@/db/schemas/fund"
+import { type ExpensesCategoryWithRelation } from "@/db/schemas"
 import { type DataTableFilterField } from "@/types"
 
 import { useDataTable } from "@/hooks/use-data-table"
@@ -24,7 +23,7 @@ export function ExpenseCategoriesTable({
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<Fund>[] = [
+  const filterFields: DataTableFilterField<ExpensesCategoryWithRelation>[] = [
     {
       label: "Name",
       value: "name",
