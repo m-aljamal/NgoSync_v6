@@ -1,9 +1,8 @@
- import { currentUser } from './_lib/auth';
+import Hero from "./_components/landing-page"
+import { currentUser } from "./_lib/auth"
 
 export default async function page() {
-  const user = await currentUser();
+  const user = await currentUser()
  
-  return (
-    <div>page</div>
-  )
+  return <Hero role={user?.role} />
 }

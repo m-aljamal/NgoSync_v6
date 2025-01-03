@@ -16,9 +16,9 @@ import {
 
 import { icons } from "./icons"
 import MobileNavigation from "./mobile-navigation"
-import { routes } from "./routes"
+import { type Route } from "./routes"
 
-export default function Navigation() {
+export default function Navigation({ routes }: { routes: Route[] }) {
   const isMobile = useMedia("(max-width: 1024px)", false)
 
   const isActive = (route: (typeof routes)[0]) => {

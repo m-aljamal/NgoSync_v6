@@ -69,7 +69,7 @@ export const filterRoutesByRole = async (routes: Route[]) => {
   })
 }
 
-export const filterPageLinksByRole = async (routes: PageLinks) => {
+export const filterPageLinksByRole = async (routes: Route[]) => {
   const role = await currentRole()
   if (!role) redirect("/auth/login")
 
