@@ -1,12 +1,14 @@
- import { type SidebarLinks } from "@/types"
+import { type SidebarLinks } from "@/types"
 
 import AppSidebar from "@/components/app-sidebar"
- 
+import { adminRouteProtection } from "@/app/_lib/auth"
+
 interface Props {
   children: React.ReactNode
 }
 
 export default async function layout({ children }: Props) {
+  await adminRouteProtection()
   const links: SidebarLinks = [
     {
       groupName: "التوثيق الرسمي",

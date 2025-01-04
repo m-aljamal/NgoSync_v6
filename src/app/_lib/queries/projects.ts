@@ -26,6 +26,7 @@ import {
 
 import { filterColumn } from "@/lib/filter-column"
 
+import { currentUser } from "../auth"
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
@@ -33,7 +34,7 @@ export const getProjects = cache(async (input: GetSearchSchema) => {
   noStore()
   const { page, per_page, sort, name, status, operator, from, to, system } =
     input
-
+  const user = await currentUser()
   try {
     const offset = calculateOffset(page, per_page)
 
@@ -45,6 +46,9 @@ export const getProjects = cache(async (input: GetSearchSchema) => {
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
+      user && user.role === "project_manager" && user.id
+        ? eq(projects.userId, user.id)
+        : undefined,
       name
         ? filterColumn({
             column: projects.name,

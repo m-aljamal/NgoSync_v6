@@ -1,3 +1,4 @@
+import { signOut } from "@/auth"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -27,7 +28,7 @@ export async function UserNav({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-40" align="end" forceMount>
-          {/* <DropdownMenuItem asChild>
+          <DropdownMenuItem asChild>
           <form
             action={async () => {
               "use server"
@@ -44,7 +45,7 @@ export async function UserNav({
               تسجيل الخروج
             </Button>
           </form>
-        </DropdownMenuItem> */}
+        </DropdownMenuItem>
           <DropdownMenuItem>Profile</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
