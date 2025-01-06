@@ -2,7 +2,7 @@ import React from "react"
 import { notFound } from "next/navigation"
 import { Users } from "lucide-react"
 
-import { cn, formatCurrency, months } from "@/lib/utils"
+import { cn, formatCurrency,   } from "@/lib/utils"
 import {
   Card,
   CardContent,
@@ -15,17 +15,16 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card"
-import CardSelect from "@/components/CardSelect"
-import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import {
   getEmployeesCounts,
   getProject,
-  getProjectExpensesByMonth,
-  getProjectMonthlyExpenses,
-  getProjectMonthlyIncome,
   getProjectRemainingBudget,
   getProjectTotalSummary,
 } from "@/app/_lib/queries/projects"
+
+import ExpensesMonthlyTotal from "./_components/expenses-monthly-total"
+import ExpensesStatistics from "./_components/expenses-statistics"
+import IncomeStatistics from "./_components/income-statistics"
 
 export default async function Project({
   params,
@@ -47,19 +46,9 @@ export default async function Project({
 
   const remainigBudget = await getProjectRemainingBudget(project.id)
 
-  const expensesByMonth =
-    (await getProjectExpensesByMonth({
-      projectId: project.id,
-      month: searchParams?.month,
-    })) || []
-
   const employeesCounts = await getEmployeesCounts({
     projectId: project.id,
   })
-
-  const monthlyExpenses = (await getProjectMonthlyExpenses(project.id)) || []
-
-  const monthlyIncome = (await getProjectMonthlyIncome(project.id)) || []
 
   const totalIncome = await getProjectTotalSummary({
     projectId: project.id,
@@ -126,151 +115,87 @@ export default async function Project({
             </CardContent>
           </Card>
         </div>
-        <div className="mt-8 grid items-start gap-6 rounded-lg lg:grid-cols-2 xl:grid-cols-2">
-          <div className="col-span-2 grid items-start gap-6 xl:col-span-1">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                  <CardTitle>المصروف الشهري</CardTitle>
-                  <CardDescription className="mt-1">
-                    تفاصيل المصروفات الشهرية
-                  </CardDescription>
-                </div>
-                <CardSelect
-                  items={[{ label: "ALL", value: "ALL" }, ...months]}
-                  name="month"
-                />
-              </CardHeader>
-              <CardContent>
-                <React.Suspense
-                  fallback={
-                    <DataTableSkeleton
-                      columnCount={2}
-                      searchableColumnCount={1}
-                      filterableColumnCount={2}
-                      cellWidths={["10rem", "12rem", "12rem", "8rem"]}
-                      shrinkZero
-                    />
-                  }
-                />
-                {/* <DataTable
-                    columns={expensesByMonthColumns}
-                    data={expensesByMonth}
-                    basic={true}
-                  /> */}
-              </CardContent>
-            </Card>
-          </div>
-          <div className="col-span-2 grid items-start gap-6 xl:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle> مجموع الإنفاق</CardTitle>
-                <CardDescription className="mt-1">
-                  تفاصيل الإنفاق الشهري
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* <DataTable
-                    columns={monthlyExpensesColumns}
-                    data={monthlyExpenses}
-                    basic={true}
-                  /> */}
-              </CardContent>
-            </Card>
-          </div>
-          <div className="col-span-2 grid items-start gap-6 xl:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle>الواردات</CardTitle>
-                <CardDescription className="mt-1">
-                  تفاصيل الواردات الشهرية
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* <DataTable
-                    columns={monthlyIncomeColumns}
-                    data={monthlyIncome}
-                    basic={true}
-                  /> */}
-              </CardContent>
-            </Card>
-          </div>
-          <div className="col-span-2 grid items-start gap-6 xl:col-span-1">
-            <Card>
-              <CardHeader>
-                <CardTitle>إجمالي الإيرادات / المصروفات</CardTitle>
-                <CardDescription>
-                  تفاصيل الإيرادات والمصروفات الشهرية
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <div className="flex justify-between border-t py-3">
-                      <p>إجمالي الواردات</p>
-                      <p>{formatCurrency(totalIncome?.totalUSD || 0, "USD")}</p>
-                    </div>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-80">
-                    <div className="">
-                      <p className="py-3 font-semibold">تفاصيل الواردات </p>
-                      {totalIncome?.totalCurrencies.map((item) => (
-                        <div
-                          className="flex gap-5 border-t py-3"
-                          key={item.currency}
-                        >
-                          <p>{item.currency}: </p>
-                          <p>{formatCurrency(item.amount, item.currency)}</p>
-                          {item.currency !== "USD" && (
-                            <>
-                              <p>يعادل</p>
-                              <p>{formatCurrency(item.amountInUSD, "USD")}</p>
-                            </>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>
-                <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <div className="flex justify-between border-t py-3">
-                      <p>إجمالي المصروفات</p>
-                      <p>
-                        {formatCurrency(totalExpenses?.totalUSD || 0, "USD")}
-                      </p>
-                    </div>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-80">
-                    <div>
-                      <p className="py-3 font-semibold">تفاصيل المصروفات </p>
-                      {totalExpenses?.totalCurrencies.map((item) => (
-                        <div
-                          className="flex gap-5 border-t py-3"
-                          key={item.currency}
-                        >
-                          <p>{item.currency}: </p>
-                          <p>{formatCurrency(item.amount, item.currency)}</p>
-                          {item.currency !== "USD" && (
-                            <>
-                              <p>يعادل</p>
-                              <p>{formatCurrency(item.amountInUSD, "USD")}</p>
-                            </>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>
-                <div className="flex justify-between border-t py-3 font-bold">
-                  <p>الرصيد</p>
-                  <p className={cn(balance < 0 && "text-red-500")}>
-                    {formatCurrency(balance, "USD")}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+
+        <ExpensesStatistics
+          projectId={project.id}
+          month={searchParams?.month}
+        />
+        <ExpensesMonthlyTotal projectId={project.id} />
+        <IncomeStatistics projectId={project.id} />
+
+        <div className="col-span-2 grid items-start gap-6 xl:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle>إجمالي الإيرادات / المصروفات</CardTitle>
+              <CardDescription>
+                تفاصيل الإيرادات والمصروفات الشهرية
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <div className="flex justify-between border-t py-3">
+                    <p>إجمالي الواردات</p>
+                    <p>{formatCurrency(totalIncome?.totalUSD || 0, "USD")}</p>
+                  </div>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-80">
+                  <div className="">
+                    <p className="py-3 font-semibold">تفاصيل الواردات </p>
+                    {totalIncome?.totalCurrencies.map((item) => (
+                      <div
+                        className="flex gap-5 border-t py-3"
+                        key={item.currency}
+                      >
+                        <p>{item.currency}: </p>
+                        <p>{formatCurrency(item.amount, item.currency)}</p>
+                        {item.currency !== "USD" && (
+                          <>
+                            <p>يعادل</p>
+                            <p>{formatCurrency(item.amountInUSD, "USD")}</p>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <div className="flex justify-between border-t py-3">
+                    <p>إجمالي المصروفات</p>
+                    <p>{formatCurrency(totalExpenses?.totalUSD || 0, "USD")}</p>
+                  </div>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-80">
+                  <div>
+                    <p className="py-3 font-semibold">تفاصيل المصروفات </p>
+                    {totalExpenses?.totalCurrencies.map((item) => (
+                      <div
+                        className="flex gap-5 border-t py-3"
+                        key={item.currency}
+                      >
+                        <p>{item.currency}: </p>
+                        <p>{formatCurrency(item.amount, item.currency)}</p>
+                        {item.currency !== "USD" && (
+                          <>
+                            <p>يعادل</p>
+                            <p>{formatCurrency(item.amountInUSD, "USD")}</p>
+                          </>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+              <div className="flex justify-between border-t py-3 font-bold">
+                <p>الرصيد</p>
+                <p className={cn(balance < 0 && "text-red-500")}>
+                  {formatCurrency(balance, "USD")}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </>
