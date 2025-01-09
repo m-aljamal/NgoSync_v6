@@ -10,7 +10,6 @@ import { Tajawal } from "next/font/google"
 import { QueryProvider } from "@/providers/query-provider"
 import { SheetProvider } from "@/providers/sheet-provider"
 
-import { fontMono } from "@/lib/fonts"
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
