@@ -33,6 +33,7 @@ export function EmployeeForm({
 
   const { data: employees, isLoading: employeesLoading } =
     useGetEmployees(projectId)
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -40,7 +41,7 @@ export function EmployeeForm({
           <Controller
             name="teachers"
             control={form.control}
-            render={({ field: { onChange }, fieldState: { error } }) => {
+            render={({ field: { onChange, value }, fieldState: { error } }) => {
               return (
                 <FormField
                   control={form.control}
@@ -56,8 +57,14 @@ export function EmployeeForm({
                             value: teacher.id,
                             label: teacher.name,
                           }))}
+                          value={employees?.filter((teacher) => 
+                            value?.includes(teacher.id)
+                          ).map((teacher) => ({
+                            value: teacher.id,
+                            label: teacher.name,
+                          }))}
                           onChange={(val) =>
-                            onChange(val.map((v) => ({ employeeId: v.value })))
+                            onChange(val.map((v) => v.value))
                           }
                         />
                       </FormControl>
@@ -74,3 +81,4 @@ export function EmployeeForm({
     </Form>
   )
 }
+

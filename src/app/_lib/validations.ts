@@ -226,11 +226,7 @@ export type CreateEmployeeSchema = z.infer<typeof createEmployeeSchema>
 
 export const createEmployeesToCourses = z.object({
   courseId: z.string().min(2),
-  teachers: z.array(
-    z.object({
-      employeeId: z.string().min(2),
-    })
-  ),
+  teachers: z.array(z.string().min(2)),
 })
 
 export type CreateEmployeesToCourses = z.infer<typeof createEmployeesToCourses>

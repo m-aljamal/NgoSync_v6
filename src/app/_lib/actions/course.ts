@@ -2,12 +2,16 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { courses } from "@/db/schemas/course"
+import { courses, teachersToCourses } from "@/db/schemas/course"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { actionClient } from "../safe-action"
-import { createCourseSchema, createEmployeesToCourses, deleteArraySchema } from "../validations"
+import {
+  createCourseSchema,
+  createEmployeesToCourses,
+  deleteArraySchema,
+} from "../validations"
 
 export const deleteCourses = actionClient
   .schema(deleteArraySchema, {
@@ -59,17 +63,20 @@ export const updateCourse = actionClient
     }
   )
 
-
-
-  export const addEmployeesToCourses = actionClient
+export const addEmployeesToCourses = actionClient
   .schema(createEmployeesToCourses, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
-  .action(async ({ parsedInput: { courseId,teachers  } }) => {
+  .action(async ({ parsedInput: { courseId, teachers } }) => {
     noStore()
 
-     console.log({courseId,teachers});
-     
+    const valuesToInsert = teachers.map((teacherId) => ({
+      teacherId,
+      courseId,
+    }))
+
+    await db.insert(teachersToCourses).values(valuesToInsert)
+
     revalidatePath("/courses")
   })
