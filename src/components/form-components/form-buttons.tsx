@@ -12,7 +12,7 @@ export default function FormButtons({ isExecuting }: { isExecuting: boolean }) {
 
   if (isDesktop)
     return (
-      <DialogFooter className="my-5 ">
+      <DialogFooter className="my-5 mt-8">
         <Button disabled={isExecuting}>
           {isExecuting && (
             <ReloadIcon

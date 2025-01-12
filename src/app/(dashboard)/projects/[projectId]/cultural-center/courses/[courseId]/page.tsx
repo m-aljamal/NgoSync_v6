@@ -17,6 +17,8 @@ import { Shell } from "@/components/shell"
 import { getCourse, getCourses } from "@/app/_lib/queries/course"
 import { searchParamsSchema } from "@/app/_lib/validations"
 
+import TeachersList from "./_components/teachers"
+
 export default async function Course({
   params,
 }: {
@@ -45,7 +47,9 @@ export default async function Course({
             />
           }
         >
-          
+          <div className="space-y-4">
+            <TeachersList courseId={params.courseId}/>
+          </div>
         </React.Suspense>
       </Shell>
     </div>

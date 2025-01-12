@@ -63,6 +63,7 @@ export function DonerForm({ form, onSubmit, children }: CreateDonerFormProps) {
                     value: gender,
                     label: genderTranslation[gender],
                   }))}
+                  
                   placeholder="الجنس"
                 />
 

@@ -7,7 +7,7 @@ import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { actionClient } from "../safe-action"
-import { createCourseSchema, deleteArraySchema } from "../validations"
+import { createCourseSchema, createEmployeesToCourses, deleteArraySchema } from "../validations"
 
 export const deleteCourses = actionClient
   .schema(deleteArraySchema, {
@@ -58,3 +58,18 @@ export const updateCourse = actionClient
       revalidatePath("/courses")
     }
   )
+
+
+
+  export const addEmployeesToCourses = actionClient
+  .schema(createEmployeesToCourses, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { courseId,teachers  } }) => {
+    noStore()
+
+     console.log({courseId,teachers});
+     
+    revalidatePath("/courses")
+  })

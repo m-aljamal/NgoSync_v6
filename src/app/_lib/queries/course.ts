@@ -3,7 +3,8 @@ import "server-only"
 import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { courses, type Course } from "@/db/schemas/course"
+import { employees } from "@/db/schemas"
+import { courses, teachersToCourses, type Course } from "@/db/schemas/course"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 
@@ -93,5 +94,25 @@ export const getCourse = cache(async ({ courseId }: { courseId: string }) => {
     return course
   } catch (error) {
     return null
+  }
+})
+
+export type TeachersList = {
+  name: string | null
+}
+
+export const getTeachers = cache(async ({ courseId }: { courseId: string }) => {
+  try {
+    const teachers = await db
+      .select({
+        name: employees.name,
+      })
+      .from(teachersToCourses)
+      .where(eq(teachersToCourses.courseId, courseId))
+      .leftJoin(employees, eq(teachersToCourses.teacherId, employees.id))
+
+    return teachers
+  } catch (error) {
+    return []
   }
 })
