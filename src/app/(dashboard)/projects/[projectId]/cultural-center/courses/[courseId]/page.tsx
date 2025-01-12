@@ -1,42 +1,39 @@
 import React from "react"
 import { type SearchParams } from "@/types"
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { DataTable } from "@/components/data-table/data-table"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getCourses } from "@/app/_lib/queries/course"
+import { getCourse, getCourses } from "@/app/_lib/queries/course"
 import { searchParamsSchema } from "@/app/_lib/validations"
 
-import { CoursesTable } from "./_components/courses-table"
-
-type SearchParamsProps = {
-  searchParams: SearchParams
+export default async function Course({
+  params,
+}: {
   params: {
-    projectId: string
+    courseId: string
   }
-}
-
-export default function Courses({ searchParams, params }: SearchParamsProps) {
-  const search = searchParamsSchema.parse(searchParams)
-  const promise = getCourses(search, params.projectId)
+}) {
+  const course = await getCourse({ courseId: params.courseId })
 
   return (
     <div>
       <Heading
-        title="الدورات"
-        description="الدورات المتاحة في المركز الثقافي."
+        title={course?.name || ""}
+        description={course?.description || ""}
         icon="BookA"
       />
       <Shell className="gap-2">
-        <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
-          <DateRangePicker
-            triggerSize="sm"
-            triggerClassName="ml-auto w-56 sm:w-60"
-            align="end"
-          />
-        </React.Suspense>
         <React.Suspense
           fallback={
             <DataTableSkeleton
@@ -48,7 +45,7 @@ export default function Courses({ searchParams, params }: SearchParamsProps) {
             />
           }
         >
-          <CoursesTable promise={promise} />
+          
         </React.Suspense>
       </Shell>
     </div>

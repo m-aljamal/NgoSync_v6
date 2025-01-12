@@ -7,6 +7,7 @@ import {
   ArrowUpRight,
   Backpack,
   Banknote,
+  BookA,
   BookText,
   BookUser,
   Boxes,
@@ -75,5 +76,6 @@ export const icons = {
   Phone,
   Mail,
   MapPinned,
-  NotebookPen
+  NotebookPen,
+  BookA
 }

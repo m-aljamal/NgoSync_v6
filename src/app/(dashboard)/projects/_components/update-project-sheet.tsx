@@ -70,7 +70,7 @@ export function UpdateProjectSheet({
   }
   return (
     <UpdateSheet {...props}>
-      <ProjectForm form={form} onSubmit={onSubmit} isUpdate>
+      <ProjectForm form={form} onSubmit={onSubmit}>
         <UpdateButtons isExecuting={isExecuting} />
       </ProjectForm>
     </UpdateSheet>

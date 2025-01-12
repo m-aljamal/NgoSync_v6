@@ -13,6 +13,7 @@ export const useGetUsers = () => {
       return data
     },
   })
+  
   return query
 }
 

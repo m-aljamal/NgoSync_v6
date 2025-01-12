@@ -1,4 +1,5 @@
 import { donations, doners, projects, tasks } from "@/db/schemas"
+import { courses } from "@/db/schemas/course"
 import { employees } from "@/db/schemas/employee"
 import { loans } from "@/db/schemas/loan"
 import { students } from "@/db/schemas/student"
@@ -259,3 +260,13 @@ export const createStudentSchema = z.object({
 })
 
 export type CreateStudentSchema = z.infer<typeof createStudentSchema>
+
+export const createCourseSchema = z.object({
+  name: z.string().min(2).max(120),
+  description: z.string().optional(),
+  projectId: z.string().min(2),
+  status: z.enum(courses.status.enumValues),
+  id: z.string().optional(),
+})
+
+export type CreateCourseSchema = z.infer<typeof createCourseSchema>
