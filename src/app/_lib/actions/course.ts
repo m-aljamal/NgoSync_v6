@@ -80,3 +80,16 @@ export const addEmployeesToCourses = actionClient
 
     revalidatePath("/courses")
   })
+
+
+
+  export const deleteEmployeeToCourse = actionClient
+  .schema(deleteArraySchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { ids } }) => {
+    noStore()
+    await db.delete(teachersToCourses).where(inArray(teachersToCourses.teacherId, ids))
+    revalidatePath("/courses")
+  })

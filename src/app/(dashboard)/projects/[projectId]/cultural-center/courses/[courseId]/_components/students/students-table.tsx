@@ -7,21 +7,21 @@ import { type DataTableFilterField } from "@/types"
 import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { getTeachers, TeachersList } from "@/app/_lib/queries/course"
+import { getTeachers, StudentsList, TeachersList } from "@/app/_lib/queries/course"
 
 import { getColumns } from "./employee-table-columns"
 import { EmployeesTableToolbarActions } from "./employees-table-toolbar-actions"
 
-interface EmployeesTableProps {
+interface StudentsTableProps {
   promise: ReturnType<typeof getTeachers>
 }
 
-export function EmployeesTable({ promise }: EmployeesTableProps) {
+export function StudentsTable({ promise }: StudentsTableProps) {
   const data = React.use(promise)
 
   const columns = React.useMemo(() => getColumns(), [])
 
-  const filterFields: DataTableFilterField<TeachersList>[] = []
+  const filterFields: DataTableFilterField<StudentsList>[] = []
 
   const { table } = useDataTable({
     data,

@@ -1,23 +1,12 @@
 import React from "react"
-import { type SearchParams } from "@/types"
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { DataTable } from "@/components/data-table/data-table"
+import { getCourse } from "@/app/_lib/queries/course"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
-import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getCourse, getCourses } from "@/app/_lib/queries/course"
-import { searchParamsSchema } from "@/app/_lib/validations"
 
 import TeachersList from "./_components/teachers"
+import StudentsList from "./_components/students"
 
 export default async function Course({
   params,
@@ -47,8 +36,9 @@ export default async function Course({
             />
           }
         >
-          <div className="space-y-4">
+          <div className="space-y-8">
             <TeachersList courseId={params.courseId}/>
+            <StudentsList courseId={params.courseId}/>
           </div>
         </React.Suspense>
       </Shell>

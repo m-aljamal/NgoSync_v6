@@ -4,7 +4,13 @@ import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
 import { employees } from "@/db/schemas"
-import { courses, teachersToCourses, type Course } from "@/db/schemas/course"
+import {
+  courses,
+  studentsToCourses,
+  teachersToCourses,
+  type Course,
+} from "@/db/schemas/course"
+import { students } from "@/db/schemas/student"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 
@@ -99,6 +105,7 @@ export const getCourse = cache(async ({ courseId }: { courseId: string }) => {
 
 export type TeachersList = {
   name: string | null
+  id: string | null
 }
 
 export const getTeachers = cache(async ({ courseId }: { courseId: string }) => {
@@ -106,12 +113,34 @@ export const getTeachers = cache(async ({ courseId }: { courseId: string }) => {
     const teachers = await db
       .select({
         name: employees.name,
+        id: employees.id,
       })
       .from(teachersToCourses)
       .where(eq(teachersToCourses.courseId, courseId))
       .leftJoin(employees, eq(teachersToCourses.teacherId, employees.id))
 
     return teachers
+  } catch (error) {
+    return []
+  }
+})
+export type StudentsList = {
+  name: string | null
+  id: string | null
+}
+
+export const getStudents = cache(async ({ courseId }: { courseId: string }) => {
+  try {
+    const studentsList = await db
+      .select({
+        name: students.name,
+        id: students.id,
+      })
+      .from(studentsToCourses)
+      .where(eq(studentsToCourses.courseId, courseId))
+      .leftJoin(students, eq(studentsToCourses.studentId, students.id))
+
+    return studentsList
   } catch (error) {
     return []
   }
