@@ -8,13 +8,13 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
-import { getTeachers } from "@/app/_lib/queries/course"
+import { getCourseStudents, getTeachers } from "@/app/_lib/queries/course"
 import { getStudents } from "@/app/_lib/queries/student"
 
-import { EmployeesTable } from "./students-table"
+import { StudentsTable } from "./students-table"
 
 export default function StudentsList({ courseId }: { courseId: string }) {
-  const promise = getStudents({ courseId })
+  const promise = getCourseStudents({ courseId })
 
   return (
     <Card>
@@ -34,7 +34,7 @@ export default function StudentsList({ courseId }: { courseId: string }) {
             />
           }
         >
-          <EmployeesTable promise={promise} />
+          <StudentsTable promise={promise} />
         </React.Suspense>
       </CardContent>
     </Card>

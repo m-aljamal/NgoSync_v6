@@ -231,6 +231,13 @@ export const createEmployeesToCourses = z.object({
 
 export type CreateEmployeesToCourses = z.infer<typeof createEmployeesToCourses>
 
+export const createStudentsToCourses = z.object({
+  courseId: z.string().min(2),
+  students: z.array(z.string().min(2)),
+})
+
+export type CreateStudentsToCourses = z.infer<typeof createStudentsToCourses>
+
 export const createJobTitleSchema = z.object({
   name: z.string().min(2).max(120),
   id: z.string().optional(),
