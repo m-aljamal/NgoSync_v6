@@ -23,6 +23,7 @@ import {
   transferFundToProject,
   transferProjectToFund,
 } from "./transfer"
+import { salaryPayments } from "./employee"
 
 export const transactionType = pgEnum("transaction_type", ["income", "outcome"])
 
@@ -140,9 +141,7 @@ export const projectsTransactions = pgTable("projects_transactions", {
   date: date("date")
     .notNull()
     .default(sql`CURRENT_DATE`),
-  // date: timestamp("date", { mode: "string", withTimezone: true })
-  //   .notNull()
-  //   .defaultNow(),
+
   proposalId: varchar("proposal_id").references(() => proposals.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
@@ -174,7 +173,7 @@ export const projectsTransactionsRelations = relations(
     transferbetweenProject: many(transferBetweenProjects),
     exchnageBetweenProjects: many(exchnageBetweenProjects),
     loans: many(loans),
-    // salaryPayments: many(salaryPayments),
+    salaryPayments: many(salaryPayments),
     // loans: many(loans),
   })
 )

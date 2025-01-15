@@ -11,6 +11,7 @@ import { toDecimalFixed } from "../utils"
 import {
   createEmployeeSchema,
   createJobTitleSchema,
+  createSalariesSchema,
   deleteArraySchema,
 } from "../validations"
 import { employeesJobTitles } from "./../../../db/schemas/employee"
@@ -98,4 +99,16 @@ export const createEmployeeJobTitle = actionClient
       name,
     })
     revalidatePath("/employees")
+  })
+
+
+export const createSalaries = actionClient
+  .schema(createSalariesSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput }) => {
+    noStore()
+    console.log(parsedInput);
+    
   })

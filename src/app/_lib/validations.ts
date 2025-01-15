@@ -69,6 +69,28 @@ export const createProjectSchema = z.object({
 })
 export type CreateProjectSchema = z.infer<typeof createProjectSchema>
 
+export const createSalariesSchema = z.object({
+  date,
+  projectId: z.string().min(2),
+  proposalId: z.string(),
+  isOfficial: z.boolean().optional(),
+  salaries: z.array(
+    z.object({
+      employeeName: z.string().optional(),
+      discount: decimalSchema.optional(),
+      extra: decimalSchema.optional(),
+      employeeId: z.string().min(2),
+      salary: decimalSchema,
+      currencyId,
+      netSalary: decimalSchema,
+      description: z.string().optional(),
+      paymentCurrencyId: currencyId,
+    })
+  ),
+  id: z.string().optional(),
+})
+export type CreateSalariesSchema = z.infer<typeof createSalariesSchema>
+
 export const deleteSchema = z.object({
   id: z.string(),
 })

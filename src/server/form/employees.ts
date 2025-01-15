@@ -25,6 +25,8 @@ const app = new Hono()
         .select({
           id: employees.id,
           name: employees.name,
+          currencyId: employees.currencyId,
+          salary: employees.salary,
         })
         .from(employees)
         .where(eq(employees.projectId, projectId))

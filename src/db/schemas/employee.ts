@@ -8,6 +8,7 @@ import { currencies } from "./currency"
 import { genders } from "./enums"
 import { loans } from "./loan"
 import { projects } from "./project"
+import { projectsTransactions } from "./transactions"
 
 export const employeeStatus = pgEnum("employee_status", ["active", "inactive"])
 export const positions = pgEnum("positions", [
@@ -56,7 +57,7 @@ export const employeesRelations = relations(employees, ({ one, many }) => ({
     fields: [employees.jobTitleId],
     references: [employeesJobTitles.id],
   }),
-  //   salaryPayments: many(salaryPayments),
+  salaryPayments: many(salaryPayments),
   loans: many(loans),
   //   teachersToCourses: many(teachersToCourses),
 }))
@@ -83,3 +84,36 @@ export const employeesJobTitlesRelations = relations(
 
 export type EmployeesJobTitles = typeof employeesJobTitles.$inferSelect
 export type NewEmployeesJobTitles = typeof employeesJobTitles.$inferInsert
+
+export const salaryPayments = pgTable("salary_payments", {
+  id: varchar("id", { length: 30 })
+    .$defaultFn(() => generateId())
+    .primaryKey(),
+  employeeId: varchar("employee_id", { length: 30 })
+    .references(() => projects.id)
+    .notNull(),
+  projectTransactionId: varchar("project_transaction_id", { length: 30 })
+    .references(() => projectsTransactions.id)
+    .notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .default(sql`current_timestamp`)
+    .$onUpdate(() => new Date()),
+  description: varchar("description", { length: 200 }),
+  discount: decimal("discount", { precision: 19, scale: 4 }).notNull(),
+  extra: decimal("extra", { precision: 19, scale: 4 }).notNull(),
+  netSalary: decimal("netSalary", { precision: 19, scale: 4 }).notNull(),
+})
+
+export const salaryPaymentsRelations = relations(salaryPayments, ({ one }) => ({
+  employee: one(employees, {
+    fields: [salaryPayments.employeeId],
+    references: [employees.id],
+  }),
+  projectTransaction: one(projectsTransactions, {
+    fields: [salaryPayments.projectTransactionId],
+    references: [projectsTransactions.id],
+  }),
+}))
+
+export type SalaryPayment = typeof salaryPayments.$inferSelect
