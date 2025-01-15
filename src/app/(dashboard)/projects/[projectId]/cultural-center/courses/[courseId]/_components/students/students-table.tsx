@@ -7,10 +7,10 @@ import { type DataTableFilterField } from "@/types"
 import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { getCourseStudents, getTeachers, StudentsList, TeachersList } from "@/app/_lib/queries/course"
+import type { getCourseStudents, StudentsList } from "@/app/_lib/queries/course"
 
 import { getColumns } from "./employee-table-columns"
-import { EmployeesTableToolbarActions } from "./employees-table-toolbar-actions"
+import { StudentsTableToolbarActions } from "./students-table-toolbar-actions"
 
 interface StudentsTableProps {
   promise: ReturnType<typeof getCourseStudents>
@@ -36,9 +36,9 @@ export function StudentsTable({ promise }: StudentsTableProps) {
   })
 
   return (
-    <DataTable table={table} >
+    <DataTable table={table}>
       <DataTableToolbar table={table} filterFields={filterFields}>
-        <EmployeesTableToolbarActions table={table} />
+        <StudentsTableToolbarActions table={table} />
       </DataTableToolbar>
     </DataTable>
   )

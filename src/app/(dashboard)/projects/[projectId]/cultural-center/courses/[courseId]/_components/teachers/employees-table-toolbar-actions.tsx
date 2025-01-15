@@ -3,10 +3,10 @@
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
-import { Button } from "@/components/ui/button"
 import { exportTableToCSV } from "@/lib/export"
+import { Button } from "@/components/ui/button"
+import { type TeachersList } from "@/app/_lib/queries/course"
 
-import { TeachersList } from "@/app/_lib/queries/course"
 import { CreateEmployeeDialog } from "./create-employee-dialog"
 import { DeleteEmployeesDialog } from "./delete-employee-dialog"
 

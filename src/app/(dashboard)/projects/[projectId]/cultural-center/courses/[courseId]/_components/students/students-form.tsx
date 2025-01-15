@@ -5,7 +5,7 @@ import { useParams } from "next/navigation"
 import { Controller, type UseFormReturn } from "react-hook-form"
 import Select from "react-select"
 
-import { useGetEmployees } from "@/hooks/use-get-form-data"
+import { useGetStudents } from "@/hooks/use-get-form-data"
 import {
   Form,
   FormControl,
@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import InputGroup from "@/components/form-components/InputGroup"
-import { CreateEmployeesToCourses, CreateStudentSchema, CreateStudentsToCourses } from "@/app/_lib/validations"
+import { type CreateStudentsToCourses } from "@/app/_lib/validations"
 
 interface CreateStudentFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
@@ -24,15 +24,15 @@ interface CreateStudentFormProps
   onSubmit: (data: CreateStudentsToCourses) => void
 }
 
-export function EmployeeForm({
+export function StudentForm({
   form,
   onSubmit,
   children,
 }: CreateStudentFormProps) {
   const { projectId } = useParams<{ projectId: string }>()
 
-  const { data: employees, isLoading: employeesLoading } =
-    useGetEmployees(projectId)
+  const { data: students, isLoading: studentsLoading } =
+    useGetStudents(projectId)
 
   return (
     <Form {...form}>
@@ -48,24 +48,22 @@ export function EmployeeForm({
                   name="students"
                   render={() => (
                     <FormItem className="col-span-full">
-                      <FormLabel>المدرسين</FormLabel>
+                      <FormLabel>الطلاب</FormLabel>
                       <FormControl>
                         <Select
-                          isLoading={employeesLoading}
+                          isLoading={studentsLoading}
                           isMulti
-                          options={employees?.map((teacher) => ({
-                            value: teacher.id,
-                            label: teacher.name,
+                          options={students?.map((student) => ({
+                            value: student.id,
+                            label: student.name,
                           }))}
-                          value={employees?.filter((teacher) => 
-                            value?.includes(teacher.id)
-                          ).map((teacher) => ({
-                            value: teacher.id,
-                            label: teacher.name,
-                          }))}
-                          onChange={(val) =>
-                            onChange(val.map((v) => v.value))
-                          }
+                          value={students
+                            ?.filter((student) => value?.includes(student.id))
+                            .map((student) => ({
+                              value: student.id,
+                              label: student.name,
+                            }))}
+                          onChange={(val) => onChange(val.map((v) => v.value))}
                         />
                       </FormControl>
                       <FormMessage>{error?.message}</FormMessage>
@@ -81,4 +79,3 @@ export function EmployeeForm({
     </Form>
   )
 }
-

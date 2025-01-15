@@ -12,7 +12,7 @@ import FormDialog from "@/components/form-components/form-dialog"
 import { addEmployeesToCourses } from "@/app/_lib/actions/course"
 import {
   createEmployeesToCourses,
-  CreateEmployeesToCourses,
+  type CreateEmployeesToCourses,
 } from "@/app/_lib/validations"
 
 import { EmployeeForm } from "./employee-form"
@@ -48,7 +48,7 @@ export function CreateEmployeeDialog() {
   }
 
   return (
-    <FormDialog>
+    <FormDialog >
       <EmployeeForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </EmployeeForm>

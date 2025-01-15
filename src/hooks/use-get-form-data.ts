@@ -13,7 +13,7 @@ export const useGetUsers = () => {
       return data
     },
   })
-  
+
   return query
 }
 
@@ -151,6 +151,23 @@ export const useGetEmployees = (projectId: string) => {
     queryKey: ["employees", projectId],
     queryFn: async () => {
       const response = await client.api.form.employees[":projectId"].$get({
+        param: { projectId },
+      })
+      if (!response.ok) {
+        throw new Error("Failed to fetch employees")
+      }
+      const { data } = await response.json()
+      return data
+    },
+  })
+  return query
+}
+
+export const useGetStudents = (projectId: string) => {
+  const query = useQuery({
+    queryKey: ["students", projectId],
+    queryFn: async () => {
+      const response = await client.api.form.students[":projectId"].$get({
         param: { projectId },
       })
       if (!response.ok) {

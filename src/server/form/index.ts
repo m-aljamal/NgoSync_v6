@@ -10,6 +10,7 @@ import projects from "./projects"
 import proposalsExpenses from "./proposal-expenses"
 import proposals from "./proposals"
 import users from "./users"
+import students from "./students"
 
 const app = new Hono()
 
@@ -24,4 +25,5 @@ const routes = app
   .route("/proposals", proposals)
   .route("/job-titles", jobTitles)
   .route("/employees", employees)
+  .route("/students", students)
 export default routes

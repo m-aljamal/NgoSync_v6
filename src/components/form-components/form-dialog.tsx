@@ -27,8 +27,10 @@ import { ScrollArea } from "../ui/scroll-area"
 
 export default function FormDialog({
   children,
+  
 }: {
   children: React.ReactNode
+  
 }) {
   const { isOpen, onOpen, onClose } = useFormDialog()
 

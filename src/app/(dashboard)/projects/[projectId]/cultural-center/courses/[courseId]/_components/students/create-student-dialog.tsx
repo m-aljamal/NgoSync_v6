@@ -9,15 +9,13 @@ import { toast } from "sonner"
 import { useFormDialog } from "@/hooks/use-form-dialog"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
-import { addEmployeesToCourses, addStudentsToCourses } from "@/app/_lib/actions/course"
+import { addStudentsToCourses } from "@/app/_lib/actions/course"
 import {
-  createEmployeesToCourses,
-  CreateEmployeesToCourses,
   createStudentsToCourses,
-  CreateStudentsToCourses,
+  type CreateStudentsToCourses,
 } from "@/app/_lib/validations"
 
-import { EmployeeForm } from "./students-form"
+import { StudentForm } from "./students-form"
 
 export function CreateStudentDialog() {
   const { courseId } = useParams<{ courseId: string }>()
@@ -51,9 +49,9 @@ export function CreateStudentDialog() {
 
   return (
     <FormDialog>
-      <EmployeeForm form={form} onSubmit={onSubmit}>
+      <StudentForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
-      </EmployeeForm>
+      </StudentForm>
     </FormDialog>
   )
 }

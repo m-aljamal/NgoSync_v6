@@ -1,5 +1,7 @@
 import React from "react"
 
+import { getCourseStudents } from "@/app/_lib/queries/course"
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import {
   Card,
   CardContent,
@@ -7,9 +9,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
-import { getCourseStudents, getTeachers } from "@/app/_lib/queries/course"
-import { getStudents } from "@/app/_lib/queries/student"
 
 import { StudentsTable } from "./students-table"
 

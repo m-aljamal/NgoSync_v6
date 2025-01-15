@@ -14,9 +14,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
-import { TeachersList } from "@/app/_lib/queries/course"
-
-import { DeleteEmployeesDialog } from "./delete-student-dialog"
+import { type TeachersList } from "@/app/_lib/queries/course"
+import { DeleteStudentsDialog } from "./delete-student-dialog"
+ 
 
 export function getColumns(): ColumnDef<TeachersList>[] {
   return [
@@ -58,17 +58,16 @@ export function getColumns(): ColumnDef<TeachersList>[] {
     {
       id: "actions",
       cell: function Cell({ row }) {
-        const [showUpdateTaskSheet, setShowUpdateTaskSheet] =
-          React.useState(false)
+        
         const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
           React.useState(false)
 
         return (
           <>
-            <DeleteEmployeesDialog
+            <DeleteStudentsDialog
               open={showDeleteTaskDialog}
               onOpenChange={setShowDeleteTaskDialog}
-              employees={[row.original]}
+              students={[row.original]}
               showTrigger={false}
               onSuccess={() => row.toggleSelected(false)}
             />

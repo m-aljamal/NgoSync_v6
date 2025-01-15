@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import InputGroup from "@/components/form-components/InputGroup"
-import { CreateEmployeesToCourses } from "@/app/_lib/validations"
+import { type CreateEmployeesToCourses } from "@/app/_lib/validations"
 
 interface CreateEmployeeFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
