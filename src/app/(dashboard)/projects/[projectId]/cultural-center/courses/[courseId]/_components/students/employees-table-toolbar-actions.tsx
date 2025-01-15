@@ -3,20 +3,20 @@
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
-import { Button } from "@/components/ui/button"
 import { exportTableToCSV } from "@/lib/export"
+import { Button } from "@/components/ui/button"
+import { StudentsList, TeachersList } from "@/app/_lib/queries/course"
 
-import { TeachersList } from "@/app/_lib/queries/course"
-import { CreateEmployeeDialog } from "./create-employee-dialog"
-import { DeleteEmployeesDialog } from "./delete-employee-dialog"
+import { CreateEmployeeDialog } from "./create-student-dialog"
+import { DeleteEmployeesDialog } from "./delete-student-dialog"
 
-interface EmployeesTableToolbarActionsProps {
-  table: Table<TeachersList>
+interface StudentsTableToolbarActionsProps {
+  table: Table<StudentsList>
 }
 
-export function EmployeesTableToolbarActions({
+export function StudentsTableToolbarActions({
   table,
-}: EmployeesTableToolbarActionsProps) {
+}: StudentsTableToolbarActionsProps) {
   return (
     <div className="flex items-center gap-2">
       {table.getFilteredSelectedRowModel().rows.length > 0 ? (

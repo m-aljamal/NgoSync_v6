@@ -1,29 +1,29 @@
 "use client"
 
+import * as React from "react"
 import { type Row } from "@tanstack/react-table"
 import { useAction } from "next-safe-action/hooks"
-import * as React from "react"
 import { toast } from "sonner"
 
-import { deleteEmployeeToCourse } from "@/app/_lib/actions/course"
-import { TeachersList } from "@/app/_lib/queries/course"
-import DeleteDialog from "@/components/delete-dialog"
 import { type Dialog } from "@/components/ui/dialog"
+import DeleteDialog from "@/components/delete-dialog"
+import { deleteStudentsToCourse } from "@/app/_lib/actions/course"
+import { type StudentsList } from "@/app/_lib/queries/course"
 
-interface DeleteEmployeeDialogProps
+interface DeleteStudentsDialogProps
   extends React.ComponentPropsWithoutRef<typeof Dialog> {
-  employees: Row<TeachersList>["original"][]
+  students: Row<StudentsList>["original"][]
   showTrigger?: boolean
   onSuccess?: () => void
 }
 
-export function DeleteEmployeesDialog({
-  employees,
+export function DeleteStudentsDialog({
+  students,
   showTrigger = true,
   onSuccess,
   ...props
-}: DeleteEmployeeDialogProps) {
-  const { executeAsync, isExecuting } = useAction(deleteEmployeeToCourse, {
+}: DeleteStudentsDialogProps) {
+  const { executeAsync, isExecuting } = useAction(deleteStudentsToCourse, {
     onSuccess: () => {
       toast.success("تم الحذف بنجاح")
       props.onOpenChange?.(false)
@@ -38,7 +38,7 @@ export function DeleteEmployeesDialog({
   })
 
   async function onDelete() {
-    await executeAsync({ ids: employees.map((p) => p.id || "") })
+    await executeAsync({ ids: students.map((p) => p.id || "") })
     toast.dismiss()
   }
 
@@ -46,7 +46,7 @@ export function DeleteEmployeesDialog({
     <DeleteDialog
       {...props}
       showTrigger={showTrigger}
-      length={employees.length}
+      length={students.length}
       onDelete={onDelete}
       isExecuting={isExecuting}
     />

@@ -15,20 +15,20 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import InputGroup from "@/components/form-components/InputGroup"
-import { CreateEmployeesToCourses } from "@/app/_lib/validations"
+import { CreateEmployeesToCourses, CreateStudentSchema, CreateStudentsToCourses } from "@/app/_lib/validations"
 
-interface CreateEmployeeFormProps
+interface CreateStudentFormProps
   extends Omit<React.ComponentPropsWithRef<"form">, "onSubmit"> {
   children: React.ReactNode
-  form: UseFormReturn<CreateEmployeesToCourses>
-  onSubmit: (data: CreateEmployeesToCourses) => void
+  form: UseFormReturn<CreateStudentsToCourses>
+  onSubmit: (data: CreateStudentsToCourses) => void
 }
 
 export function EmployeeForm({
   form,
   onSubmit,
   children,
-}: CreateEmployeeFormProps) {
+}: CreateStudentFormProps) {
   const { projectId } = useParams<{ projectId: string }>()
 
   const { data: employees, isLoading: employeesLoading } =
@@ -39,13 +39,13 @@ export function EmployeeForm({
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <InputGroup>
           <Controller
-            name="teachers"
+            name="students"
             control={form.control}
             render={({ field: { onChange, value }, fieldState: { error } }) => {
               return (
                 <FormField
                   control={form.control}
-                  name="teachers"
+                  name="students"
                   render={() => (
                     <FormItem className="col-span-full">
                       <FormLabel>المدرسين</FormLabel>

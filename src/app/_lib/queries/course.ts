@@ -129,7 +129,7 @@ export type StudentsList = {
   id: string | null
 }
 
-export const getStudents = cache(async ({ courseId }: { courseId: string }) => {
+export const getCourseStudents = cache(async ({ courseId }: { courseId: string }) => {
   try {
     const studentsList = await db
       .select({

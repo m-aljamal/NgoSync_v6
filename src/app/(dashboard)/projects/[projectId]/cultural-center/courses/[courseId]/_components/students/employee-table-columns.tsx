@@ -16,7 +16,7 @@ import {
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header"
 import { TeachersList } from "@/app/_lib/queries/course"
 
-import { DeleteEmployeesDialog } from "./delete-employee-dialog"
+import { DeleteEmployeesDialog } from "./delete-student-dialog"
 
 export function getColumns(): ColumnDef<TeachersList>[] {
   return [

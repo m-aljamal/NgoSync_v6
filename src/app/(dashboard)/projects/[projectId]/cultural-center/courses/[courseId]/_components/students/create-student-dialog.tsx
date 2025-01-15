@@ -9,28 +9,30 @@ import { toast } from "sonner"
 import { useFormDialog } from "@/hooks/use-form-dialog"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
-import { addEmployeesToCourses } from "@/app/_lib/actions/course"
+import { addEmployeesToCourses, addStudentsToCourses } from "@/app/_lib/actions/course"
 import {
   createEmployeesToCourses,
   CreateEmployeesToCourses,
+  createStudentsToCourses,
+  CreateStudentsToCourses,
 } from "@/app/_lib/validations"
 
-import { EmployeeForm } from "./employee-form"
+import { EmployeeForm } from "./students-form"
 
-export function CreateEmployeeDialog() {
+export function CreateStudentDialog() {
   const { courseId } = useParams<{ courseId: string }>()
 
   const { onClose } = useFormDialog()
 
-  const form = useForm<CreateEmployeesToCourses>({
-    resolver: zodResolver(createEmployeesToCourses),
+  const form = useForm<CreateStudentsToCourses>({
+    resolver: zodResolver(createStudentsToCourses),
     defaultValues: {
       courseId,
-      teachers: [],
+      students: [],
     },
   })
 
-  const { executeAsync, isExecuting } = useAction(addEmployeesToCourses, {
+  const { executeAsync, isExecuting } = useAction(addStudentsToCourses, {
     onSuccess: async () => {
       toast.success("تمت الإضافة")
 
@@ -43,7 +45,7 @@ export function CreateEmployeeDialog() {
     },
   })
 
-  async function onSubmit(input: CreateEmployeesToCourses) {
+  async function onSubmit(input: CreateStudentsToCourses) {
     await executeAsync(input)
   }
 
