@@ -15,7 +15,7 @@ import { createFundSchema, type CreateFundSchema } from "@/app/_lib/validations"
 import { FundForm } from "./fund-form"
 
 export function CreateFundDialog() {
-  const { onClose } = useFormDialog()
+  const { isOpen, onOpen, onClose } = useFormDialog()
   const queryClient = useQueryClient()
 
   const form = useForm<CreateFundSchema>({
@@ -45,7 +45,7 @@ export function CreateFundDialog() {
   }
 
   return (
-    <FormDialog>
+    <FormDialog isOpen={isOpen} onOpenChange={(open) => (open ? onOpen() : onClose())}>
       <FundForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </FundForm>

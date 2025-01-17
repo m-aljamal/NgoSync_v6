@@ -19,8 +19,7 @@ import { StudentForm } from "./students-form"
 
 export function CreateStudentDialog() {
   const { courseId } = useParams<{ courseId: string }>()
-
-  const { onClose } = useFormDialog()
+  const { isOpen, onOpen, onClose } = useFormDialog()
 
   const form = useForm<CreateStudentsToCourses>({
     resolver: zodResolver(createStudentsToCourses),
@@ -33,7 +32,6 @@ export function CreateStudentDialog() {
   const { executeAsync, isExecuting } = useAction(addStudentsToCourses, {
     onSuccess: async () => {
       toast.success("تمت الإضافة")
-
       form.reset()
       toast.dismiss()
       onClose()
@@ -48,10 +46,11 @@ export function CreateStudentDialog() {
   }
 
   return (
-    <FormDialog>
+    <FormDialog isOpen={isOpen} onOpenChange={(open) => (open ? onOpen() : onClose())}>
       <StudentForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </StudentForm>
     </FormDialog>
   )
 }
+

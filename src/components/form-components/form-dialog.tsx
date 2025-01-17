@@ -2,8 +2,6 @@
 
 import * as React from "react"
 import { PlusIcon } from "@radix-ui/react-icons"
-
-import { useFormDialog } from "@/hooks/use-form-dialog"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { Button } from "@/components/ui/button"
 import {
@@ -22,32 +20,37 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
-
 import { ScrollArea } from "../ui/scroll-area"
 
 export default function FormDialog({
   children,
-  
+  title = "إضافة جديد",
+  description = "قم بملء التفاصيل أدناه لإنشاء عنصر جديد.",
+  triggerButton,
+  isOpen,
+  onOpenChange,
 }: {
   children: React.ReactNode
-  
+  title?: string
+  description?: string
+  triggerButton?: React.ReactNode
+  isOpen: boolean
+  onOpenChange: (isOpen: boolean) => void
 }) {
-  const { isOpen, onOpen, onClose } = useFormDialog()
-
   const isDesktop = useMediaQuery("(min-width: 640px)")
-  const title = "إضافة جديد"
-  const description = "قم بملء التفاصيل أدناه لإنشاء عنصر جديد."
+
+  const defaultTrigger = (
+    <Button variant="outline" size="sm">
+      <PlusIcon className="ml-2 size-4" aria-hidden="true" />
+      إضافة
+    </Button>
+  )
+
   if (isDesktop)
     return (
-      <Dialog
-        open={isOpen}
-        onOpenChange={(isOpen) => (isOpen ? onOpen() : onClose())}
-      >
+      <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogTrigger asChild>
-          <Button variant="outline" size="sm">
-            <PlusIcon className="ml-2 size-4" aria-hidden="true" />
-            إضافة
-          </Button>
+          {triggerButton || defaultTrigger}
         </DialogTrigger>
         <DialogContent>
           <ScrollArea className="max-h-[80vh] p-2">
@@ -62,17 +65,10 @@ export default function FormDialog({
     )
 
   return (
-    <Drawer
-      open={isOpen}
-      onOpenChange={(isOpen) => (isOpen ? onOpen() : onClose())}
-    >
+    <Drawer open={isOpen} onOpenChange={onOpenChange}>
       <DrawerTrigger asChild>
-        <Button variant="outline" size="sm">
-          <PlusIcon className="ml-2 size-4" aria-hidden="true" />
-          اضافة
-        </Button>
+        {triggerButton || defaultTrigger}
       </DrawerTrigger>
-
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>
@@ -83,3 +79,4 @@ export default function FormDialog({
     </Drawer>
   )
 }
+
