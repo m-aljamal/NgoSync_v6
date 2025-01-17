@@ -6,6 +6,7 @@ import { db } from "@/db"
 import { employees } from "@/db/schemas"
 import {
   courses,
+  lessons,
   studentsToCourses,
   teachersToCourses,
   type Course,
@@ -129,18 +130,34 @@ export type StudentsList = {
   id: string | null
 }
 
-export const getCourseStudents = cache(async ({ courseId }: { courseId: string }) => {
-  try {
-    const studentsList = await db
-      .select({
-        name: students.name,
-        id: students.id,
-      })
-      .from(studentsToCourses)
-      .where(eq(studentsToCourses.courseId, courseId))
-      .leftJoin(students, eq(studentsToCourses.studentId, students.id))
+export const getCourseStudents = cache(
+  async ({ courseId }: { courseId: string }) => {
+    try {
+      const studentsList = await db
+        .select({
+          name: students.name,
+          id: students.id,
+        })
+        .from(studentsToCourses)
+        .where(eq(studentsToCourses.courseId, courseId))
+        .leftJoin(students, eq(studentsToCourses.studentId, students.id))
 
-    return studentsList
+      return studentsList
+    } catch (error) {
+      return []
+    }
+  }
+)
+
+
+export const getLessons = cache(async ({ courseId }: { courseId: string }) => {
+  try {
+    const lessonsList = await db
+      .select()
+      .from(lessons)
+      .where(eq(lessons.courseId, courseId))
+
+    return lessonsList
   } catch (error) {
     return []
   }

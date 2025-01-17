@@ -7,6 +7,7 @@ import { Shell } from "@/components/shell"
 
 import TeachersList from "./_components/teachers"
 import StudentsList from "./_components/students"
+import Lessons from "./_components/lessons"
 
 export default async function Course({
   params,
@@ -39,6 +40,7 @@ export default async function Course({
           <div className="space-y-8">
             <TeachersList courseId={params.courseId}/>
             <StudentsList courseId={params.courseId}/>
+            <Lessons courseId={params.courseId}/>
           </div>
         </React.Suspense>
       </Shell>

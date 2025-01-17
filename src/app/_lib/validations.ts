@@ -306,3 +306,12 @@ export const createCourseSchema = z.object({
 })
 
 export type CreateCourseSchema = z.infer<typeof createCourseSchema>
+
+export const createLessonSchema = z.object({
+  title: z.string().min(2).max(120),
+  courseId: z.string().min(6),
+  date,
+  description: z.string().optional(),
+})
+
+export type CreateLessonSchema = z.infer<typeof createLessonSchema>

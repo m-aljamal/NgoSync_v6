@@ -2,7 +2,12 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { courses, studentsToCourses, teachersToCourses } from "@/db/schemas/course"
+import {
+  courses,
+  lessons,
+  studentsToCourses,
+  teachersToCourses,
+} from "@/db/schemas/course"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
@@ -10,6 +15,7 @@ import { actionClient } from "../safe-action"
 import {
   createCourseSchema,
   createEmployeesToCourses,
+  createLessonSchema,
   createStudentsToCourses,
   deleteArraySchema,
 } from "../validations"
@@ -82,19 +88,18 @@ export const addEmployeesToCourses = actionClient
     revalidatePath("/courses")
   })
 
-
-
-  export const deleteEmployeeToCourse = actionClient
+export const deleteEmployeeToCourse = actionClient
   .schema(deleteArraySchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput: { ids } }) => {
     noStore()
-    await db.delete(teachersToCourses).where(inArray(teachersToCourses.teacherId, ids))
+    await db
+      .delete(teachersToCourses)
+      .where(inArray(teachersToCourses.teacherId, ids))
     revalidatePath("/courses")
   })
-
 
 export const addStudentsToCourses = actionClient
   .schema(createStudentsToCourses, {
@@ -114,15 +119,39 @@ export const addStudentsToCourses = actionClient
     revalidatePath("/courses")
   })
 
-
-
-  export const deleteStudentsToCourse = actionClient
+export const deleteStudentsToCourse = actionClient
   .schema(deleteArraySchema, {
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
   .action(async ({ parsedInput: { ids } }) => {
     noStore()
-    await db.delete(studentsToCourses).where(inArray(studentsToCourses.studentId, ids))
+    await db
+      .delete(studentsToCourses)
+      .where(inArray(studentsToCourses.studentId, ids))
+    revalidatePath("/courses")
+  })
+
+export const createLesson = actionClient
+  .schema(createLessonSchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput }) => {
+    noStore()
+
+    console.log(parsedInput)
+
+    revalidatePath("/courses")
+  })
+
+export const deleteLessons = actionClient
+  .schema(deleteArraySchema, {
+    handleValidationErrorsShape: (ve) =>
+      flattenValidationErrors(ve).fieldErrors,
+  })
+  .action(async ({ parsedInput: { ids } }) => {
+    noStore()
+    await db.delete(lessons).where(inArray(lessons.id, ids))
     revalidatePath("/courses")
   })

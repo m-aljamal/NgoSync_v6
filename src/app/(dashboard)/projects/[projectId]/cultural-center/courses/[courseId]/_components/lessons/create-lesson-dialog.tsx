@@ -1,7 +1,7 @@
 "use client"
 
+import { useParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQueryClient } from "@tanstack/react-query"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -9,28 +9,28 @@ import { toast } from "sonner"
 import { useFormDialog } from "@/hooks/use-form-dialog"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
-import { createDoner } from "@/app/_lib/actions/doner"
+import { createLesson } from "@/app/_lib/actions/course"
 import {
-  createDonerSchema,
-  type CreateDonerSchema,
+  createLessonSchema,
+  type CreateLessonSchema,
 } from "@/app/_lib/validations"
 
-import { DonerForm } from "./doner-form"
+import { LessonForm } from "./lesson-form"
 
-export function CreateDonerDialog() {
+export function CreateLessonDialog() {
+  const { courseId } = useParams<{ courseId: string }>()
   const { isOpen, onOpen, onClose } = useFormDialog()
-  const queryClient = useQueryClient()
-  const form = useForm<CreateDonerSchema>({
-    resolver: zodResolver(createDonerSchema),
+
+  const form = useForm<CreateLessonSchema>({
+    resolver: zodResolver(createLessonSchema),
     defaultValues: {
-      status: "active",
-      name: "",
+      courseId,
     },
   })
 
-  const { executeAsync, isExecuting } = useAction(createDoner, {
-    onSuccess: () => {
-      toast.success("تم إنشاء المتبرع")
+  const { executeAsync, isExecuting } = useAction(createLesson, {
+    onSuccess: async () => {
+      toast.success("تمت الإضافة")
       form.reset()
       toast.dismiss()
       onClose()
@@ -40,21 +40,18 @@ export function CreateDonerDialog() {
     },
   })
 
-  async function onSubmit(input: CreateDonerSchema) {
+  async function onSubmit(input: CreateLessonSchema) {
     await executeAsync(input)
-    await queryClient.invalidateQueries({
-      queryKey: ["doners"],
-    })
   }
 
   return (
     <FormDialog
-    isOpen={isOpen}
+      isOpen={isOpen}
       onOpenChange={(open) => (open ? onOpen() : onClose())}
     >
-      <DonerForm form={form} onSubmit={onSubmit}>
+      <LessonForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
-      </DonerForm>
+      </LessonForm>
     </FormDialog>
   )
 }

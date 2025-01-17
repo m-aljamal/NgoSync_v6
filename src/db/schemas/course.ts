@@ -118,6 +118,8 @@ export const lessonsRelations = relations(lessons, ({ one, many }) => ({
   studentsCourseNotes: many(studentsCourseNotes),
 }))
 
+export type Lesson = typeof lessons.$inferSelect
+
 export const attendance = pgEnum("attendance_enum", ["present", "absent"])
 
 export const studentsCourseNotes = pgTable("students_notes", {
