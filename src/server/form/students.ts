@@ -1,7 +1,8 @@
 import { db } from "@/db"
+import { studentsToCourses } from "@/db/schemas/course"
 import { students } from "@/db/schemas/student"
 import { zValidator } from "@hono/zod-validator"
-import { desc, eq } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 import { Hono } from "hono"
 import { z } from "zod"
 
@@ -28,6 +29,39 @@ const app = new Hono()
         })
         .from(students)
         .where(eq(students.projectId, projectId))
+        .orderBy(desc(students.createdAt))
+
+      return c.json({ data })
+    }
+  )
+  .get(
+    "/:projectId/:courseId?",
+    zValidator(
+      "param",
+      z.object({
+        projectId: z.string(),
+        courseId: z.string().optional(),
+      })
+    ),
+    async (c) => {
+      const { projectId, courseId } = c.req.valid("param")
+
+      const data = await db
+        .select({
+          id: students.id,
+          name: students.name,
+        })
+        .from(students)
+        .where(
+          and(
+            projectId ? eq(students.projectId, projectId) : undefined,
+            courseId ? eq(studentsToCourses.courseId, courseId) : undefined
+          )
+        )
+        .leftJoin(
+          studentsToCourses,
+          eq(students.id, studentsToCourses.studentId)
+        )
         .orderBy(desc(students.createdAt))
 
       return c.json({ data })

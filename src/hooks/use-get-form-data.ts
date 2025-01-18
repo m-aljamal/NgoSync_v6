@@ -179,3 +179,24 @@ export const useGetStudents = (projectId: string) => {
   })
   return query
 }
+export const useGetStudentsByCourseId = (
+  projectId: string,
+  courseId: string
+) => {
+  const query = useQuery({
+    queryKey: ["students", projectId, courseId],
+    queryFn: async () => {
+      const response = await client.api.form.students[":projectId"][
+        ":courseId?"
+      ].$get({
+        param: { projectId, courseId },
+      })
+      if (!response.ok) {
+        throw new Error("Failed to fetch employees")
+      }
+      const { data } = await response.json()
+      return data
+    },
+  })
+  return query
+}

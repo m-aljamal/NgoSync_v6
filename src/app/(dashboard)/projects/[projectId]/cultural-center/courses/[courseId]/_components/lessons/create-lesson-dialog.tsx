@@ -1,12 +1,14 @@
 "use client"
 
 import { useParams } from "next/navigation"
+import { Lesson } from "@/db/schemas/course"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { useFormDialog } from "@/hooks/use-form-dialog"
+import { useGetStudentsByCourseId } from "@/hooks/use-get-form-data"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
 import { createLesson } from "@/app/_lib/actions/course"
@@ -18,8 +20,24 @@ import {
 import { LessonForm } from "./lesson-form"
 
 export function CreateLessonDialog() {
-  const { courseId } = useParams<{ courseId: string }>()
+  const { courseId, projectId } = useParams<{
+    courseId: string
+    projectId: string
+  }>()
   const { isOpen, onOpen, onClose } = useFormDialog()
+  const { data, isLoading } = useGetStudentsByCourseId(projectId, courseId)
+
+  const defaultValues: Partial<CreateLessonSchema> = {
+    courseId,
+    students: data?.map((student) => ({
+      studentId: student.id,
+      name: student.name,
+      note: "",
+      attendance: "present",
+      pageNumber: "",
+      mark: "",
+    })),
+  }
 
   const form = useForm<CreateLessonSchema>({
     resolver: zodResolver(createLessonSchema),

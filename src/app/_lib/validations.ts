@@ -1,5 +1,5 @@
 import { donations, doners, projects, tasks } from "@/db/schemas"
-import { courses } from "@/db/schemas/course"
+import { courses, lessons, studentsCourseNotes } from "@/db/schemas/course"
 import { employees } from "@/db/schemas/employee"
 import { loans } from "@/db/schemas/loan"
 import { students } from "@/db/schemas/student"
@@ -312,6 +312,18 @@ export const createLessonSchema = z.object({
   courseId: z.string().min(6),
   date,
   description: z.string().optional(),
+  students: z.array(
+    z.object({
+      studentId: z.string().min(2),
+      name: z.string().optional(),
+      note: z.string().optional(),
+      attendance: z.enum(studentsCourseNotes.attendance.enumValues, {
+        required_error: "الرجاء اختيار حالة الحضور",
+      }),
+      pageNumber: z.string().optional(),
+      mark: z.string().optional(),
+    })
+  ),
 })
 
 export type CreateLessonSchema = z.infer<typeof createLessonSchema>
