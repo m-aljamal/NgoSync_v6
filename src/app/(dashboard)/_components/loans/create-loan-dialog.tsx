@@ -5,19 +5,16 @@ import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
-import {
-  createLoanSchema,
-  type CreateLoanSchema
-} from "@/app/_lib/validations"
+import { useFormDialog } from "@/hooks/use-form-dialog"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
-import { useFormDialog } from "@/hooks/use-form-dialog"
-
 import { createLoan } from "@/app/_lib/actions/loan"
+import { createLoanSchema, type CreateLoanSchema } from "@/app/_lib/validations"
+
 import { LoanForm } from "./loan-form"
 
 export function CreateLoanDialog() {
-  const { onClose } = useFormDialog()
+  const { onClose, isOpen, onOpen } = useFormDialog()
 
   const form = useForm<CreateLoanSchema>({
     resolver: zodResolver(createLoanSchema),
@@ -43,7 +40,10 @@ export function CreateLoanDialog() {
   }
 
   return (
-    <FormDialog>
+    <FormDialog
+      isOpen={isOpen}
+      onOpenChange={(open) => (open ? onOpen() : onClose())}
+    >
       <LoanForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </LoanForm>

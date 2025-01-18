@@ -17,7 +17,7 @@ import {
 import { TransferBetweenProjectsForm } from "./transfer-between-projects-form"
 
 export function CreateTransferBetweenProjectsDialog() {
-  const { onClose } = useFormDialog()
+  const { onClose, isOpen, onOpen } = useFormDialog()
 
   const form = useForm<CreateTransferSchema>({
     resolver: zodResolver(createTransferSchema),
@@ -46,7 +46,10 @@ export function CreateTransferBetweenProjectsDialog() {
   }
 
   return (
-    <FormDialog>
+    <FormDialog
+      isOpen={isOpen}
+      onOpenChange={(open) => (open ? onOpen() : onClose())}
+    >
       <TransferBetweenProjectsForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </TransferBetweenProjectsForm>

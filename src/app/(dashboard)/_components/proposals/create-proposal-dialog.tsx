@@ -17,7 +17,7 @@ import {
 import { ProposalForm } from "./proposal-form"
 
 export function CreateProposalDialog() {
-  const { onClose } = useFormDialog()
+  const { onClose, isOpen, onOpen } = useFormDialog()
 
   const form = useForm<CreateProposalSchema>({
     resolver: zodResolver(createProposalSchema),
@@ -49,7 +49,10 @@ export function CreateProposalDialog() {
   }
 
   return (
-    <FormDialog>
+    <FormDialog
+      isOpen={isOpen}
+      onOpenChange={(open) => (open ? onOpen() : onClose())}
+    >
       <ProposalForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </ProposalForm>

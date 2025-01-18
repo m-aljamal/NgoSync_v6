@@ -1,6 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useQueryClient } from "@tanstack/react-query"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -15,10 +16,9 @@ import {
 } from "@/app/_lib/validations"
 
 import { EmployeeForm } from "./employee-form"
-import { useQueryClient } from "@tanstack/react-query"
 
 export function CreateEmployeeDialog() {
-  const { onClose } = useFormDialog()
+  const { onClose, isOpen, onOpen } = useFormDialog()
 
   const queryClient = useQueryClient()
 
@@ -50,7 +50,10 @@ export function CreateEmployeeDialog() {
   }
 
   return (
-    <FormDialog>
+    <FormDialog
+      isOpen={isOpen}
+      onOpenChange={(open) => (open ? onOpen() : onClose())}
+    >
       <EmployeeForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </EmployeeForm>

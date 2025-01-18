@@ -17,7 +17,7 @@ import {
 import { ExchangeRateForm } from "./exchange-form"
 
 export function CreateExchangeRateDialog() {
-  const { onClose } = useFormDialog()
+  const { onClose, isOpen, onOpen } = useFormDialog()
 
   const form = useForm<CreateExchangeRateSchema>({
     resolver: zodResolver(createExchangeRateSchema),
@@ -40,7 +40,10 @@ export function CreateExchangeRateDialog() {
   }
 
   return (
-    <FormDialog>
+    <FormDialog
+      isOpen={isOpen}
+      onOpenChange={(open) => (open ? onOpen() : onClose())}
+    >
       <ExchangeRateForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </ExchangeRateForm>

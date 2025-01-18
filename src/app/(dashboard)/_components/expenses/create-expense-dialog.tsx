@@ -17,7 +17,7 @@ import {
 import { ExpenseForm } from "./expense-form"
 
 export function CreateExpenseDialog() {
-  const { onClose } = useFormDialog()
+  const { onClose, isOpen, onOpen } = useFormDialog()
 
   const form = useForm<CreateExpenseSchema>({
     resolver: zodResolver(createExpenseSchema),
@@ -43,7 +43,10 @@ export function CreateExpenseDialog() {
   }
 
   return (
-    <FormDialog>
+    <FormDialog
+      isOpen={isOpen}
+      onOpenChange={(open) => (open ? onOpen() : onClose())}
+    >
       <ExpenseForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </ExpenseForm>

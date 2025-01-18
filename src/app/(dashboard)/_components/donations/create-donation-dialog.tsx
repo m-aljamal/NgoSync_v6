@@ -16,7 +16,7 @@ import {
 import { DonationForm } from "./donation-form"
 
 export function CreateDonationDialog() {
-  const { onClose } = useFormDialog()
+  const { isOpen, onOpen, onClose } = useFormDialog()
 
   const form = useForm<CreateDonationSchema>({
     resolver: zodResolver(createDonationSchema),
@@ -45,7 +45,10 @@ export function CreateDonationDialog() {
   }
 
   return (
-    <FormDialog>
+    <FormDialog
+      isOpen={isOpen}
+      onOpenChange={(open) => (open ? onOpen() : onClose())}
+    >
       <DonationForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </DonationForm>
