@@ -1,5 +1,5 @@
 import { donations, doners, projects, tasks } from "@/db/schemas"
-import { courses, lessons, studentsCourseNotes } from "@/db/schemas/course"
+import { courses, studentsCourseNotes } from "@/db/schemas/course"
 import { employees } from "@/db/schemas/employee"
 import { loans } from "@/db/schemas/loan"
 import { students } from "@/db/schemas/student"
