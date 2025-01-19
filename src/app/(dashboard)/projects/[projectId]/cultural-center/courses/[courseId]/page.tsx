@@ -38,9 +38,9 @@ export default async function Course({
           }
         >
           <div className="space-y-8">
-            <TeachersList courseId={params.courseId}/>
-            <StudentsList courseId={params.courseId}/>
             <Lessons courseId={params.courseId}/>
+            <StudentsList courseId={params.courseId}/>
+            <TeachersList courseId={params.courseId}/>
           </div>
         </React.Suspense>
       </Shell>
