@@ -1,7 +1,7 @@
 "use client"
 
+import React from "react"
 import { useParams } from "next/navigation"
-import { Lesson } from "@/db/schemas/course"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
@@ -27,24 +27,32 @@ export function CreateLessonDialog() {
   const { isOpen, onOpen, onClose } = useFormDialog()
   const { data, isLoading } = useGetStudentsByCourseId(projectId, courseId)
 
-  const defaultValues: Partial<CreateLessonSchema> = {
-    courseId,
-    students: data?.map((student) => ({
-      studentId: student.id,
-      name: student.name,
-      note: "",
-      attendance: "present",
-      pageNumber: "",
-      mark: "",
-    })),
-  }
+  const defaultValues: CreateLessonSchema = React.useMemo(() => {
+    return {
+      courseId,
+      date: new Date(),
+      title: "",
+      description: "",
+      students:
+        data?.map((student) => ({
+          studentId: student.id,
+          name: student.name,
+          note: "",
+          attendance: "present",
+          pageNumber: "",
+          mark: "",
+        })) ?? [],
+    }
+  }, [data, courseId])
 
   const form = useForm<CreateLessonSchema>({
     resolver: zodResolver(createLessonSchema),
-    defaultValues: {
-      courseId,
-    },
+    defaultValues,
   })
+
+  React.useEffect(() => {
+    form.reset(defaultValues)
+  }, [form, data, defaultValues])
 
   const { executeAsync, isExecuting } = useAction(createLesson, {
     onSuccess: async () => {
@@ -67,7 +75,7 @@ export function CreateLessonDialog() {
       isOpen={isOpen}
       onOpenChange={(open) => (open ? onOpen() : onClose())}
     >
-      <LessonForm form={form} onSubmit={onSubmit}>
+      <LessonForm form={form} onSubmit={onSubmit} isLoading={isLoading}>
         <FormButtons isExecuting={isExecuting} />
       </LessonForm>
     </FormDialog>

@@ -6,7 +6,7 @@ import type {
   projects,
   projectsTransactions,
 } from "@/db/schemas"
-import { courses } from "@/db/schemas/course"
+import { courses, studentsCourseNotes } from "@/db/schemas/course"
 import { type loans } from "@/db/schemas/loan"
 import { students } from "@/db/schemas/student"
 
@@ -53,6 +53,14 @@ export const genderTranslation: Record<
 > = {
   female: "أنثى",
   male: "ذكر",
+}
+
+export const attendanceTranslation: Record<
+  typeof studentsCourseNotes.$inferSelect.attendance,
+  string
+> = {
+  present: "حضور",
+  absent: "غياب",
 }
 
 export const donerTypeTranslation: Record<
