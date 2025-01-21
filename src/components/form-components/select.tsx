@@ -90,7 +90,7 @@
 "use client"
 
 import { useMemo } from "react"
-import Select, { ActionMeta, MultiValue, SingleValue } from "react-select"
+import Select, { MultiValue, SingleValue } from "react-select"
 import CreateableSelect from "react-select/creatable"
 
 type Option = { value: string; label: string }
@@ -158,6 +158,7 @@ export const AppSelect = ({
           ":hover": {
             borderColor: "#e2e8f0",
           },
+          zIndex: "50"
         }),
       }}
       value={formattedValue}

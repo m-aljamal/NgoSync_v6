@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { SalaryPayment } from "@/db/schemas"
 import { type Project } from "@/db/schemas/project"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useAction } from "next-safe-action/hooks"
@@ -16,10 +17,9 @@ import {
   CreateSalariesSchema,
   type CreateProjectSchema,
 } from "@/app/_lib/validations"
-import { SalaryPayment } from "@/db/schemas"
+
 import { SalariesForm } from "./salaries-form"
 
- 
 interface UpdateProjectSheetProps
   extends React.ComponentPropsWithRef<typeof Sheet> {
   salaries: SalaryPayment
@@ -31,9 +31,7 @@ export function UpdateProjectSheet({
 }: UpdateProjectSheetProps) {
   const form = useForm<CreateProjectSchema>({
     resolver: zodResolver(createProjectSchema),
-    defaultValues: {
-      
-    },
+    defaultValues: {},
   })
 
   // React.useEffect(() => {

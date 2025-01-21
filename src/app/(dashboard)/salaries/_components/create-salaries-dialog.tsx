@@ -1,6 +1,8 @@
 "use client"
 
+import React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Decimal from "decimal.js"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -16,7 +18,6 @@ import {
 } from "@/app/_lib/validations"
 
 import { SalariesForm } from "./salaries-form"
-import React from "react"
 
 export function CreateSalariesDialog() {
   const { isOpen, onOpen, onClose } = useFormDialog()
@@ -44,15 +45,24 @@ export function CreateSalariesDialog() {
     },
   })
 
-  const defulatValues: CreateSalariesSchema = React.useMemo(()=>{
-    return{
-      salaries: employees?.map((employee)=>({
-        employeeName: employee.name,
-
-      }))
+  const defaultValues = React.useMemo(() => {
+    return {
+      salaries:
+        employees?.map((employee) => ({
+          employeeName: employee.name,
+          discount: new Decimal(0),
+          extra: new Decimal(0),
+          employeeId: employee.id,
+          salary: new Decimal(employee.salary),
+          currencyId: employee.currencyId ?? "",
+          netSalary: new Decimal(employee.salary),
+          description: "",
+          paymentCurrencyId: employee.currencyId ?? "",
+        })) ?? [],
     }
-  },[employees])
+  }, [employees, selectedProject])
 
+  form.setValue("salaries", defaultValues.salaries)
 
   async function onSubmit(input: CreateSalariesSchema) {
     await executeAsync(input)
