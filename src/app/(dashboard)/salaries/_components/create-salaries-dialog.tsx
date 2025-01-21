@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { useFormDialog } from "@/hooks/use-form-dialog"
+import { useGetEmployees } from "@/hooks/use-get-form-data"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
 import { createSalaries } from "@/app/_lib/actions/employee"
@@ -15,19 +16,21 @@ import {
 } from "@/app/_lib/validations"
 
 import { SalariesForm } from "./salaries-form"
-import { useGetEmployees } from "@/hooks/use-get-form-data"
+import React from "react"
 
 export function CreateSalariesDialog() {
-  const { onClose } = useFormDialog()
+  const { isOpen, onOpen, onClose } = useFormDialog()
 
   const form = useForm<CreateSalariesSchema>({
     resolver: zodResolver(createSalariesSchema),
     defaultValues: {
-      salaries:[
-        
-      ]
+      salaries: [],
     },
   })
+  const selectedProject = form.watch("projectId")
+
+  const { data: employees, isLoading: employeesLoading } =
+    useGetEmployees(selectedProject)
 
   const { executeAsync, isExecuting } = useAction(createSalaries, {
     onSuccess: () => {
@@ -41,20 +44,25 @@ export function CreateSalariesDialog() {
     },
   })
 
+  const defulatValues: CreateSalariesSchema = React.useMemo(()=>{
+    return{
+      salaries: employees?.map((employee)=>({
+        employeeName: employee.name,
+
+      }))
+    }
+  },[employees])
+
+
   async function onSubmit(input: CreateSalariesSchema) {
     await executeAsync(input)
   }
 
-  const selectedProject = form.watch("projectId")
-
-  const { data: employees, isLoading: employeesLoading } =
-    useGetEmployees(selectedProject)
-
-    console.log({selectedProject, employees});
-    
-
   return (
-    <FormDialog>
+    <FormDialog
+      isOpen={isOpen}
+      onOpenChange={(open) => (open ? onOpen() : onClose())}
+    >
       <SalariesForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </SalariesForm>
