@@ -1,6 +1,8 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
+import { useParams } from "next/navigation"
 import { type Lesson } from "@/db/schemas/course"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
@@ -18,7 +20,9 @@ import { DataTableColumnHeader } from "@/components/data-table/data-table-column
 
 import { DeleteLessonsDialog } from "./delete-lesson-dialog"
 
-export function getColumns(): ColumnDef<Lesson>[] {
+export function GetColumns(): ColumnDef<Lesson>[] {
+  const { projectId } = useParams<{ projectId: string }>()
+  const [showDeleteTaskDialog, setShowDeleteTaskDialog] = React.useState(false)
   return [
     {
       id: "select",
@@ -50,6 +54,14 @@ export function getColumns(): ColumnDef<Lesson>[] {
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="عنوان الدرس" />
       ),
+      cell: ({ row }) => (
+        <Link
+          href={`/projects/${projectId}/cultural-center/courses/${row.original.courseId}/${row.original.id}`}
+          className="max-w-[31.25rem] truncate font-medium"
+        >
+          {row.original.title}
+        </Link>
+      ),
 
       enableSorting: false,
       enableHiding: false,
@@ -58,9 +70,6 @@ export function getColumns(): ColumnDef<Lesson>[] {
     {
       id: "actions",
       cell: function Cell({ row }) {
-        const [showDeleteTaskDialog, setShowDeleteTaskDialog] =
-          React.useState(false)
-
         return (
           <>
             <DeleteLessonsDialog

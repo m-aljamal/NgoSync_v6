@@ -9,7 +9,7 @@ import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
 import type { getLessons } from "@/app/_lib/queries/course"
 
-import { getColumns } from "./lesson-table-columns"
+import { GetColumns } from "./lesson-table-columns"
 import { LessonsTableToolbarActions } from "./lessons-table-toolbar-actions"
 
 interface LessonsTableProps {
@@ -19,7 +19,7 @@ interface LessonsTableProps {
 export function LessonsTable({ promise }: LessonsTableProps) {
   const data = React.use(promise)
 
-  const columns = React.useMemo(() => getColumns(), [])
+  const columns = React.useMemo(() => GetColumns(), [])
 
   const filterFields: DataTableFilterField<Lesson>[] = []
 

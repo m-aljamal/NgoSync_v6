@@ -7,6 +7,7 @@ import { employees } from "@/db/schemas"
 import {
   courses,
   lessons,
+  studentsCourseNotes,
   studentsToCourses,
   teachersToCourses,
   type Course,
@@ -162,3 +163,32 @@ export const getLessons = cache(async ({ courseId }: { courseId: string }) => {
     return []
   }
 })
+
+
+
+export const getLesson = cache(async ({ id }: { id?: string }) => {
+  if (!id) {
+    return undefined;
+  }
+  try {
+    const [data] = await db.select().from(lessons).where(eq(lessons.id, id));
+    const notes = await db
+      .select({
+        student: students.name,
+        note: studentsCourseNotes.note,
+        attendance: studentsCourseNotes.attendance,
+        pageNumber: studentsCourseNotes.pageNumber,
+        mark: studentsCourseNotes.mark,
+      })
+      .from(studentsCourseNotes)
+      .where(eq(studentsCourseNotes.lessonId, id))
+      .rightJoin(students, eq(studentsCourseNotes.studentId, students.id))
+       
+    return {
+      lessonData: data,
+      notes,
+    };
+  } catch (error) {
+     return []
+  }
+});

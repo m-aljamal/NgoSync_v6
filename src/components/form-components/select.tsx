@@ -158,7 +158,6 @@ export const AppSelect = ({
           ":hover": {
             borderColor: "#e2e8f0",
           },
-          zIndex: "50"
         }),
       }}
       value={formattedValue}
