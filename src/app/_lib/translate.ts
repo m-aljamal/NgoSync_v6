@@ -6,9 +6,9 @@ import type {
   projects,
   projectsTransactions,
 } from "@/db/schemas"
-import { courses, studentsCourseNotes } from "@/db/schemas/course"
+import type { studentsCourseNotes,  courses } from "@/db/schemas/course"
 import { type loans } from "@/db/schemas/loan"
-import { students } from "@/db/schemas/student"
+import { type students } from "@/db/schemas/student"
 
 export const projectStatusTranslation: Record<
   typeof projects.$inferSelect.status,

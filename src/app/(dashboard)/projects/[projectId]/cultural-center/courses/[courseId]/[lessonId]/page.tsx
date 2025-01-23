@@ -6,9 +6,10 @@ import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getCourses, getLesson } from "@/app/_lib/queries/course"
+import { getLesson, getLessonStudentsNote } from "@/app/_lib/queries/course"
 import { searchParamsSchema } from "@/app/_lib/validations"
 
+import { LessonTable } from "../_components/lesson/lesson-table"
 
 type SearchParamsProps = {
   searchParams: SearchParams
@@ -17,16 +18,22 @@ type SearchParamsProps = {
   }
 }
 
-export default async function Lesson({ searchParams, params }: SearchParamsProps) {
+export default async function Lesson({
+  searchParams,
+  params,
+}: SearchParamsProps) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = await  getLesson( {id: params.lessonId})
-console.log(promise);
+  const lesson = await getLesson({ id: params.lessonId })
+  const lessonStudentsNote = getLessonStudentsNote(
+    search,
+    params.lessonId
+  )
 
   return (
     <div>
       <Heading
-        title="الدورات"
-        description="الدورات المتاحة في المركز الثقافي."
+        title={lesson?.title || ""}
+        description={lesson?.description || ""}
         icon="BookA"
       />
       <Shell className="gap-2">
@@ -48,8 +55,7 @@ console.log(promise);
             />
           }
         >
-          {/* <CoursesTable promise={promise} /> */}
-          Table
+          <LessonTable promise={lessonStudentsNote} />
         </React.Suspense>
       </Shell>
     </div>

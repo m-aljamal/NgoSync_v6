@@ -163,3 +163,13 @@ export const studentsCourseNotesRelations = relations(
     }),
   })
 )
+
+export type StudentsCourseNotes = typeof studentsCourseNotes.$inferSelect
+
+export type StudentsCourseNotesWithRelation = {
+  student: string
+  note: string | null
+  attendance: typeof studentsCourseNotes.$inferSelect.attendance | null
+  pageNumber: number | null
+  mark: string | null
+}

@@ -150,7 +150,6 @@ export const getCourseStudents = cache(
   }
 )
 
-
 export const getLessons = cache(async ({ courseId }: { courseId: string }) => {
   try {
     const lessonsList = await db
@@ -164,31 +163,71 @@ export const getLessons = cache(async ({ courseId }: { courseId: string }) => {
   }
 })
 
-
-
 export const getLesson = cache(async ({ id }: { id?: string }) => {
   if (!id) {
-    return undefined;
+    return undefined
   }
   try {
-    const [data] = await db.select().from(lessons).where(eq(lessons.id, id));
-    const notes = await db
-      .select({
-        student: students.name,
-        note: studentsCourseNotes.note,
-        attendance: studentsCourseNotes.attendance,
-        pageNumber: studentsCourseNotes.pageNumber,
-        mark: studentsCourseNotes.mark,
-      })
-      .from(studentsCourseNotes)
-      .where(eq(studentsCourseNotes.lessonId, id))
-      .rightJoin(students, eq(studentsCourseNotes.studentId, students.id))
-       
-    return {
-      lessonData: data,
-      notes,
-    };
+    const [data] = await db.select().from(lessons).where(eq(lessons.id, id))
+
+    return data
   } catch (error) {
-     return []
+    return null
   }
-});
+})
+
+export async function getLessonStudentsNote(
+  input: GetSearchSchema,
+  lessonId: string
+) {
+  noStore()
+  const { page, per_page, operator } = input
+
+  try {
+    const offset = calculateOffset(page, per_page)
+
+    const expressions: (SQL<unknown> | undefined)[] = [
+      eq(studentsCourseNotes.lessonId, lessonId),
+    ]
+
+    const where: DrizzleWhere<Course> =
+      !operator || operator === "and" ? and(...expressions) : or(...expressions)
+
+    const { data, total } = await db.transaction(async (tx) => {
+      const data = await tx
+        .select({
+          student: students.name,
+          note: studentsCourseNotes.note,
+          attendance: studentsCourseNotes.attendance,
+          pageNumber: studentsCourseNotes.pageNumber,
+          mark: studentsCourseNotes.mark,
+        })
+        .from(studentsCourseNotes)
+        .limit(per_page)
+        .offset(offset)
+        .where(where)
+        .rightJoin(students, eq(studentsCourseNotes.studentId, students.id))
+
+      const total = await tx
+        .select({
+          count: count(),
+        })
+        .from(studentsCourseNotes)
+        .where(where)
+        .rightJoin(students, eq(studentsCourseNotes.studentId, students.id))
+        .execute()
+        .then((res) => res[0]?.count ?? 0)
+
+      return {
+        data,
+        total,
+      }
+    })
+
+    const pageCount = calculatePageCount(total, per_page)
+
+    return { data, pageCount }
+  } catch (err) {
+    return { data: [], pageCount: 0 }
+  }
+}

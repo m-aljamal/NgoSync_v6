@@ -22,7 +22,7 @@ interface ProjectTableProps {
   promise: ReturnType<typeof getProjects>
 }
 
-export function ProjectsTable({ promise }: ProjectTableProps) {
+export function LessonTable({ promise }: ProjectTableProps) {
   const { data, pageCount } = React.use(promise)
 
   const columns = React.useMemo(() => getColumns(), [])
