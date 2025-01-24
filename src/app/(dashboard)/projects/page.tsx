@@ -10,7 +10,7 @@ import { getProjects } from "@/app/_lib/queries/projects"
 
 import { searchParamsSchema } from "../../_lib/validations"
 import { ProjectsTable } from "./_components/project-table"
-
+ 
 export interface IndexPageProps {
   searchParams: SearchParams
 }

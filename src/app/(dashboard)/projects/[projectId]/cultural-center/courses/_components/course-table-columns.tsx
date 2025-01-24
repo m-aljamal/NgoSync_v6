@@ -57,7 +57,7 @@ export function getColumns(): ColumnDef<Course>[] {
       ),
       cell: ({ row }) => (
         <Link
-          href={`/projects/${row.original.projectId}/cultural-center/courses/${row.original.id}`}
+          href={`/course/${row.original.id}`}
           className="max-w-[31.25rem] truncate font-medium"
         >
           {row.getValue("name")}
