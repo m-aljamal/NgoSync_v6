@@ -17,7 +17,11 @@ import {
 
 import { CourseForm } from "./course-form"
 
-export function CreateCourseDialog() {
+export function CreateCourseDialog({
+  params,
+}: {
+  params: { projectId: string }
+}) {
   const { onClose } = useFormDialog()
 
   const queryClient = useQueryClient()
@@ -25,6 +29,7 @@ export function CreateCourseDialog() {
   const form = useForm<CreateCourseSchema>({
     resolver: zodResolver(createCourseSchema),
     defaultValues: {
+      projectId: params.projectId,
       status: "active",
       name: "",
     },

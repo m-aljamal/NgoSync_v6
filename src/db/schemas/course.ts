@@ -70,8 +70,12 @@ export const studentsToCoursesRelations = relations(
 export const teachersToCourses = pgTable(
   "teachers_to_courses",
   {
-    teacherId: varchar("teacher_id").notNull(),
-    courseId: varchar("course_id").notNull(),
+    teacherId: varchar("teacher_id")
+      .references(() => courses.id, { onDelete: "cascade" })
+      .notNull(),
+    courseId: varchar("course_id")
+      .references(() => courses.id, { onDelete: "cascade" })
+      .notNull(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.teacherId, t.courseId] }),

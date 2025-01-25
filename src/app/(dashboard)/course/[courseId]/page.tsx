@@ -1,8 +1,19 @@
-import React from 'react'
+import React from "react"
 
-function Course() {
+import Heading from "@/components/Heading"
+import { getCourse } from "@/app/_lib/queries/course"
+
+async function Course({ params }: { params: { courseId: string } }) {
+  const course = await getCourse({ courseId: params.courseId })
+
   return (
-    <div>Course</div>
+    <div>
+      <Heading
+        title={course?.name || ""}
+        description={course?.description || ""}
+        icon="BookA"
+      />
+    </div>
   )
 }
 

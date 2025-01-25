@@ -37,8 +37,6 @@ export function CourseForm({ form, onSubmit, children }: CourseFormProps) {
             labelName="اسم الكورس"
           />
 
-          <ProjectInput form={form} />
-
           <FormField
             control={form.control}
             name="status"

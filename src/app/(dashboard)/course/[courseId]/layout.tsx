@@ -1,120 +1,63 @@
-import { notFound, redirect } from "next/navigation"
-import { type projects } from "@/db/schemas"
+import { notFound } from "next/navigation"
 import { type SidebarLinks } from "@/types"
 
 import AppSidebar from "@/components/app-sidebar"
 import { currentUser } from "@/app/_lib/auth"
-import { getProject } from "@/app/_lib/queries/projects"
+import { getCourse } from "@/app/_lib/queries/course"
 
 export default async function CourseLayout({
   children,
   params,
 }: {
   children: React.ReactNode
-  params: { projectId: string }
+  params: { courseId: string }
 }) {
-  // const project = await getProject({
-  //   id: params.projectId,
-  // })
+  const course = await getCourse({ courseId: params.courseId })
+
   const user = await currentUser()
 
-  // if (!project) {
-  //   notFound()
-  // }
+  if (!course) {
+    notFound()
+  }
 
   // if (user?.role === "project_manager" && user.id !== project.userId) {
   //   redirect("/projects")
   // }
-
-  const schoolSystem: SidebarLinks = [
-    {
-      groupName: "المدرسة",
-      items: [
-        {
-          title: "بيانات المدرسة",
-          icon: "Presentation",
-          href: `/projects/school-system/overview`,
-        },
-        {
-          title: "معلومات المدرسة",
-          icon: "BriefcaseBusiness",
-          children: [
-            {
-              href: `/projects/school-system/students`,
-              title: "الطلاب",
-              icon: "Users",
-            },
-          
-          ],
-        },
-      ],
-    },
-  ]
-
-  const culturalCenterSystem: SidebarLinks = [
-    {
-      groupName: "المركز الثقافي",
-      items: [
-        {
-          title: "بيانات المركز",
-          icon: "Presentation",
-          href: `/projects/cultural-center/overview`,
-        },
-        {
-          title: "معلومات المركز",
-          icon: "BriefcaseBusiness",
-          children: [
-            {
-              href: `/projects/cultural-center/courses`,
-              title: "الدورات",
-              icon: "SwatchBook",
-            },
-             
-          ],
-        },
-      ],
-    },
-  ]
-
-  const systems: Record<typeof projects.$inferSelect.system, SidebarLinks> = {
-    school: schoolSystem,
-    cultural_center: culturalCenterSystem,
-    relief: [],
-    health: [],
-    office: [],
-  }
 
   const links: SidebarLinks = [
     {
       groupName: "المشروع",
       items: [
         {
-          title: "بيانات المشروع",
+          title: "بيانات الدورة ",
           icon: "Presentation",
-          href: `/projects/overview`,
+          href: `/course/${params.courseId}`,
         },
-
         {
-          title: "الحركات المالية",
-          icon: "ArrowDownUp",
-          children: [
-            {
-              href: `/projects/income`,
-              title: "الإيرادات",
-              icon: "ArrowDownLeft",
-            },
-            
-          ],
+          title: "الطلاب",
+          icon: "Users",
+          href: `/course/${params.courseId}/students`,
         },
-         
+        {
+          title: "المعلمين",
+          icon: "Users",
+          href: `/course/${params.courseId}/teachers`,
+        },
+        {
+          title: "الدروس",
+          icon: "Users",
+          href: `/course/${params.courseId}/lessons`,
+        },
       ],
     },
-     
   ]
 
   const breadcrumbs = [
-    { title: "الدورات", href: "/projects/uhYfLIsvwLUc/cultural-center/courses" },
-    { title: "project.name", href: `/courses` },
+    {
+      title: "الدورات",
+      href: `/projects/${course.projectId}/cultural-center/courses`,
+    },
+    { title: course.name, href: `/course/${course.id}` },
   ]
 
   return (

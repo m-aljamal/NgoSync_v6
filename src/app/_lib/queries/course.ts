@@ -110,22 +110,56 @@ export type TeachersList = {
   id: string | null
 }
 
-export const getTeachers = cache(async ({ courseId }: { courseId: string }) => {
-  try {
-    const teachers = await db
-      .select({
-        name: employees.name,
-        id: employees.id,
-      })
-      .from(teachersToCourses)
-      .where(eq(teachersToCourses.courseId, courseId))
-      .leftJoin(employees, eq(teachersToCourses.teacherId, employees.id))
+export async function getTeachers(input: GetSearchSchema, courseId: string) {
+  noStore()
+  const { page, per_page, operator } = input
 
-    return teachers
-  } catch (error) {
-    return []
+  try {
+    const offset = calculateOffset(page, per_page)
+
+    const expressions: (SQL<unknown> | undefined)[] = [
+      eq(teachersToCourses.courseId, courseId),
+    ]
+
+    const where: DrizzleWhere<Course> =
+      !operator || operator === "and" ? and(...expressions) : or(...expressions)
+
+    const { data, total } = await db.transaction(async (tx) => {
+      const data = await tx
+        .select({
+          name: employees.name,
+          id: employees.id,
+        })
+        .from(teachersToCourses)
+        .limit(per_page)
+        .offset(offset)
+        .where(where)
+        .leftJoin(employees, eq(teachersToCourses.teacherId, employees.id))
+        console.log({data});
+        
+      const total = await tx
+        .select({
+          count: count(),
+        })
+        .from(courses)
+        .where(where)
+        .execute()
+        .then((res) => res[0]?.count ?? 0)
+
+      return {
+        data,
+        total,
+      }
+    })
+
+    const pageCount = calculatePageCount(total, per_page)
+
+    return { data, pageCount }
+  } catch (err) {
+    return { data: [], pageCount: 0 }
   }
-})
+}
+
 export type StudentsList = {
   name: string | null
   id: string | null
