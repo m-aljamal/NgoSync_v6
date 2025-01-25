@@ -9,6 +9,8 @@ import { genders } from "./enums"
 import { loans } from "./loan"
 import { projects } from "./project"
 import { projectsTransactions } from "./transactions"
+import { users } from "./user"
+import { teachersToCourses } from "./course"
 
 export const employeeStatus = pgEnum("employee_status", ["active", "inactive"])
 export const positions = pgEnum("positions", [
@@ -41,6 +43,7 @@ export const employees = pgTable("employees", {
   jobTitleId: varchar("job_title_id", { length: 30 })
     .references(() => employeesJobTitles.id)
     .notNull(),
+  userId: varchar("user_id", { length: 30 }).references(() => users.id),
 })
 
 export const employeesRelations = relations(employees, ({ one, many }) => ({
@@ -57,9 +60,13 @@ export const employeesRelations = relations(employees, ({ one, many }) => ({
     fields: [employees.jobTitleId],
     references: [employeesJobTitles.id],
   }),
+  userId: one(users, {
+    fields: [employees.userId],
+    references: [users.id],
+  }),
   salaryPayments: many(salaryPayments),
   loans: many(loans),
-  //   teachersToCourses: many(teachersToCourses),
+  teachersToCourses: many(teachersToCourses),
 }))
 
 export type Employee = typeof employees.$inferSelect

@@ -57,9 +57,10 @@ export default function Hero({ role }: HeroProps) {
 
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             {!role && <SigninBtn />}
+            
             {role && role !== "viewer" && (
               <Link
-                href="/overview"
+                href={role === "teacher" ? "/courses" :"/overview"}
                 className="text-sm font-semibold leading-6 text-gray-900"
               >
                 لوحة التحكم <span aria-hidden="true">&larr;</span>

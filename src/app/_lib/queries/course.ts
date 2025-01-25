@@ -22,6 +22,77 @@ import { filterColumn } from "@/lib/filter-column"
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
+export async function getTeacherCourses(input: GetSearchSchema) {
+  noStore()
+  const { page, per_page, sort, name, operator, from, to } = input
+
+  try {
+    const offset = calculateOffset(page, per_page)
+
+    const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+      "createdAt",
+      "desc",
+    ]) as [keyof Course | undefined, "asc" | "desc" | undefined]
+
+    // Convert the date strings to date objects
+    const { fromDay, toDay } = convertToDate(from, to)
+
+    const expressions: (SQL<unknown> | undefined)[] = [
+      // projectId ? eq(courses.projectId, projectId) : undefined,
+      name
+        ? filterColumn({
+            column: courses.name,
+            value: name,
+          })
+        : undefined,
+
+      // Filter by createdAt
+      fromDay && toDay
+        ? and(gte(courses.createdAt, fromDay), lte(courses.createdAt, toDay))
+        : undefined,
+    ]
+
+    const where: DrizzleWhere<Course> =
+      !operator || operator === "and" ? and(...expressions) : or(...expressions)
+
+    const { data, total } = await db.transaction(async (tx) => {
+      const data = await tx
+        .select()
+        .from(courses)
+        .limit(per_page)
+        .offset(offset)
+        .where(where)
+        .orderBy(
+          column && column in courses
+            ? order === "asc"
+              ? asc(courses[column])
+              : desc(courses[column])
+            : desc(courses.id)
+        )
+        console.log({data});
+        
+      const total = await tx
+        .select({
+          count: count(),
+        })
+        .from(courses)
+        .where(where)
+        .execute()
+        .then((res) => res[0]?.count ?? 0)
+
+      return {
+        data,
+        total,
+      }
+    })
+
+    const pageCount = calculatePageCount(total, per_page)
+
+    return { data, pageCount }
+  } catch (err) {
+    return { data: [], pageCount: 0 }
+  }
+}
 export async function getCourses(input: GetSearchSchema, projectId?: string) {
   noStore()
   const { page, per_page, sort, name, operator, from, to } = input

@@ -23,11 +23,6 @@ export const routes: Route[] = [
     href: "/overview",
     roles: ["admin", "project_manager"],
   },
-  // {
-  //   title: "الدورات",
-  //   href: "/courses",
-  //   roles: ["teacher"],
-  // },
 
   {
     title: "المشاريع",
@@ -37,7 +32,7 @@ export const routes: Route[] = [
         icon: "Presentation",
         href: "/projects",
         description: "جميع المشاريع وأنشطة المنظمة",
-        roles: ["admin", "project_manager","teacher"],
+        roles: ["admin", "project_manager"],
       },
 
       {

@@ -1,9 +1,51 @@
-import React from 'react'
+import React from "react"
+import { type SearchParams } from "@/types"
 
-function Courses() {
-  return (
-    <div>Courses</div>
-  )
+import { Skeleton } from "@/components/ui/skeleton"
+import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
+import { DateRangePicker } from "@/components/date-range-picker"
+import Heading from "@/components/Heading"
+import { Shell } from "@/components/shell"
+import { getCourses, getTeacherCourses } from "@/app/_lib/queries/course"
+import { searchParamsSchema } from "@/app/_lib/validations"
+
+type SearchParamsProps = {
+  searchParams: SearchParams
 }
 
-export default Courses
+export default function Courses({ searchParams }: SearchParamsProps) {
+  const search = searchParamsSchema.parse(searchParams)
+  const promise = getTeacherCourses(search)
+
+  return (
+    <div>
+      <Heading
+        title="الدورات"
+        description="الدورات المتاحة في المركز الثقافي."
+        icon="BookA"
+      />
+      <Shell className="gap-2">
+        <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
+          <DateRangePicker
+            triggerSize="sm"
+            triggerClassName="ml-auto w-56 sm:w-60"
+            align="end"
+          />
+        </React.Suspense>
+        <React.Suspense
+          fallback={
+            <DataTableSkeleton
+              columnCount={5}
+              searchableColumnCount={1}
+              filterableColumnCount={2}
+              cellWidths={["10rem", "40rem", "12rem", "12rem", "8rem"]}
+              shrinkZero
+            />
+          }
+        >
+          {/* <CoursesTable promise={promise} /> */}
+        </React.Suspense>
+      </Shell>
+    </div>
+  )
+}

@@ -21,36 +21,19 @@ export const adminRouteProtection = async () => {
   }
 }
 
-export const filterRoutesByRole = async (routes: Route[]) => {
-  const role = await currentRole()
-  if (!role) redirect("/auth/login")
-
-  return routes.filter((route) => {
-    if (route.roles) {
-      return route.roles.includes(role)
-    }
-    if (route.children) {
-      route.children = route.children.filter((child) =>
-        child.roles.includes(role)
-      )
-    }
-    return true
-  })
-}
-
 export const filterPageLinksByRole = async (routes: Route[]) => {
   const role = await currentRole()
   if (!role) redirect("/auth/login")
 
   return routes.filter((route) => {
-    if (route.roles) {
-      return route.roles.includes(role)
-    }
+    if (route.roles?.includes(role)) return true
+
     if (route.children) {
-      route.children = route.children.filter((child) =>
-        child.roles.includes(role)
-      )
+      route.children = route.children.filter((child) => child.roles?.includes(role))
+      return route.children.length > 0
     }
-    return true
+
+    return false
   })
 }
+
