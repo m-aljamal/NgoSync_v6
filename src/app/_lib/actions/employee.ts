@@ -37,9 +37,11 @@ export const createEmployee = actionClient
         phone,
         description,
         address,
+        userId,
       },
     }) => {
       noStore()
+
       await db.insert(employees).values({
         name,
         projectId,
@@ -54,6 +56,7 @@ export const createEmployee = actionClient
         phone,
         description,
         address,
+        userId,
       })
       revalidatePath("/employees")
     }
@@ -101,7 +104,6 @@ export const createEmployeeJobTitle = actionClient
     revalidatePath("/employees")
   })
 
-
 export const createSalaries = actionClient
   .schema(createSalariesSchema, {
     handleValidationErrorsShape: (ve) =>
@@ -109,6 +111,5 @@ export const createSalaries = actionClient
   })
   .action(async ({ parsedInput }) => {
     noStore()
-    console.log(parsedInput);
-    
+    console.log(parsedInput)
   })

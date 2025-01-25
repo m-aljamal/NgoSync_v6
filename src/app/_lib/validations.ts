@@ -242,6 +242,7 @@ export const createEmployeeSchema = z.object({
   description: z.string().optional(),
   birthDate: date,
   id: z.string().optional(),
+  userId: z.string().optional(),
 })
 
 export type CreateEmployeeSchema = z.infer<typeof createEmployeeSchema>

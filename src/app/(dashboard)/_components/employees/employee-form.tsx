@@ -25,6 +25,7 @@ import {
 } from "@/components/form-components"
 import InputGroup from "@/components/form-components/InputGroup"
 import { AppSelect } from "@/components/form-components/select"
+import SelectUsers from "@/components/form-components/select-users"
 import { createEmployeeJobTitle } from "@/app/_lib/actions/employee"
 import {
   employeePosisionTranslation,
@@ -220,6 +221,8 @@ export function EmployeeForm({
             )}
           />
           <DateInput form={form} name="birthDate" labelName="تاريخ الولادة" />
+
+          <SelectUsers form={form} />
 
           <DescriptionInput form={form} />
         </InputGroup>

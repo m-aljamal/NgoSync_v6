@@ -43,7 +43,7 @@ export const employees = pgTable("employees", {
   jobTitleId: varchar("job_title_id", { length: 30 })
     .references(() => employeesJobTitles.id)
     .notNull(),
-  userId: varchar("user_id", { length: 30 }).references(() => users.id),
+  userId: varchar("user_id", { length: 50 }).references(() => users.id),
 })
 
 export const employeesRelations = relations(employees, ({ one, many }) => ({

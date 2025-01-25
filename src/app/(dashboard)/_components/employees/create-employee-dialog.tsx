@@ -18,7 +18,7 @@ import {
 import { EmployeeForm } from "./employee-form"
 
 export function CreateEmployeeDialog() {
-  const { onClose, isOpen, onOpen } = useFormDialog()
+  const { onClose } = useFormDialog()
 
   const queryClient = useQueryClient()
 
@@ -50,10 +50,7 @@ export function CreateEmployeeDialog() {
   }
 
   return (
-    <FormDialog
-      isOpen={isOpen}
-      onOpenChange={(open) => (open ? onOpen() : onClose())}
-    >
+    <FormDialog>
       <EmployeeForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </EmployeeForm>

@@ -4,7 +4,6 @@ import * as React from "react"
 import { projects } from "@/db/schemas/project"
 import { type UseFormReturn } from "react-hook-form"
 
-import { useGetUsers } from "@/hooks/use-get-form-data"
 import {
   Form,
   FormControl,
@@ -16,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import InputGroup from "@/components/form-components/InputGroup"
 import { AppSelect } from "@/components/form-components/select"
+import SelectUsers from "@/components/form-components/select-users"
 import {
   projectStatusTranslation,
   projectSystemTranslation,
@@ -30,8 +30,6 @@ interface CreateTaskFormProps
 }
 
 export function ProjectForm({ form, onSubmit, children }: CreateTaskFormProps) {
-  const { data: users, isLoading } = useGetUsers()
-
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -86,28 +84,7 @@ export function ProjectForm({ form, onSubmit, children }: CreateTaskFormProps) {
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="userId"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>المسؤول</FormLabel>
-
-                <AppSelect
-                  isLoading={isLoading}
-                  onChange={field.onChange}
-                  value={field.value}
-                  options={users?.map((user) => ({
-                    value: user.id,
-                    label: user.name ?? "",
-                  }))}
-                  placeholder="المسؤول"
-                />
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <SelectUsers form={form} withAdmin label="المسؤول" />
 
           <FormField
             control={form.control}

@@ -48,6 +48,7 @@ export function UpdateEmployeeSheet({
       description: employee.description ?? "",
       address: employee.address ?? "",
       status: employee.status,
+      userId: employee.userId ?? "",
     })
   }, [employee, form])
 

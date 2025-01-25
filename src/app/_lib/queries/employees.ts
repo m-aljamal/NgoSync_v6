@@ -75,6 +75,7 @@ export async function getEmployees(input: GetSearchSchema, projectId?: string) {
           address: employees.address,
           birthDate: employees.birthDate,
           currencyCode: currencies.code,
+          userId: employees.userId,
         })
         .from(employees)
         .limit(per_page)
