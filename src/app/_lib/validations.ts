@@ -283,6 +283,7 @@ export type CreateLoanSchema = z.infer<typeof createLoanSchema>
 export const createStudentSchema = z.object({
   name: z.string().min(2).max(120),
   projectId: z.string().min(2),
+  nID: z.string(),
   gender: z.enum(students.gender.enumValues),
   status: z.enum(students.status.enumValues),
   phone: z.string().min(6).max(20),

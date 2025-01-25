@@ -59,6 +59,12 @@ export function StudentForm({
           />
           <NameInput
             form={form}
+            name="nID"
+            placeholder="الرقم الوطني"
+            labelName="الرقم الوطني"
+          />
+          <NameInput
+            form={form}
             name="motherName"
             placeholder="اسم الأم"
             labelName="اسم الأم"

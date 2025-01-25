@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
-import { type PageLinks } from "@/types"
 
 import { type Route } from "@/components/layouts/routes"
 
@@ -19,36 +18,6 @@ export const adminRouteProtection = async () => {
 
   if (role !== "admin") {
     redirect("/overview")
-  }
-}
-
-export const userPermissions = async () => {
-  const role = await currentRole()
-
-  const permissions = {
-    admin: {
-      canCreateProjects: true,
-      canDeleteProjects: true,
-      canDeleteTransfer_fund_to_project: true,
-    },
-
-    project_manager: {
-      canCreateProjects: false,
-      canDeleteProjects: false,
-      canDeleteTransfer_fund_to_project: false,
-    },
-    viewer: {
-      canCreateProjects: false,
-      canDeleteProjects: false,
-      canDeleteTransfer_fund_to_project: false,
-    },
-  }
-
-  const userPermissions = permissions[role!]
-
-  return {
-    role,
-    ...userPermissions,
   }
 }
 

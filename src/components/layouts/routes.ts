@@ -1,6 +1,5 @@
 import { type users } from "@/db/schemas/user"
 
- 
 import type { icons } from "./icons"
 
 export interface Route {
@@ -24,6 +23,12 @@ export const routes: Route[] = [
     href: "/overview",
     roles: ["admin", "project_manager"],
   },
+  // {
+  //   title: "الدورات",
+  //   href: "/courses",
+  //   roles: ["teacher"],
+  // },
+
   {
     title: "المشاريع",
     children: [
@@ -32,7 +37,7 @@ export const routes: Route[] = [
         icon: "Presentation",
         href: "/projects",
         description: "جميع المشاريع وأنشطة المنظمة",
-        roles: ["admin", "project_manager"],
+        roles: ["admin", "project_manager","teacher"],
       },
 
       {
@@ -85,6 +90,7 @@ export const routes: Route[] = [
       },
     ],
   },
+
   {
     title: "الحركات المالية",
     children: [
@@ -198,5 +204,3 @@ export const routes: Route[] = [
     roles: ["admin"],
   },
 ]
-
- 

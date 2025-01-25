@@ -16,6 +16,7 @@ export const roleEnum = pgEnum("role_enum", [
   "admin",
   "project_manager",
   "viewer",
+  "teacher",
 ])
 
 export const users = pgTable("user", {
@@ -92,7 +93,7 @@ export const authenticators = pgTable(
     credentialDeviceType: text("credentialDeviceType").notNull(),
     credentialBackedUp: boolean("credentialBackedUp").notNull(),
     transports: text("transports"),
-  },
+  }
   // (authenticator) => ({
   //   compositePK: primaryKey({
   //     columns: [authenticator.userId, authenticator.credentialID],

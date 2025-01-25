@@ -40,6 +40,7 @@ export const createStudent = actionClient
         fatherName,
         motherName,
         registrationDate,
+        nID,
       },
     }) => {
       noStore()
@@ -55,6 +56,7 @@ export const createStudent = actionClient
         description,
         address,
         motherName,
+        nID,
         registrationDate: format(registrationDate, "yyyy-MM-dd"),
       })
       revalidatePath("/students")

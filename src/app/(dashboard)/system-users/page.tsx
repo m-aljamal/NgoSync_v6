@@ -1,32 +1,29 @@
-import * as React from "react"
-import type { SearchParams } from "@/types"
+import React from "react"
+import { type SearchParams } from "@/types"
 
 import { Skeleton } from "@/components/ui/skeleton"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getProjects } from "@/app/_lib/queries/projects"
+import { getExchangeBetweenFunds } from "@/app/_lib/queries/currency"
+import { getUsers } from "@/app/_lib/queries/user"
+import { searchParamsSchema } from "@/app/_lib/validations"
 
-import { searchParamsSchema } from "../../_lib/validations"
-import { ProjectsTable } from "./_components/project-table"
-
-export interface IndexPageProps {
-  searchParams: SearchParams
-}
-export default function page({ searchParams }: IndexPageProps) {
+export default function ExchangeBetweenFundsToFunds({
+  searchParams,
+}: SearchParams) {
+  // todo add search
   const search = searchParamsSchema.parse(searchParams)
-
-  const promise = getProjects(search)
+  const promise = getUsers()
 
   return (
     <div>
       <Heading
-        title="المشاريع"
-        description="المشاريع الخاصة بالمنظمة"
-        icon="Presentation"
+        title="المستخدمين"
+        description="إدارة المستخدمين."
+        icon="Users"
       />
-
       <Shell className="gap-2">
         <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
           <DateRangePicker
@@ -46,7 +43,7 @@ export default function page({ searchParams }: IndexPageProps) {
             />
           }
         >
-          <ProjectsTable promise={promise} />
+          {/* <ExchangeBetweenFundsTable promise={promise} /> */}
         </React.Suspense>
       </Shell>
     </div>

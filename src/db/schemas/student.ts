@@ -23,7 +23,7 @@ export const students = pgTable("students", {
   projectId: varchar("project_id", { length: 30 })
     .references(() => projects.id)
     .notNull(),
-
+  nID: varchar("nID", { length: 120 }),
   status: studentStatus("student_status").notNull(),
 
   gender: genders("genders").notNull(),
