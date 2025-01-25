@@ -1,34 +1,38 @@
-import * as React from "react"
-import type { SearchParams } from "@/types"
+import React from "react"
+import { type SearchParams } from "@/types"
 
 import { Skeleton } from "@/components/ui/skeleton"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getLessons } from "@/app/_lib/queries/course"
+import { getLesson, getLessonStudentsNote } from "@/app/_lib/queries/course"
 import { searchParamsSchema } from "@/app/_lib/validations"
 
-import { LessonsTable } from "./_components/lessons-table"
+import { LessonTable } from "./_components/lesson-table"
 
-export interface IndexPageProps {
+type SearchParamsProps = {
   searchParams: SearchParams
   params: {
-    courseId: string
+    lessonId: string
   }
 }
-export default function Lessons({ searchParams, params }: IndexPageProps) {
+
+export default async function Lesson({
+  searchParams,
+  params,
+}: SearchParamsProps) {
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getLessons(search, params.courseId)
+  const lesson = await getLesson({ id: params.lessonId })
+  const lessonStudentsNote = getLessonStudentsNote(search, params.lessonId)
 
   return (
     <div>
       <Heading
-        title="الدروس"
-        description="تفاصيل الدروس في الدورة"
-        icon="Presentation"
+        title={lesson?.title || ""}
+        description={lesson?.description || ""}
+        icon="BookA"
       />
-
       <Shell className="gap-2">
         <React.Suspense fallback={<Skeleton className="h-7 w-52" />}>
           <DateRangePicker
@@ -48,7 +52,7 @@ export default function Lessons({ searchParams, params }: IndexPageProps) {
             />
           }
         >
-          <LessonsTable promise={promise} />
+          <LessonTable promise={lessonStudentsNote} />
         </React.Suspense>
       </Shell>
     </div>
