@@ -14,6 +14,7 @@ import { ProjectsTable } from "./_components/project-table"
 export interface IndexPageProps {
   searchParams: SearchParams
 }
+
 export default function page({ searchParams }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
