@@ -39,17 +39,10 @@ export async function getTeacherCourses(input: GetSearchSchema) {
 
     const expressions: (SQL<unknown> | undefined)[] = [
       // projectId ? eq(courses.projectId, projectId) : undefined,
-      name
-        ? filterColumn({
-            column: courses.name,
-            value: name,
-          })
-        : undefined,
-
       // Filter by createdAt
-      fromDay && toDay
-        ? and(gte(courses.createdAt, fromDay), lte(courses.createdAt, toDay))
-        : undefined,
+      // fromDay && toDay
+      //   ? and(gte(courses.createdAt, fromDay), lte(courses.createdAt, toDay))
+      //   : undefined,
     ]
 
     const where: DrizzleWhere<Course> =
@@ -57,20 +50,23 @@ export async function getTeacherCourses(input: GetSearchSchema) {
 
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
-        .select()
-        .from(courses)
+        .select({
+          name: courses.name,
+          status: courses.status,
+          id: courses.id,
+          createdAt: courses.createdAt,
+          updatedAt: courses.updatedAt,
+          description: courses.description,
+          projectId: courses.projectId,
+        })
+        .from(teachersToCourses)
         .limit(per_page)
         .offset(offset)
         .where(where)
-        .orderBy(
-          column && column in courses
-            ? order === "asc"
-              ? asc(courses[column])
-              : desc(courses[column])
-            : desc(courses.id)
-        )
-        console.log({data});
-        
+        .leftJoin(courses, eq(teachersToCourses.courseId, courses.id))
+
+      console.log(data)
+
       const total = await tx
         .select({
           count: count(),

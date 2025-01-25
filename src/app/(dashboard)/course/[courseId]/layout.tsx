@@ -55,7 +55,10 @@ export default async function CourseLayout({
   const breadcrumbs = [
     {
       title: "الدورات",
-      href: `/projects/${course.projectId}/cultural-center/courses`,
+      href:
+        user?.role === "teacher"
+          ? "/courses"
+          : `/projects/${course.projectId}/cultural-center/courses`,
     },
     { title: course.name, href: `/course/${course.id}` },
   ]

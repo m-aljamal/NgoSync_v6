@@ -6,8 +6,10 @@ import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
 import { Shell } from "@/components/shell"
-import { getCourses, getTeacherCourses } from "@/app/_lib/queries/course"
+import { getTeacherCourses } from "@/app/_lib/queries/course"
 import { searchParamsSchema } from "@/app/_lib/validations"
+
+import { CoursesTable } from "./_components/courses-table"
 
 type SearchParamsProps = {
   searchParams: SearchParams
@@ -43,7 +45,7 @@ export default function Courses({ searchParams }: SearchParamsProps) {
             />
           }
         >
-          {/* <CoursesTable promise={promise} /> */}
+          <CoursesTable promise={promise} />
         </React.Suspense>
       </Shell>
     </div>
