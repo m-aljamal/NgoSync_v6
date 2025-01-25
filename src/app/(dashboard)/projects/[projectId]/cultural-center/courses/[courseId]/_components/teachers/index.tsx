@@ -13,7 +13,7 @@ import { getTeachers } from "@/app/_lib/queries/course"
 import { EmployeesTable } from "./employees-table"
 
 export default function TeachersList({ courseId }: { courseId: string }) {
-  const promise = getTeachers({ courseId })
+  const promise = getTeachers( { },  courseId  )
 
   return (
     <Card>

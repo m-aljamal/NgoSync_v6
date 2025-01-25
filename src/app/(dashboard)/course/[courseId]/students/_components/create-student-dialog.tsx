@@ -2,7 +2,6 @@
 
 import { useParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useQueryClient } from "@tanstack/react-query"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -10,34 +9,29 @@ import { toast } from "sonner"
 import { useFormDialog } from "@/hooks/use-form-dialog"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
-import { createCourse } from "@/app/_lib/actions/course"
+import { addStudentsToCourses } from "@/app/_lib/actions/course"
 import {
-  createCourseSchema,
-  type CreateCourseSchema,
+  createStudentsToCourses,
+  type CreateStudentsToCourses,
 } from "@/app/_lib/validations"
 
-import { CourseForm } from "./course-form"
+import { StudentForm } from "./students-form"
 
-export function CreateCourseDialog() {
+export function CreateStudentDialog() {
+  const { courseId } = useParams<{ courseId: string }>()
   const { onClose } = useFormDialog()
 
-  const queryClient = useQueryClient()
-  const { projectId } = useParams<{ projectId: string }>()
-  const form = useForm<CreateCourseSchema>({
-    resolver: zodResolver(createCourseSchema),
+  const form = useForm<CreateStudentsToCourses>({
+    resolver: zodResolver(createStudentsToCourses),
     defaultValues: {
-      projectId,
-      status: "active",
-      name: "",
+      courseId,
+      students: [],
     },
   })
 
-  const { executeAsync, isExecuting } = useAction(createCourse, {
+  const { executeAsync, isExecuting } = useAction(addStudentsToCourses, {
     onSuccess: async () => {
-      toast.success("تم إنشاء الكورس")
-      await queryClient.invalidateQueries({
-        queryKey: ["courses"],
-      })
+      toast.success("تمت الإضافة")
       form.reset()
       toast.dismiss()
       onClose()
@@ -47,15 +41,15 @@ export function CreateCourseDialog() {
     },
   })
 
-  async function onSubmit(input: CreateCourseSchema) {
+  async function onSubmit(input: CreateStudentsToCourses) {
     await executeAsync(input)
   }
 
   return (
     <FormDialog>
-      <CourseForm form={form} onSubmit={onSubmit}>
+      <StudentForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
-      </CourseForm>
+      </StudentForm>
     </FormDialog>
   )
 }

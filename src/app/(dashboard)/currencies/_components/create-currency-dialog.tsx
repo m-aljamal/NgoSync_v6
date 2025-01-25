@@ -17,7 +17,7 @@ import {
 import { CurrencyForm } from "./currency-form"
 
 export function CreateCurrencyDialog() {
-  const { isOpen, onOpen, onClose } = useFormDialog()
+  const {  onClose } = useFormDialog()
 
   const form = useForm<CreateCurrencySchema>({
     resolver: zodResolver(createCurrencySchema),
@@ -40,10 +40,7 @@ export function CreateCurrencyDialog() {
   }
 
   return (
-    <FormDialog
-      isOpen={isOpen}
-      onOpenChange={(open) => (open ? onOpen() : onClose())}
-    >
+    <FormDialog>
       <CurrencyForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </CurrencyForm>

@@ -2,6 +2,8 @@
 
 import * as React from "react"
 import { PlusIcon } from "@radix-ui/react-icons"
+
+import { useFormDialog } from "@/hooks/use-form-dialog"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,6 +22,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
+
 import { ScrollArea } from "../ui/scroll-area"
 
 export default function FormDialog({
@@ -27,16 +30,18 @@ export default function FormDialog({
   title = "إضافة جديد",
   description = "قم بملء التفاصيل أدناه لإنشاء عنصر جديد.",
   triggerButton,
-  isOpen,
-  onOpenChange,
+  // isOpen,
+  // onOpenChange,
 }: {
   children: React.ReactNode
   title?: string
   description?: string
   triggerButton?: React.ReactNode
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
+  // isOpen: boolean
+  // onOpenChange: (isOpen: boolean) => void
 }) {
+  const { isOpen, onOpen, onClose } = useFormDialog()
+
   const isDesktop = useMediaQuery("(min-width: 640px)")
 
   const defaultTrigger = (
@@ -48,10 +53,12 @@ export default function FormDialog({
 
   if (isDesktop)
     return (
-      <Dialog open={isOpen} onOpenChange={onOpenChange}>
-        <DialogTrigger asChild>
-          {triggerButton || defaultTrigger}
-        </DialogTrigger>
+      <Dialog
+        open={isOpen}
+        // onOpenChange={onOpenChange}
+        onOpenChange={(isOpen) => (isOpen ? onOpen() : onClose())}
+      >
+        <DialogTrigger asChild>{triggerButton || defaultTrigger}</DialogTrigger>
         <DialogContent>
           <ScrollArea className="max-h-[80vh] p-2">
             <DialogHeader className="mb-5">
@@ -65,10 +72,12 @@ export default function FormDialog({
     )
 
   return (
-    <Drawer open={isOpen} onOpenChange={onOpenChange}>
-      <DrawerTrigger asChild>
-        {triggerButton || defaultTrigger}
-      </DrawerTrigger>
+    <Drawer
+      open={isOpen}
+      // onOpenChange={onOpenChange}
+      onOpenChange={(isOpen) => (isOpen ? onOpen() : onClose())}
+    >
+      <DrawerTrigger asChild>{triggerButton || defaultTrigger}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle>{title}</DrawerTitle>
@@ -79,4 +88,3 @@ export default function FormDialog({
     </Drawer>
   )
 }
-

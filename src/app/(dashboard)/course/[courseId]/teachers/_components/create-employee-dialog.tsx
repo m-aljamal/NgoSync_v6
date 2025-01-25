@@ -20,7 +20,7 @@ import { EmployeeForm } from "./employee-form"
 export function CreateEmployeeDialog() {
   const { courseId } = useParams<{ courseId: string }>()
 
-  const { isOpen, onOpen, onClose } = useFormDialog()
+  const { onClose } = useFormDialog()
 
   const form = useForm<CreateEmployeesToCourses>({
     resolver: zodResolver(createEmployeesToCourses),
@@ -48,10 +48,7 @@ export function CreateEmployeeDialog() {
   }
 
   return (
-    <FormDialog 
-    isOpen={isOpen}
-    onOpenChange={(open) => (open ? onOpen() : onClose())}
-    >
+    <FormDialog>
       <EmployeeForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </EmployeeForm>

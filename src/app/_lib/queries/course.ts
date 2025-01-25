@@ -135,14 +135,14 @@ export async function getTeachers(input: GetSearchSchema, courseId: string) {
         .offset(offset)
         .where(where)
         .leftJoin(employees, eq(teachersToCourses.teacherId, employees.id))
-        console.log({data});
-        
+
       const total = await tx
         .select({
           count: count(),
         })
-        .from(courses)
+        .from(teachersToCourses)
         .where(where)
+        .leftJoin(employees, eq(teachersToCourses.teacherId, employees.id))
         .execute()
         .then((res) => res[0]?.count ?? 0)
 
@@ -165,24 +165,58 @@ export type StudentsList = {
   id: string | null
 }
 
-export const getCourseStudents = cache(
-  async ({ courseId }: { courseId: string }) => {
-    try {
-      const studentsList = await db
+export async function getCourseStudents(
+  input: GetSearchSchema,
+  courseId: string
+) {
+  noStore()
+  const { page, per_page, operator } = input
+
+  try {
+    const offset = calculateOffset(page, per_page)
+
+    const expressions: (SQL<unknown> | undefined)[] = [
+      eq(studentsToCourses.courseId, courseId),
+    ]
+
+    const where: DrizzleWhere<Course> =
+      !operator || operator === "and" ? and(...expressions) : or(...expressions)
+
+    const { data, total } = await db.transaction(async (tx) => {
+      const data = await tx
         .select({
           name: students.name,
           id: students.id,
         })
         .from(studentsToCourses)
-        .where(eq(studentsToCourses.courseId, courseId))
+        .limit(per_page)
+        .offset(offset)
+        .where(where)
         .leftJoin(students, eq(studentsToCourses.studentId, students.id))
 
-      return studentsList
-    } catch (error) {
-      return []
-    }
+      const total = await tx
+        .select({
+          count: count(),
+        })
+        .from(studentsToCourses)
+        .where(where)
+        .leftJoin(students, eq(studentsToCourses.studentId, students.id))
+        .execute()
+        .then((res) => res[0]?.count ?? 0)
+
+      return {
+        data,
+        total,
+      }
+    })
+
+    const pageCount = calculatePageCount(total, per_page)
+
+    return { data, pageCount }
+  } catch (err) {
+    return { data: [], pageCount: 0 }
   }
-)
+}
 
 export const getLessons = cache(async ({ courseId }: { courseId: string }) => {
   try {

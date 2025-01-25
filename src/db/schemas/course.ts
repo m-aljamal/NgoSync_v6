@@ -45,8 +45,12 @@ export const courseRelations = relations(courses, ({ one }) => ({
 export const studentsToCourses = pgTable(
   "students_to_courses",
   {
-    studentId: varchar("student_id").notNull(),
-    courseId: varchar("course_id").notNull(),
+    studentId: varchar("student_id")
+      .references(() => students.id, { onDelete: "cascade" })
+      .notNull(),
+    courseId: varchar("course_id")
+      .references(() => courses.id, { onDelete: "cascade" })
+      .notNull(),
   },
   (t) => ({
     pk: primaryKey({ columns: [t.studentId, t.courseId] }),
@@ -71,7 +75,7 @@ export const teachersToCourses = pgTable(
   "teachers_to_courses",
   {
     teacherId: varchar("teacher_id")
-      .references(() => courses.id, { onDelete: "cascade" })
+      .references(() => employees.id, { onDelete: "cascade" })
       .notNull(),
     courseId: varchar("course_id")
       .references(() => courses.id, { onDelete: "cascade" })
@@ -131,7 +135,7 @@ export const studentsCourseNotes = pgTable("students_notes", {
     .$defaultFn(() => generateId())
     .primaryKey(),
   studentId: varchar("student_id", { length: 30 })
-    .references(() => students.id)
+    .references(() => students.id, { onDelete: "cascade" })
     .notNull(),
   note: varchar("note", { length: 250 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -140,13 +144,13 @@ export const studentsCourseNotes = pgTable("students_notes", {
     .$onUpdate(() => new Date()),
 
   courseId: varchar("course_id", { length: 30 })
-    .references(() => courses.id)
+    .references(() => courses.id, { onDelete: "cascade" })
     .notNull(),
   attendance: attendance("attendance_enum").notNull(),
   pageNumber: integer("page_number"),
   mark: varchar("mark"),
   lessonId: varchar("lesson_id", { length: 30 })
-    .references(() => lessons.id)
+    .references(() => lessons.id, { onDelete: "cascade" })
     .notNull(),
 })
 
