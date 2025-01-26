@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
+import { RoleGate } from "@/components/RouteGate"
 import { Shell } from "@/components/shell"
 import { getProjects } from "@/app/_lib/queries/projects"
 
@@ -21,7 +22,7 @@ export default function page({ searchParams }: IndexPageProps) {
   const promise = getProjects(search)
 
   return (
-    <div>
+    <RoleGate allowedRoles={["admin", "project_manager"]}>
       <Heading
         title="المشاريع"
         description="المشاريع الخاصة بالمنظمة"
@@ -50,6 +51,6 @@ export default function page({ searchParams }: IndexPageProps) {
           <ProjectsTable promise={promise} />
         </React.Suspense>
       </Shell>
-    </div>
+    </RoleGate>
   )
 }

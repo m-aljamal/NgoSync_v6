@@ -19,7 +19,9 @@ import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
+import { currentUser } from "../auth"
 import { type GetSearchSchema } from "../validations"
+import { currentEmployee } from "./user"
 import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
 export async function getTeacherCourses(input: GetSearchSchema) {
@@ -27,6 +29,10 @@ export async function getTeacherCourses(input: GetSearchSchema) {
   const { page, per_page, sort, name, operator, from, to } = input
 
   try {
+    const employee = await currentEmployee()
+    if (!employee) {
+      return { data: [], pageCount: 0 }
+    }
     const offset = calculateOffset(page, per_page)
 
     const [column, order] = (sort?.split(".").filter(Boolean) ?? [
@@ -38,6 +44,7 @@ export async function getTeacherCourses(input: GetSearchSchema) {
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
+      eq(teachersToCourses.teacherId, employee.id),
       // projectId ? eq(courses.projectId, projectId) : undefined,
       // Filter by createdAt
       // fromDay && toDay
@@ -58,6 +65,7 @@ export async function getTeacherCourses(input: GetSearchSchema) {
           updatedAt: courses.updatedAt,
           description: courses.description,
           projectId: courses.projectId,
+          userId: teachersToCourses.teacherId,
         })
         .from(teachersToCourses)
         .limit(per_page)
@@ -65,14 +73,13 @@ export async function getTeacherCourses(input: GetSearchSchema) {
         .where(where)
         .leftJoin(courses, eq(teachersToCourses.courseId, courses.id))
 
-      console.log(data)
-
       const total = await tx
         .select({
           count: count(),
         })
-        .from(courses)
+        .from(teachersToCourses)
         .where(where)
+        
         .execute()
         .then((res) => res[0]?.count ?? 0)
 

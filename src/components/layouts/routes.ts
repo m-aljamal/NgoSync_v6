@@ -21,7 +21,7 @@ export const routes: Route[] = [
   {
     title: "الرئيسية",
     href: "/overview",
-    roles: ["admin", "project_manager"],
+    roles: ["admin", "project_manager", "teacher"],
   },
 
   {
@@ -197,5 +197,10 @@ export const routes: Route[] = [
     title: "المستخدمين",
     href: "/system-users",
     roles: ["admin"],
+  },
+  {
+    title: "الدورات",
+    href: "/courses",
+    roles: ["teacher"],
   },
 ]

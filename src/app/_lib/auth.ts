@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation"
 import { auth } from "@/auth"
+import { db } from "@/db"
+import { employees } from "@/db/schemas"
 
 import { type Route } from "@/components/layouts/routes"
 
@@ -7,6 +9,8 @@ export const currentUser = async () => {
   const session = await auth()
   return session?.user
 }
+
+
 
 export const currentRole = async () => {
   const session = await auth()
@@ -46,7 +50,9 @@ export const filterPageLinksByRole = async (routes: Route[]) => {
       return route.roles.includes(role)
     }
     if (route.children) {
-      const filteredChildren = route.children.filter((child) => child.roles?.includes(role))
+      const filteredChildren = route.children.filter((child) =>
+        child.roles?.includes(role)
+      )
       if (filteredChildren.length > 0) {
         route.children = filteredChildren
         return true

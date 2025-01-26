@@ -7,7 +7,10 @@ import { currentRole } from "../_lib/auth"
 
 export default async function layout({ children }: React.PropsWithChildren) {
   const role = await currentRole()
-  if (role === "viewer") redirect("/")
+  if (role === "viewer") {
+    redirect("/")
+  }
+
   return (
     <div>
       <SiteHeader />
