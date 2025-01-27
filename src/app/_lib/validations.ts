@@ -72,7 +72,7 @@ export type CreateProjectSchema = z.infer<typeof createProjectSchema>
 export const createSalariesSchema = z.object({
   date,
   projectId: z.string().min(2),
-  proposalId: z.string(),
+  proposalId: z.string().optional(),
   isOfficial: z.boolean().optional(),
   salaries: z.array(
     z.object({

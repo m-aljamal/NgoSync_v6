@@ -2,10 +2,13 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
+import { expensesCategories } from "@/db/schemas"
 import { employees } from "@/db/schemas/employee"
 import { eq, inArray } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
+import { getExpenseCategory } from "../queries/expenses"
+import { getExpensesCategories } from "../queries/project-transactions"
 import { actionClient } from "../safe-action"
 import { toDecimalFixed } from "../utils"
 import {
@@ -109,7 +112,60 @@ export const createSalaries = actionClient
     handleValidationErrorsShape: (ve) =>
       flattenValidationErrors(ve).fieldErrors,
   })
-  .action(async ({ parsedInput }) => {
-    noStore()
-    console.log(parsedInput)
-  })
+  .action(
+    async ({
+      parsedInput: { projectId, proposalId, salaries, date, isOfficial },
+    }) => {
+      noStore()
+      let employeeExpenseCategoryId: string
+      const employeeExpenseCategory = await getExpenseCategory({
+        name: "رواتب الموظفين",
+        projectId,
+      })
+
+      if (!employeeExpenseCategory) {
+        const [createNewCategory] = await db
+          .insert(expensesCategories)
+          .values({
+            name: "رواتب الموظفين",
+            projectId,
+          })
+          .returning()
+
+        if (!createNewCategory) {
+          throw new Error("Error in create expense category")
+        }
+        employeeExpenseCategoryId = createNewCategory.id
+      } else {
+        employeeExpenseCategoryId = employeeExpenseCategory.id
+      }
+
+
+      {
+        date: 2024-12-31T21:00:00.000Z,
+        projectId: 'uhYfLIsvwLUc',
+        salaries: [
+          {
+            employeeId: 'hBBsYLzBmDsR',
+            salary: 8000,
+            currencyId: 'YUbAJN3aSpVF',
+            netSalary: 8000,
+            description: '',
+            paymentCurrencyId: 'YUbAJN3aSpVF'
+          },
+          {
+            employeeId: '1XilphV8YBOS',
+            salary: 200,
+            currencyId: 'oOlDXQA2iGpn',
+            netSalary: 200,
+            description: '',
+            paymentCurrencyId: 'oOlDXQA2iGpn'
+          }
+        ]
+      }
+
+        
+      
+      throw new Error("fdf")
+    }
+  )

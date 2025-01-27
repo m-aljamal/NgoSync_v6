@@ -94,7 +94,7 @@ export async function getExpenses({
     const where: DrizzleWhere<ProjectTransaction> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
 
-      const officialCurrency = alias(currencies, "officialCurrency")
+    const officialCurrency = alias(currencies, "officialCurrency")
 
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
@@ -216,3 +216,36 @@ export const getExpense = cache(async (id: string) => {
     throw new Error("Error in getting expense")
   }
 })
+
+export const getExpenseCategory = cache(
+  async ({
+    id,
+    name,
+    projectId,
+  }: {
+    id?: string
+    name?: string
+    projectId?: string
+  }) => {
+    try {
+      if (!id && !name && !projectId) return
+      const data = await db.query.expensesCategories.findFirst({
+        where: and(
+          id ? eq(expensesCategories.id, id) : undefined,
+          name ? eq(expensesCategories.name, name) : undefined,
+          projectId ? eq(expensesCategories.projectId, projectId) : undefined
+        ),
+        with: {
+          project: {
+            columns: {
+              name: true,
+            },
+          },
+        },
+      })
+      return data
+    } catch (error) {
+      console.error(error)
+    }
+  }
+)
