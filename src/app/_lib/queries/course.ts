@@ -6,12 +6,12 @@ import { db } from "@/db"
 import { employees } from "@/db/schemas"
 import {
   courses,
-  Lesson,
   lessons,
   studentsCourseNotes,
   studentsToCourses,
   teachersToCourses,
   type Course,
+  type Lesson,
 } from "@/db/schemas/course"
 import { students } from "@/db/schemas/student"
 import { type DrizzleWhere } from "@/types"
@@ -19,14 +19,13 @@ import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 
 import { filterColumn } from "@/lib/filter-column"
 
-import { currentUser } from "../auth"
 import { type GetSearchSchema } from "../validations"
 import { currentEmployee } from "./user"
 import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
 export async function getTeacherCourses(input: GetSearchSchema) {
   noStore()
-  const { page, per_page, sort, name, operator, from, to } = input
+  const { page, per_page, operator } = input
 
   try {
     const employee = await currentEmployee()
@@ -35,21 +34,8 @@ export async function getTeacherCourses(input: GetSearchSchema) {
     }
     const offset = calculateOffset(page, per_page)
 
-    const [column, order] = (sort?.split(".").filter(Boolean) ?? [
-      "createdAt",
-      "desc",
-    ]) as [keyof Course | undefined, "asc" | "desc" | undefined]
-
-    // Convert the date strings to date objects
-    const { fromDay, toDay } = convertToDate(from, to)
-
     const expressions: (SQL<unknown> | undefined)[] = [
       eq(teachersToCourses.teacherId, employee.id),
-      // projectId ? eq(courses.projectId, projectId) : undefined,
-      // Filter by createdAt
-      // fromDay && toDay
-      //   ? and(gte(courses.createdAt, fromDay), lte(courses.createdAt, toDay))
-      //   : undefined,
     ]
 
     const where: DrizzleWhere<Course> =
@@ -71,7 +57,7 @@ export async function getTeacherCourses(input: GetSearchSchema) {
         .limit(per_page)
         .offset(offset)
         .where(where)
-        .leftJoin(courses, eq(teachersToCourses.courseId, courses.id))
+        .innerJoin(courses, eq(teachersToCourses.courseId, courses.id))
 
       const total = await tx
         .select({
@@ -79,7 +65,7 @@ export async function getTeacherCourses(input: GetSearchSchema) {
         })
         .from(teachersToCourses)
         .where(where)
-        
+
         .execute()
         .then((res) => res[0]?.count ?? 0)
 

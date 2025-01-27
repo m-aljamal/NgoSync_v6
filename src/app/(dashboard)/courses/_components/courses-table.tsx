@@ -7,12 +7,12 @@ import { type DataTableFilterField } from "@/types"
 import { useDataTable } from "@/hooks/use-data-table"
 import { DataTable } from "@/components/data-table/data-table"
 import { DataTableToolbar } from "@/components/data-table/data-table-toolbar"
-import { type getCourses } from "@/app/_lib/queries/course"
+import { type getTeacherCourses } from "@/app/_lib/queries/course"
 
 import { getColumns } from "./course-table-columns"
 
 interface CoursesTableProps {
-  promise: ReturnType<typeof getCourses>
+  promise: ReturnType<typeof getTeacherCourses>
 }
 
 export function CoursesTable({ promise }: CoursesTableProps) {
