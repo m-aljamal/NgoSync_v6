@@ -18,7 +18,7 @@ import {
 import { DonerForm } from "./doner-form"
 
 export function CreateDonerDialog() {
-  const { isOpen, onOpen, onClose } = useFormDialog()
+  const { onClose } = useFormDialog()
   const queryClient = useQueryClient()
   const form = useForm<CreateDonerSchema>({
     resolver: zodResolver(createDonerSchema),
@@ -48,10 +48,7 @@ export function CreateDonerDialog() {
   }
 
   return (
-    <FormDialog
-    isOpen={isOpen}
-      onOpenChange={(open) => (open ? onOpen() : onClose())}
-    >
+    <FormDialog>
       <DonerForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </DonerForm>

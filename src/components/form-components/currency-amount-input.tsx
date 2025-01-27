@@ -25,6 +25,7 @@ export default function CurrencyAmountInput<T extends FieldValues>({
   amountName = "amount",
   amountLabel = "المبلغ",
   withAmount = true,
+  disabled = false,
 }: {
   form: UseFormReturn<T>
   currencyName?: string
@@ -32,6 +33,7 @@ export default function CurrencyAmountInput<T extends FieldValues>({
   amountName?: string
   amountLabel?: string
   withAmount?: boolean
+  disabled?: boolean
 }) {
   const { data: currencies, isLoading: currenciesLoading } = useGetCurrencies()
 
@@ -52,6 +54,7 @@ export default function CurrencyAmountInput<T extends FieldValues>({
           <FormItem>
             <FormLabel>{currencyLabel}</FormLabel>
             <AppSelect
+              disabled={disabled}
               isLoading={currenciesLoading}
               onChange={field.onChange}
               value={(field.value as string | undefined)?.toString()}

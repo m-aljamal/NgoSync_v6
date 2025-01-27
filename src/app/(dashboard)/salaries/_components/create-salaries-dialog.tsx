@@ -1,3 +1,5 @@
+ 
+
 "use client"
 
 import React from "react"
@@ -12,15 +14,12 @@ import { useGetEmployees } from "@/hooks/use-get-form-data"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
 import { createSalaries } from "@/app/_lib/actions/employee"
-import {
-  createSalariesSchema,
-  type CreateSalariesSchema,
-} from "@/app/_lib/validations"
+import { createSalariesSchema, type CreateSalariesSchema } from "@/app/_lib/validations"
 
 import { SalariesForm } from "./salaries-form"
 
 export function CreateSalariesDialog() {
-  const { isOpen, onOpen, onClose } = useFormDialog()
+  const { onClose } = useFormDialog()
 
   const form = useForm<CreateSalariesSchema>({
     resolver: zodResolver(createSalariesSchema),
@@ -30,8 +29,7 @@ export function CreateSalariesDialog() {
   })
   const selectedProject = form.watch("projectId")
 
-  const { data: employees, isLoading: employeesLoading } =
-    useGetEmployees(selectedProject)
+  const { data: employees, isLoading: employeesLoading } = useGetEmployees(selectedProject)
 
   const { executeAsync, isExecuting } = useAction(createSalaries, {
     onSuccess: () => {
@@ -45,37 +43,32 @@ export function CreateSalariesDialog() {
     },
   })
 
-  const defaultValues = React.useMemo(() => {
-    return {
-      salaries:
-        employees?.map((employee) => ({
-          employeeName: employee.name,
-          discount: new Decimal(0),
-          extra: new Decimal(0),
-          employeeId: employee.id,
-          salary: new Decimal(employee.salary),
-          currencyId: employee.currencyId ?? "",
-          netSalary: new Decimal(employee.salary),
-          description: "",
-          paymentCurrencyId: employee.currencyId ?? "",
-        })) ?? [],
-    }
-  }, [employees, selectedProject])
+  React.useEffect(() => {
+    if (employees) {
+      const defaultSalaries = employees.map((employee) => ({
+        employeeName: employee.name,
+        employeeId: employee.id,
+        salary: new Decimal(employee.salary),
+        currencyId: employee.currencyId ?? "",
+        netSalary: new Decimal(employee.salary),
+        description: "",
+        paymentCurrencyId: employee.currencyId ?? "",
+      }))
 
-  form.setValue("salaries", defaultValues.salaries)
+      form.setValue("salaries", defaultSalaries)
+    }
+  }, [employees, form])
 
   async function onSubmit(input: CreateSalariesSchema) {
     await executeAsync(input)
   }
 
   return (
-    <FormDialog
-      isOpen={isOpen}
-      onOpenChange={(open) => (open ? onOpen() : onClose())}
-    >
-      <SalariesForm form={form} onSubmit={onSubmit}>
+    <FormDialog>
+      <SalariesForm form={form} onSubmit={onSubmit} isLoading={employeesLoading}>
         <FormButtons isExecuting={isExecuting} />
       </SalariesForm>
     </FormDialog>
   )
 }
+

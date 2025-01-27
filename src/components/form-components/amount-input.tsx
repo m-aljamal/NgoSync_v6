@@ -20,12 +20,14 @@ export default function AmountInput<T extends FieldValues>({
   labelName = "المبلغ",
   prefix,
   currency,
+  disabled = false,
 }: {
   form: UseFormReturn<T>
   name?: string
   labelName?: string
   prefix?: string
   currency?: string
+  disabled?: boolean
 }) {
   return (
     <FormField
@@ -41,6 +43,7 @@ export default function AmountInput<T extends FieldValues>({
                 placeholder="0.00"
                 onChange={field.onChange}
                 value={field.value}
+                disabled={disabled}
               />
               <span className="absolute left-2 top-2 text-gray-500">
                 {prefix || currency}
