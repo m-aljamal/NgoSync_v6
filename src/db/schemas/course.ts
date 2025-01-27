@@ -106,7 +106,7 @@ export const lessons = pgTable("lessons", {
     .primaryKey(),
   title: varchar("title").notNull(),
   courseId: varchar("course_id", { length: 30 })
-    .references(() => courses.id)
+    .references(() => courses.id, { onDelete: "cascade" })
     .notNull(),
 
   date: date("date")

@@ -29,6 +29,7 @@ export const deleteCourses = actionClient
   })
   .action(async ({ parsedInput: { ids } }) => {
     noStore()
+
     await db.delete(courses).where(inArray(courses.id, ids))
     revalidatePath("/courses")
   })
@@ -79,7 +80,7 @@ export const addEmployeesToCourses = actionClient
   })
   .action(async ({ parsedInput: { courseId, teachers } }) => {
     noStore()
-console.log({courseId, teachers});
+    console.log({ courseId, teachers })
 
     const valuesToInsert = teachers.map((teacherId) => ({
       teacherId,
