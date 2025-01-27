@@ -8,11 +8,20 @@ import * as z from "zod"
 
 const currencyId = z.string().min(2)
 
+// const decimalSchema = z.instanceof(Decimal).or(
+//   z
+//     .string()
+//     .or(z.number())
+//     .transform((val) => new Decimal(val))
+// )
+
 const decimalSchema = z.instanceof(Decimal).or(
-  z
-    .string()
-    .or(z.number())
-    .transform((val) => new Decimal(val))
+  z.union([z.string(), z.number(), z.null(), z.undefined()]).transform((val) => {
+    if (val === null || val === undefined || val === "") {
+      return new Decimal(0)
+    }
+    return new Decimal(val)
+  }),
 )
 const date = z.date()
 export const searchParamsSchema = z.object({

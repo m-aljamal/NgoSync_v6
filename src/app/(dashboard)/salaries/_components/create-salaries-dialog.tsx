@@ -48,9 +48,9 @@ export function CreateSalariesDialog() {
       const defaultSalaries = employees.map((employee) => ({
         employeeName: employee.name,
         employeeId: employee.id,
-        salary: new Decimal(employee.salary),
+        salary: new Decimal(employee.salary || 0),
         currencyId: employee.currencyId ?? "",
-        netSalary: new Decimal(employee.salary),
+        netSalary: new Decimal(employee.salary || 0),
         description: "",
         paymentCurrencyId: employee.currencyId ?? "",
       }))

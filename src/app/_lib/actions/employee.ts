@@ -139,30 +139,37 @@ export const createSalaries = actionClient
       } else {
         employeeExpenseCategoryId = employeeExpenseCategory.id
       }
+console.log(salaries);
 
+      for(const paymentData of salaries){
+        
+        const salary = paymentData.salary
+        const discount = paymentData.discount
 
-      {
-        date: 2024-12-31T21:00:00.000Z,
-        projectId: 'uhYfLIsvwLUc',
-        salaries: [
-          {
-            employeeId: 'hBBsYLzBmDsR',
-            salary: 8000,
-            currencyId: 'YUbAJN3aSpVF',
-            netSalary: 8000,
-            description: '',
-            paymentCurrencyId: 'YUbAJN3aSpVF'
-          },
-          {
-            employeeId: '1XilphV8YBOS',
-            salary: 200,
-            currencyId: 'oOlDXQA2iGpn',
-            netSalary: 200,
-            description: '',
-            paymentCurrencyId: 'oOlDXQA2iGpn'
-          }
-        ]
       }
+       
+      // {
+      //   date: 2024-12-31T21:00:00.000Z,
+      //   projectId: 'uhYfLIsvwLUc',
+      //   salaries: [
+      //     {
+      //       employeeId: 'hBBsYLzBmDsR',
+      //       salary: 8000,
+      //       currencyId: 'YUbAJN3aSpVF',
+      //       netSalary: 8000,
+      //       description: '',
+      //       paymentCurrencyId: 'YUbAJN3aSpVF'
+      //     },
+      //     {
+      //       employeeId: '1XilphV8YBOS',
+      //       salary: 200,
+      //       currencyId: 'oOlDXQA2iGpn',
+      //       netSalary: 200,
+      //       description: '',
+      //       paymentCurrencyId: 'oOlDXQA2iGpn'
+      //     }
+      //   ]
+      // }
 
         
       

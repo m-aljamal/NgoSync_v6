@@ -60,7 +60,7 @@ export function SalariesForm({
   React.useEffect(() => {
     watchFields.forEach((salary, index) => {
       const extra = new Decimal(salary.extra || 0)
-      const discount = new Decimal(salary.discount || "0")
+      const discount = new Decimal(salary.discount || 0)
       const salaryAmount = new Decimal(salary.salary || 0)
       const netSalary = Decimal.sub(Decimal.add(salaryAmount, extra), discount)
       const selectedNetSalary = form.getValues(`salaries.${index}.netSalary`)
