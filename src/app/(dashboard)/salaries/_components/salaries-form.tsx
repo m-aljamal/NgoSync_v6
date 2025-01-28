@@ -188,6 +188,7 @@ export function SalariesForm({
 
                           <TableCell>
                             <AmountInput
+                              disabled
                               name={`salaries.${index}.netSalary`}
                               form={form}
                               labelName=""

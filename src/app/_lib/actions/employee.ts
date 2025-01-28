@@ -2,13 +2,15 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { expensesCategories } from "@/db/schemas"
+import { expensesCategories, projectsTransactions } from "@/db/schemas"
 import { employees } from "@/db/schemas/employee"
-import { eq, inArray } from "drizzle-orm"
+import Decimal from "decimal.js"
+import { eq, inArray, sql } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { getExpenseCategory } from "../queries/expenses"
 import { getExpensesCategories } from "../queries/project-transactions"
+import { calculateAmounts } from "../queries/utils"
 import { actionClient } from "../safe-action"
 import { toDecimalFixed } from "../utils"
 import {
@@ -117,7 +119,7 @@ export const createSalaries = actionClient
       parsedInput: { projectId, proposalId, salaries, date, isOfficial },
     }) => {
       noStore()
-      let employeeExpenseCategoryId: string
+      let expensesCategoryId: string
       const employeeExpenseCategory = await getExpenseCategory({
         name: "رواتب الموظفين",
         projectId,
@@ -135,44 +137,49 @@ export const createSalaries = actionClient
         if (!createNewCategory) {
           throw new Error("Error in create expense category")
         }
-        employeeExpenseCategoryId = createNewCategory.id
+        expensesCategoryId = createNewCategory.id
       } else {
-        employeeExpenseCategoryId = employeeExpenseCategory.id
+        expensesCategoryId = employeeExpenseCategory.id
       }
-console.log(salaries);
+      console.log(salaries)
 
-      for(const paymentData of salaries){
-        
+      for (const paymentData of salaries) {
         const salary = paymentData.salary
-        const discount = paymentData.discount
+        const discount = paymentData.discount ?? 0
+        const extra = paymentData.extra ?? 0
+        const net = +salary + +extra - +discount
 
+        const { amountInUSD, proposalAmount, officialAmount } =
+          await calculateAmounts({
+            amount: new Decimal(net),
+            currencyId: paymentData.paymentCurrencyId,
+            date,
+            isOfficial,
+            proposalId,
+          })
+
+        await db.transaction(async (ex) => {
+          const projectTransaction = await ex
+            .insert(projectsTransactions)
+            .values({
+              amount: sql`${net}`,
+              amountInUSD:sql`${amountInUSD}`,
+              projectId,
+              currencyId: paymentData.paymentCurrencyId,
+              officialAmount:sql`${officialAmount}`,
+              proposalAmount:sql`${proposalAmount}`,
+              type: "outcome",
+              category: "expense",
+              transactionStatus: "approved",
+              description: `راتب الموظف ${paymentData.employeeName}`,
+              isOfficial,
+              expensesCategoryId,
+              date,
+              proposalId,
+            })
+        })
       }
-       
-      // {
-      //   date: 2024-12-31T21:00:00.000Z,
-      //   projectId: 'uhYfLIsvwLUc',
-      //   salaries: [
-      //     {
-      //       employeeId: 'hBBsYLzBmDsR',
-      //       salary: 8000,
-      //       currencyId: 'YUbAJN3aSpVF',
-      //       netSalary: 8000,
-      //       description: '',
-      //       paymentCurrencyId: 'YUbAJN3aSpVF'
-      //     },
-      //     {
-      //       employeeId: '1XilphV8YBOS',
-      //       salary: 200,
-      //       currencyId: 'oOlDXQA2iGpn',
-      //       netSalary: 200,
-      //       description: '',
-      //       paymentCurrencyId: 'oOlDXQA2iGpn'
-      //     }
-      //   ]
-      // }
 
-        
-      
       throw new Error("fdf")
     }
   )
