@@ -10,6 +10,7 @@ import { getProjects } from "@/app/_lib/queries/projects"
 
 import { searchParamsSchema } from "../../_lib/validations"
 import { ProjectsTable } from "./_components/project-table"
+import { getSalariesPayments } from "@/app/_lib/queries/employees"
 
 export interface IndexPageProps {
   searchParams: SearchParams
@@ -17,7 +18,7 @@ export interface IndexPageProps {
 export default function Salaries({ searchParams }: IndexPageProps) {
   const search = searchParamsSchema.parse(searchParams)
 
-  const promise = getProjects(search)
+  const promise = getSalariesPayments(search)
 
   return (
     <div>

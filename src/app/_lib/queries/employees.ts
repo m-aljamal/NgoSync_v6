@@ -7,6 +7,8 @@ import { currencies, projects } from "@/db/schemas"
 import {
   employees,
   employeesJobTitles,
+  SalaryPayment,
+  salaryPayments,
   type Employee,
 } from "@/db/schemas/employee"
 import { type DrizzleWhere } from "@/types"
@@ -176,3 +178,82 @@ export const getEmployeeName = cache(async (id: string) => {
     return null
   }
 })
+
+export async function getSalariesPayments(
+  input: GetSearchSchema,
+  projectId?: string
+) {
+  noStore()
+  const { page, per_page, sort, name, operator, from, to } = input
+
+  try {
+    const offset = calculateOffset(page, per_page)
+
+    const [column, order] = (sort?.split(".").filter(Boolean) ?? [
+      "createdAt",
+      "desc",
+    ]) as [keyof SalaryPayment, "asc" | "desc" | undefined]
+
+    const { fromDay, toDay } = convertToDate(from, to)
+
+    const expressions: (SQL<unknown> | undefined)[] = [
+      // projectId ? eq(employees.projectId, projectId) : undefined,
+      name
+        ? filterColumn({
+            column: employees.name,
+            value: name,
+          })
+        : undefined,
+
+      fromDay && toDay
+        ? and(
+            gte(salaryPayments.createdAt, fromDay),
+            lte(salaryPayments.createdAt, toDay)
+          )
+        : undefined,
+    ]
+
+    const where: DrizzleWhere<SalaryPayment> =
+      !operator || operator === "and" ? and(...expressions) : or(...expressions)
+
+    const { data, total } = await db.transaction(async (tx) => {
+      const data = await tx
+        .select()
+        .from(salaryPayments)
+        .limit(per_page)
+        .offset(offset)
+        .where(where)
+        // .innerJoin(projects, eq(projects.id, employees.projectId))
+
+        .orderBy(
+          column && column in employees
+            ? order === "asc"
+              ? asc(salaryPayments[column])
+              : desc(salaryPayments[column])
+            : desc(salaryPayments.id)
+        )
+
+      const total = await tx
+        .select({
+          count: count(),
+        })
+        .from(salaryPayments)
+        .where(where)
+        .execute()
+        .then((res) => res[0]?.count ?? 0)
+
+      console.log(data)
+
+      return {
+        data,
+        total,
+      }
+    })
+
+    const pageCount = calculatePageCount(total, per_page)
+
+    return { data, pageCount }
+  } catch (err) {
+    return { data: [], pageCount: 0 }
+  }
+}
