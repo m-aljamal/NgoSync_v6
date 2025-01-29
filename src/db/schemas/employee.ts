@@ -4,13 +4,13 @@ import { decimal, pgEnum, timestamp, varchar } from "drizzle-orm/pg-core"
 
 import { generateId } from "@/lib/id"
 
+import { teachersToCourses } from "./course"
 import { currencies } from "./currency"
 import { genders } from "./enums"
 import { loans } from "./loan"
 import { projects } from "./project"
 import { projectsTransactions } from "./transactions"
 import { users } from "./user"
-import { teachersToCourses } from "./course"
 
 export const employeeStatus = pgEnum("employee_status", ["active", "inactive"])
 export const positions = pgEnum("positions", [
@@ -97,7 +97,7 @@ export const salaryPayments = pgTable("salary_payments", {
     .$defaultFn(() => generateId())
     .primaryKey(),
   employeeId: varchar("employee_id", { length: 30 })
-    .references(() => projects.id)
+    .references(() => employees.id)
     .notNull(),
   projectTransactionId: varchar("project_transaction_id", { length: 30 })
     .references(() => projectsTransactions.id)

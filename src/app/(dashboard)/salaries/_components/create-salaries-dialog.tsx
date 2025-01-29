@@ -1,5 +1,3 @@
- 
-
 "use client"
 
 import React from "react"
@@ -14,7 +12,10 @@ import { useGetEmployees } from "@/hooks/use-get-form-data"
 import FormButtons from "@/components/form-components/form-buttons"
 import FormDialog from "@/components/form-components/form-dialog"
 import { createSalaries } from "@/app/_lib/actions/employee"
-import { createSalariesSchema, type CreateSalariesSchema } from "@/app/_lib/validations"
+import {
+  createSalariesSchema,
+  type CreateSalariesSchema,
+} from "@/app/_lib/validations"
 
 import { SalariesForm } from "./salaries-form"
 
@@ -29,7 +30,8 @@ export function CreateSalariesDialog() {
   })
   const selectedProject = form.watch("projectId")
 
-  const { data: employees, isLoading: employeesLoading } = useGetEmployees(selectedProject)
+  const { data: employees, isLoading: employeesLoading } =
+    useGetEmployees(selectedProject)
 
   const { executeAsync, isExecuting } = useAction(createSalaries, {
     onSuccess: () => {
@@ -65,10 +67,13 @@ export function CreateSalariesDialog() {
 
   return (
     <FormDialog>
-      <SalariesForm form={form} onSubmit={onSubmit} isLoading={employeesLoading}>
+      <SalariesForm
+        form={form}
+        onSubmit={onSubmit}
+        isLoading={employeesLoading}
+      >
         <FormButtons isExecuting={isExecuting} />
       </SalariesForm>
     </FormDialog>
   )
 }
-

@@ -3,13 +3,13 @@
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
 import { expensesCategories, projectsTransactions } from "@/db/schemas"
-import { employees } from "@/db/schemas/employee"
+import { employees, salaryPayments } from "@/db/schemas/employee"
+import { format } from "date-fns"
 import Decimal from "decimal.js"
 import { eq, inArray, sql } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
 import { getExpenseCategory } from "../queries/expenses"
-import { getExpensesCategories } from "../queries/project-transactions"
 import { calculateAmounts } from "../queries/utils"
 import { actionClient } from "../safe-action"
 import { toDecimalFixed } from "../utils"
@@ -141,45 +141,58 @@ export const createSalaries = actionClient
       } else {
         expensesCategoryId = employeeExpenseCategory.id
       }
-      console.log(salaries)
 
       for (const paymentData of salaries) {
-        const salary = paymentData.salary
-        const discount = paymentData.discount ?? 0
-        const extra = paymentData.extra ?? 0
-        const net = +salary + +extra - +discount
+        const salary = Number(paymentData.salary)
+        const discount = Number(paymentData.discount ?? 0)
+        const extra = Number(paymentData.extra ?? 0)
+        const netSalary = salary + extra - discount
 
         const { amountInUSD, proposalAmount, officialAmount } =
           await calculateAmounts({
-            amount: new Decimal(net),
+            amount: new Decimal(netSalary),
             currencyId: paymentData.paymentCurrencyId,
             date,
             isOfficial,
             proposalId,
           })
+        const expenseDate = format(date, "yyyy-MM-dd")
 
         await db.transaction(async (ex) => {
-          const projectTransaction = await ex
+          const [projectTransaction] = await ex
             .insert(projectsTransactions)
             .values({
-              amount: sql`${net}`,
-              amountInUSD:sql`${amountInUSD}`,
+              amount: sql`${netSalary}`,
+              amountInUSD: sql`${amountInUSD}`,
               projectId,
               currencyId: paymentData.paymentCurrencyId,
-              officialAmount:sql`${officialAmount}`,
-              proposalAmount:sql`${proposalAmount}`,
+              officialAmount: sql`${officialAmount}`,
+              proposalAmount: sql`${proposalAmount}`,
               type: "outcome",
               category: "expense",
               transactionStatus: "approved",
               description: `راتب الموظف ${paymentData.employeeName}`,
               isOfficial,
               expensesCategoryId,
-              date,
+              date: expenseDate,
               proposalId,
             })
+            .returning()
+
+          if (!projectTransaction) {
+            throw new Error("error in create project transaction")
+          }
+
+          await ex.insert(salaryPayments).values({
+            employeeId: paymentData.employeeId,
+            projectTransactionId: projectTransaction?.id,
+            discount: sql`${discount}`,
+            extra: sql`${extra}`,
+            description: `راتب الموظف ${paymentData.employeeName} - ${paymentData.description}`,
+            netSalary: sql`${netSalary}`,
+          })
         })
       }
-
-      throw new Error("fdf")
+      revalidatePath("/salaries")
     }
   )
