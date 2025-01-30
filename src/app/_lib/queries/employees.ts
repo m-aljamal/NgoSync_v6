@@ -3,7 +3,7 @@ import "server-only"
 import { cache } from "react"
 import { unstable_noStore as noStore } from "next/cache"
 import { db } from "@/db"
-import { currencies, projects } from "@/db/schemas"
+import { currencies, projects, projectsTransactions } from "@/db/schemas"
 import {
   employees,
   employeesJobTitles,
@@ -13,6 +13,7 @@ import {
 } from "@/db/schemas/employee"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
+import { alias } from "drizzle-orm/pg-core"
 
 import { filterColumn } from "@/lib/filter-column"
 
@@ -185,7 +186,6 @@ export async function getSalariesPayments(
 ) {
   noStore()
   const { page, per_page, sort, name, operator, from, to } = input
-
   try {
     const offset = calculateOffset(page, per_page)
 
@@ -197,7 +197,7 @@ export async function getSalariesPayments(
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
-      // projectId ? eq(employees.projectId, projectId) : undefined,
+      projectId ? eq(employees.projectId, projectId) : undefined,
       name
         ? filterColumn({
             column: employees.name,
@@ -218,12 +218,25 @@ export async function getSalariesPayments(
 
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
-        .select()
+        .select({
+          projectId: employees.projectId,
+          createdAt: salaryPayments.createdAt,
+          employeeName: employees.name,
+          
+        })
         .from(salaryPayments)
         .limit(per_page)
         .offset(offset)
         .where(where)
-        // .innerJoin(projects, eq(projects.id, employees.projectId))
+        .innerJoin(employees, eq(employees.id, salaryPayments.employeeId))
+        .innerJoin(
+          projectsTransactions,
+          eq(salaryPayments.projectTransactionId, projectsTransactions.id)
+        )
+        .innerJoin(
+          currencies,
+          eq(projectsTransactions.currencyId, currencies.id)
+        )
 
         .orderBy(
           column && column in employees
