@@ -43,10 +43,11 @@ export const createEmployee = actionClient
         description,
         address,
         userId,
+        nameLatin,
       },
     }) => {
       noStore()
-
+ 
       await db.insert(employees).values({
         name,
         projectId,
@@ -62,6 +63,7 @@ export const createEmployee = actionClient
         description,
         address,
         userId: userId || undefined,
+        nameLatin,
       })
       revalidatePath("/employees")
     }

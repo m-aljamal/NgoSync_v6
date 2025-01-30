@@ -16,7 +16,7 @@ export const employeeStatus = pgEnum("employee_status", ["active", "inactive"])
 export const positions = pgEnum("positions", [
   "manager",
   "teacher",
-  "service",
+  "services",
   "volunteer",
 ])
 export const employees = pgTable("employees", {
@@ -24,6 +24,7 @@ export const employees = pgTable("employees", {
     .$defaultFn(() => generateId())
     .primaryKey(),
   name: varchar("name", { length: 120 }).notNull(),
+  nameLatin: varchar("name_latin", { length: 120 }).notNull(),
   status: employeeStatus("employee_status").notNull(),
   projectId: varchar("project_id", { length: 30 })
     .references(() => projects.id)

@@ -24,6 +24,7 @@ import {
   ProjectInput,
 } from "@/components/form-components"
 import InputGroup from "@/components/form-components/InputGroup"
+import NameInput from "@/components/form-components/name-input"
 import { AppSelect } from "@/components/form-components/select"
 import SelectUsers from "@/components/form-components/select-users"
 import { createEmployeeJobTitle } from "@/app/_lib/actions/employee"
@@ -72,18 +73,17 @@ export function EmployeeForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <InputGroup>
-          <FormField
-            control={form.control}
+          <NameInput
+            form={form}
+            placeholder="اسم الموظف"
             name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>اسم الموظف</FormLabel>
-                <FormControl>
-                  <Input type="text" placeholder="اسم الموظف" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+            labelName="اسم الموظف"
+          />
+          <NameInput
+            form={form}
+            placeholder="Name"
+            name="nameLatin"
+            labelName="Name"
           />
           <ProjectInput form={form} />
           <FormField

@@ -109,7 +109,7 @@ export const employeePosisionTranslation: Record<
 > = {
   teacher: "معلم",
   manager: "إداري",
-  service: "خدمي",
+  services: "خدمي",
   volunteer: "متطوع",
 }
 

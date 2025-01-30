@@ -16,12 +16,14 @@ const currencyId = z.string().min(2)
 // )
 
 const decimalSchema = z.instanceof(Decimal).or(
-  z.union([z.string(), z.number(), z.null(), z.undefined()]).transform((val) => {
-    if (val === null || val === undefined || val === "") {
-      return new Decimal(0)
-    }
-    return new Decimal(val)
-  }),
+  z
+    .union([z.string(), z.number(), z.null(), z.undefined()])
+    .transform((val) => {
+      if (val === null || val === undefined || val === "") {
+        return new Decimal(0)
+      }
+      return new Decimal(val)
+    })
 )
 const date = z.date()
 export const searchParamsSchema = z.object({
@@ -238,6 +240,7 @@ export type CreateExchangeSchema = z.infer<typeof createExchangeSchema>
 
 export const createEmployeeSchema = z.object({
   name: z.string().min(2).max(120),
+  nameLatin: z.string().min(2).max(120),
   projectId: z.string().min(2),
   gender: z.enum(employees.gender.enumValues),
   position: z.enum(employees.position.enumValues),
