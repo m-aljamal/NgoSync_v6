@@ -16,6 +16,7 @@ export const employeeStatus = pgEnum("employee_status", ["active", "inactive"])
 export const positions = pgEnum("positions", [
   "manager",
   "teacher",
+  "service",
   "volunteer",
 ])
 export const employees = pgTable("employees", {

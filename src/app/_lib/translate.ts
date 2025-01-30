@@ -6,7 +6,7 @@ import type {
   projects,
   projectsTransactions,
 } from "@/db/schemas"
-import type { studentsCourseNotes,  courses } from "@/db/schemas/course"
+import type { courses, studentsCourseNotes } from "@/db/schemas/course"
 import { type loans } from "@/db/schemas/loan"
 import { type students } from "@/db/schemas/student"
 
@@ -108,7 +108,8 @@ export const employeePosisionTranslation: Record<
   string
 > = {
   teacher: "معلم",
-  manager: "مدير",
+  manager: "إداري",
+  service: "خدمي",
   volunteer: "متطوع",
 }
 
