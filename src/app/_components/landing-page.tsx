@@ -25,17 +25,17 @@ export default function Hero({ role }: HeroProps) {
       orgDescription: "منظمة غير ربحية تعمل على تطوير التعليم",
     },
     RUYA: {
-      logo: "https://scontent.fada1-13.fna.fbcdn.net/v/t39.30808-6/376809035_1969573423428903_3183509217221179951_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=CsyTqFGpXYoQ7kNvgF0IA9l&_nc_ht=scontent.fada1-13.fna&oh=00_AYDRymYDUolXjgM9IvhGgxP1sCwk17fYFWHIihtVc3myRA&oe=66AAB7E1",
+      logo: "https://scontent.fada1-12.fna.fbcdn.net/v/t39.30808-6/464397392_122216629616028411_4906670146771025282_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_ohc=1nTnQFl6NQ4Q7kNvgGgYpNa&_nc_zt=23&_nc_ht=scontent.fada1-12.fna&_nc_gid=AzsSTep0oQ2hE_RT0pmzN-1&oh=00_AYDFC7YkWI2jMNchedqfaJCIKDV6BRmzszpkNX1uvXTkfQ&oe=67A3DDF5",
       image1:
-        "https://scontent.fada1-14.fna.fbcdn.net/v/t39.30808-6/425805269_122159901236028411_5576446366281901662_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_ohc=C_JsVa3bHFsQ7kNvgHFt9nq&_nc_ht=scontent.fada1-14.fna&oh=00_AYAg5Qka__9fkam3uuKHJbpxcg1ldSFL_gHb8WIQiaGNng&oe=66AAAE6C",
+        "https://scontent.fada1-12.fna.fbcdn.net/v/t39.30808-6/464397392_122216629616028411_4906670146771025282_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_ohc=1nTnQFl6NQ4Q7kNvgGgYpNa&_nc_zt=23&_nc_ht=scontent.fada1-12.fna&_nc_gid=AzsSTep0oQ2hE_RT0pmzN-1&oh=00_AYDFC7YkWI2jMNchedqfaJCIKDV6BRmzszpkNX1uvXTkfQ&oe=67A3DDF5",
       image2:
-        "https://scontent.fada1-12.fna.fbcdn.net/v/t39.30808-6/425816631_122159899478028411_6597876414033522713_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_ohc=3CILSl-_4oIQ7kNvgGUdYS8&_nc_ht=scontent.fada1-12.fna&oh=00_AYDYWaO1Rn-7wEGHAkhOtCrWZJuYcO74aXMdyag0KK2H3Q&oe=66AAAFA0",
+        "https://scontent.fada1-12.fna.fbcdn.net/v/t39.30808-6/464397392_122216629616028411_4906670146771025282_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_ohc=1nTnQFl6NQ4Q7kNvgGgYpNa&_nc_zt=23&_nc_ht=scontent.fada1-12.fna&_nc_gid=AzsSTep0oQ2hE_RT0pmzN-1&oh=00_AYDFC7YkWI2jMNchedqfaJCIKDV6BRmzszpkNX1uvXTkfQ&oe=67A3DDF5",
       image3:
-        "https://scontent.fada1-15.fna.fbcdn.net/v/t39.30808-6/426316751_122159897720028411_855224073030678986_n.jpg?_nc_cat=101&ccb=1-7&_nc_sid=127cfc&_nc_ohc=ReAWdjbus0IQ7kNvgG-CFoO&_nc_ht=scontent.fada1-15.fna&oh=00_AYDkS5DUCjFrpyQxA5HZaynehIwIb0bhnThAz2eHo0axAQ&oe=66AAD079",
+        "https://scontent.fada1-12.fna.fbcdn.net/v/t39.30808-6/464397392_122216629616028411_4906670146771025282_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_ohc=1nTnQFl6NQ4Q7kNvgGgYpNa&_nc_zt=23&_nc_ht=scontent.fada1-12.fna&_nc_gid=AzsSTep0oQ2hE_RT0pmzN-1&oh=00_AYDFC7YkWI2jMNchedqfaJCIKDV6BRmzszpkNX1uvXTkfQ&oe=67A3DDF5",
       image4:
-        "https://scontent.fada1-14.fna.fbcdn.net/v/t39.30808-6/425892895_122159893154028411_8697692480970668675_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=127cfc&_nc_ohc=m05HlGUvRuUQ7kNvgFIjEDq&_nc_ht=scontent.fada1-14.fna&oh=00_AYC48bxL_d6IlbYaXbBwlqA2l7ir9Wqn-JgNcUZVHAWd9g&oe=66AACE26",
+        "https://scontent.fada1-12.fna.fbcdn.net/v/t39.30808-6/464397392_122216629616028411_4906670146771025282_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_ohc=1nTnQFl6NQ4Q7kNvgGgYpNa&_nc_zt=23&_nc_ht=scontent.fada1-12.fna&_nc_gid=AzsSTep0oQ2hE_RT0pmzN-1&oh=00_AYDFC7YkWI2jMNchedqfaJCIKDV6BRmzszpkNX1uvXTkfQ&oe=67A3DDF5",
       image5:
-        "https://scontent.fada1-13.fna.fbcdn.net/v/t39.30808-6/387825812_122128301624028411_2979281457636102648_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=127cfc&_nc_ohc=gDW8CJ4jexwQ7kNvgH_2b5R&_nc_ht=scontent.fada1-13.fna&oh=00_AYARo3yln_-GOMWyl_zPqEpOwPcUAUam-nlxeL1alcxPHg&oe=66AAC38E",
+        "https://scontent.fada1-12.fna.fbcdn.net/v/t39.30808-6/464397392_122216629616028411_4906670146771025282_n.jpg?stp=dst-jpg_s600x600_tt6&_nc_cat=103&ccb=1-7&_nc_sid=127cfc&_nc_ohc=1nTnQFl6NQ4Q7kNvgGgYpNa&_nc_zt=23&_nc_ht=scontent.fada1-12.fna&_nc_gid=AzsSTep0oQ2hE_RT0pmzN-1&oh=00_AYDFC7YkWI2jMNchedqfaJCIKDV6BRmzszpkNX1uvXTkfQ&oe=67A3DDF5",
       orgName: "مركز رؤية المستقبل",
       orgDescription: "منظمة غير ربحية تعمل على تطوير المجتمع",
     },
@@ -55,7 +55,7 @@ export default function Hero({ role }: HeroProps) {
             </a>
           </div>
 
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          <div className="flex flex-1 justify-end">
             {!role && <SigninBtn />}
             
             {role && role !== "viewer" && (
