@@ -21,6 +21,7 @@ interface CreateExpenseFormProps
   onSubmit: (data: CreateExpenseSchema) => void
 }
 // todo make when choosing loan in the categories create the loan in the loans table
+// todo make the category creatable
 export function ExpenseForm({
   form,
   onSubmit,
