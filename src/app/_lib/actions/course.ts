@@ -80,7 +80,6 @@ export const addEmployeesToCourses = actionClient
   })
   .action(async ({ parsedInput: { courseId, teachers } }) => {
     noStore()
-    console.log({ courseId, teachers })
 
     const valuesToInsert = teachers.map((teacherId) => ({
       teacherId,
