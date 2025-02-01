@@ -27,6 +27,7 @@ import {
   createExchangeSchema,
   deleteArraySchema,
 } from "../validations"
+import { findOrCreateExpenseCategory } from "./utils"
 
 export const createCurrency = actionClient
   .schema(createCurrencySchema, {
@@ -387,6 +388,10 @@ export const createExchangeBetweenProjects = actionClient
         currencyId: fromCurrencyId,
         date: transferDate,
       })
+      const expensesCategory = await findOrCreateExpenseCategory(
+        "تصريف عملات",
+        senderId
+      )
       await db.transaction(async (tx) => {
         const [sender] = await tx
           .insert(projectsTransactions)
@@ -402,6 +407,7 @@ export const createExchangeBetweenProjects = actionClient
             description,
             category: "currency_exchange",
             transactionStatus: "approved",
+            expensesCategoryId: expensesCategory?.id,
           })
           .returning({ id: projectsTransactions.id })
 

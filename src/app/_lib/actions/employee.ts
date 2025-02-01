@@ -20,6 +20,7 @@ import {
   deleteArraySchema,
 } from "../validations"
 import { employeesJobTitles } from "./../../../db/schemas/employee"
+import { findOrCreateExpenseCategory } from "./utils"
 
 export const createEmployee = actionClient
   .schema(createEmployeeSchema, {
@@ -47,7 +48,7 @@ export const createEmployee = actionClient
       },
     }) => {
       noStore()
- 
+
       await db.insert(employees).values({
         name,
         projectId,
@@ -121,28 +122,32 @@ export const createSalaries = actionClient
       parsedInput: { projectId, proposalId, salaries, date, isOfficial },
     }) => {
       noStore()
-      let expensesCategoryId: string
-      const employeeExpenseCategory = await getExpenseCategory({
-        name: "رواتب الموظفين",
-        projectId,
-      })
+      // let expensesCategoryId: string
+      // const employeeExpenseCategory = await getExpenseCategory({
+      //   name: "رواتب الموظفين",
+      //   projectId,
+      // })
 
-      if (!employeeExpenseCategory) {
-        const [createNewCategory] = await db
-          .insert(expensesCategories)
-          .values({
-            name: "رواتب الموظفين",
-            projectId,
-          })
-          .returning()
+      // if (!employeeExpenseCategory) {
+      //   const [createNewCategory] = await db
+      //     .insert(expensesCategories)
+      //     .values({
+      //       name: "رواتب الموظفين",
+      //       projectId,
+      //     })
+      //     .returning()
 
-        if (!createNewCategory) {
-          throw new Error("Error in create expense category")
-        }
-        expensesCategoryId = createNewCategory.id
-      } else {
-        expensesCategoryId = employeeExpenseCategory.id
-      }
+      //   if (!createNewCategory) {
+      //     throw new Error("Error in create expense category")
+      //   }
+      //   expensesCategoryId = createNewCategory.id
+      // } else {
+      //   expensesCategoryId = employeeExpenseCategory.id
+      // }
+      const expensesCategory = await findOrCreateExpenseCategory(
+        "رواتب الموظفين",
+        projectId
+      )
 
       for (const paymentData of salaries) {
         const salary = Number(paymentData.salary)
@@ -175,7 +180,7 @@ export const createSalaries = actionClient
               transactionStatus: "approved",
               description: `راتب الموظف ${paymentData.employeeName}`,
               isOfficial,
-              expensesCategoryId,
+              expensesCategoryId: expensesCategory?.id,
               date: expenseDate,
               proposalId,
             })

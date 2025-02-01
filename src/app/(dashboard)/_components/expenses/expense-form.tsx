@@ -20,7 +20,7 @@ interface CreateExpenseFormProps
   form: UseFormReturn<CreateExpenseSchema>
   onSubmit: (data: CreateExpenseSchema) => void
 }
-
+// todo make when choosing loan in the categories create the loan in the loans table
 export function ExpenseForm({
   form,
   onSubmit,

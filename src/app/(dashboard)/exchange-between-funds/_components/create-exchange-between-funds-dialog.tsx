@@ -17,7 +17,7 @@ import {
 import { ExchangeBetweenFundsForm } from "./exchange-between-funds-form"
 
 export function CreateExchangeBetweenFundsDialog() {
-  const { onClose, isOpen, onOpen } = useFormDialog()
+  const { onClose } = useFormDialog()
 
   const form = useForm<CreateExchangeSchema>({
     resolver: zodResolver(createExchangeSchema),
@@ -43,10 +43,7 @@ export function CreateExchangeBetweenFundsDialog() {
   }
 
   return (
-    <FormDialog
-      isOpen={isOpen}
-      onOpenChange={(open) => (open ? onOpen() : onClose())}
-    >
+    <FormDialog>
       <ExchangeBetweenFundsForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </ExchangeBetweenFundsForm>
