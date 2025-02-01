@@ -64,7 +64,7 @@ export const createEmployee = actionClient
         description,
         address,
         userId: userId || undefined,
-        nameLatin,
+        nameLatin:"name",
       })
       revalidatePath("/employees")
     }
