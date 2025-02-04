@@ -43,9 +43,7 @@ export const exchangeRates = pgTable("exchange_rates", {
     .default(sql`current_timestamp`)
     .$onUpdate(() => new Date()),
 
-  date: date("date")
-    .notNull()
-    .default(sql`CURRENT_DATE`),
+  date: date("date").defaultNow(),
 
   fromCurrencyId: varchar("from_currency_id")
     .references(() => currencies.id)

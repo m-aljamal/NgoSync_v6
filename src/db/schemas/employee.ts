@@ -16,8 +16,8 @@ export const employeeStatus = pgEnum("employee_status", ["active", "inactive"])
 export const positions = pgEnum("positions", [
   "manager",
   "teacher",
-  "services",
   "volunteer",
+  "services",
 ])
 export const employees = pgTable("employees", {
   id: varchar("id", { length: 30 })
