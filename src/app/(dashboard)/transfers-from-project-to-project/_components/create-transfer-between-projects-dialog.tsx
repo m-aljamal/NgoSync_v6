@@ -16,8 +16,14 @@ import {
 
 import { TransferBetweenProjectsForm } from "./transfer-between-projects-form"
 
+// todo fix the date and fix the dissplay the tranfer to the project
+// todo الخصم المباشر من الصناديق
+//  todo الوصلات
+// todo اجور حوالات مباشر من الحولات
+// todo الصفحة الرئيسية
+
 export function CreateTransferBetweenProjectsDialog() {
-  const { onClose, isOpen, onOpen } = useFormDialog()
+  const { onClose } = useFormDialog()
 
   const form = useForm<CreateTransferSchema>({
     resolver: zodResolver(createTransferSchema),
@@ -46,10 +52,7 @@ export function CreateTransferBetweenProjectsDialog() {
   }
 
   return (
-    <FormDialog
-      isOpen={isOpen}
-      onOpenChange={(open) => (open ? onOpen() : onClose())}
-    >
+    <FormDialog>
       <TransferBetweenProjectsForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </TransferBetweenProjectsForm>

@@ -208,7 +208,7 @@ export const createTransferBetweenProjects = actionClient
       })
 
       const date = format(transferDate, "dd-MM-yyyy")
-
+      // todo the transfer is not appear in the project becase there is no expenseCategory
       await db.transaction(async (tx) => {
         const [sender] = await tx
           .insert(projectsTransactions)
