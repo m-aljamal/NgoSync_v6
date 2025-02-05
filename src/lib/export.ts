@@ -56,8 +56,6 @@ export function exportTableToCSV<TData>(
     ),
   ].join("\n")
 
-   
-
   const utf8Bom = "\uFEFF"
   // Create a Blob with CSV content
   const blob = new Blob([utf8Bom + csvContent], {
@@ -75,14 +73,31 @@ export function exportTableToCSV<TData>(
   document.body.removeChild(link)
 }
 
+export function exportVoucherPDF({
+  date,
+  no,
+  donorName,
+  amount,
+  reason,
+  signature,
+}: any) {
+  const doc = new jsPDF()
 
+  doc.setFontSize(18)
+  doc.text("Donation Voucher", 105, 20, { align: "center" })
 
+  doc.setFontSize(12)
+  doc.text(`Date: ${date}`, 20, 40)
+  doc.text(`No: ${no}`, 20, 50)
+  doc.text(`Donor Name: ${donorName}`, 20, 60)
+  doc.text(`Amount: ${amount}`, 20, 70)
+  doc.text(`Reason: ${reason}`, 20, 80)
 
+  doc.text("Signature:", 20, 100)
+  doc.text(signature, 50, 100)
 
-
-
-
-
+  doc.save(`voucher_${no}.pdf`)
+}
 
 export function exportTableToPDF<TData>(
   table: Table<TData>,
@@ -92,7 +107,11 @@ export function exportTableToPDF<TData>(
     onlySelected?: boolean
   } = {}
 ) {
-  const { filename = "voucher", excludeColumns = [], onlySelected = false } = opts
+  const {
+    filename = "voucher",
+    excludeColumns = [],
+    onlySelected = false,
+  } = opts
 
   // Initialize jsPDF
   const doc = new jsPDF({ orientation: "portrait" })
@@ -108,12 +127,11 @@ export function exportTableToPDF<TData>(
     .filter((id) => !excludeColumns.includes(id))
 
   // Retrieve data rows
-  const dataRows = (onlySelected
-    ? table.getFilteredSelectedRowModel().rows
-    : table.getRowModel().rows
-  ).map((row) =>
-    headers.map((header) => row.getValue(header) || "")
-  )
+  const dataRows = (
+    onlySelected
+      ? table.getFilteredSelectedRowModel().rows
+      : table.getRowModel().rows
+  ).map((row) => headers.map((header) => row.getValue(header) || ""))
 
   // Add table to PDF
   autoTable(doc, {
@@ -127,10 +145,49 @@ export function exportTableToPDF<TData>(
 
   // Footer
   doc.setFontSize(10)
-  doc.text("Thank you for your contribution!", 105, doc.internal.pageSize.height - 10, {
-    align: "center",
-  })
+  doc.text(
+    "Thank you for your contribution!",
+    105,
+    doc.internal.pageSize.height - 10,
+    {
+      align: "center",
+    }
+  )
 
   // Save PDF
   doc.save(`${filename}.pdf`)
 }
+
+// import html2canvas from 'html2canvas';
+// import { Button } from '@/components/ui/button';
+
+// export function ExportVoucherImage({ date, no, donorName, amount, reason, signature }) {
+//   const generateImage = () => {
+//     const element = document.getElementById('voucher');
+//     if (!element) return;
+
+//     html2canvas(element).then((canvas) => {
+//       const link = document.createElement('a');
+//       link.href = canvas.toDataURL('image/jpeg');
+//       link.download = `voucher_${no}.jpg`;
+//       link.click();
+//     });
+//   };
+
+//   return (
+//     <div>
+//       <div id="voucher" style={{ padding: 20, background: 'white', width: 300, textAlign: 'left', border: '1px solid black' }}>
+//         <h2 style={{ textAlign: 'center' }}>Donation Voucher</h2>
+//         <p>Date: {date}</p>
+//         <p>No: {no}</p>
+//         <p>Donor Name: {donorName}</p>
+//         <p>Amount: {amount}</p>
+//         <p>Reason: {reason}</p>
+//         <p>Signature: {signature}</p>
+//       </div>
+//       <Button variant="outline" size="sm" onClick={generateImage}>
+//         تحميل الصورة
+//       </Button>
+//     </div>
+//   );
+// }

@@ -23,6 +23,7 @@ import { donationPaymentTranslation } from "@/app/_lib/translate"
 
 import { DeleteDonationsDialog } from "./delete-donations-dialog"
 import { UpdateDonationSheet } from "./update-donation-sheet"
+import { exportVoucherPDF } from "@/lib/export"
 
 export function getColumns(): ColumnDef<DonationWithRelations>[] {
   return [
@@ -156,6 +157,16 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
                 </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
                   تعديل
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => exportVoucherPDF({
+                   date:"1",
+                   no:"1",
+                   donorName:"011",
+                   amount:"4545",
+                   reason:"45454",
+                   signature:"45454",
+                })}>
+                  الوصل
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
