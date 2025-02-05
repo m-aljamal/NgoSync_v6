@@ -26,6 +26,7 @@ import Decimal from "decimal.js"
 import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
 import { alias } from "drizzle-orm/pg-core"
 
+import { currentUser } from "../auth"
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, convertToDate } from "./utils"
 
@@ -138,6 +139,8 @@ export async function getTransferBetweenFunds(input: GetSearchSchema) {
 // Transfer between projects
 export async function getTransferBetweenProjects(input: GetSearchSchema) {
   noStore()
+  const user = await currentUser()
+
   const { page, per_page, sort, operator, from, to, amount } = input
 
   try {
@@ -151,9 +154,24 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
       "asc" | "desc" | undefined,
     ]
 
+    const senderTransaction = alias(projectsTransactions, "senderTransaction")
+    const recipientTransaction = alias(
+      projectsTransactions,
+      "recipientTransaction"
+    )
+    const senderProject = alias(projects, "senderProject")
+    const recipientProject = alias(projects, "recipientProject")
+
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
+      user && user.role === "project_manager" && user.id
+        ? or(
+            eq(senderProject.userId, user.id),
+            eq(recipientProject.userId, user.id)
+          )
+        : undefined,
+
       amount
         ? eq(projectsTransactions.amount, new Decimal(amount).toFixed(4))
         : undefined,
@@ -167,14 +185,6 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
 
     const where: DrizzleWhere<TransferBetweenProjects> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
-
-    const senderTransaction = alias(projectsTransactions, "senderTransaction")
-    const recipientTransaction = alias(
-      projectsTransactions,
-      "recipientTransaction"
-    )
-    const senderProject = alias(projects, "senderProject")
-    const recipientProject = alias(projects, "recipientProject")
 
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
@@ -193,6 +203,8 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
           currencyCode: currencies.code,
           senderName: senderProject.name,
           receiverName: recipientProject.name,
+          senderUserId: senderProject.userId,
+          receiverUserId: recipientProject.userId,
         })
         .from(transferBetweenProjects)
         .limit(per_page)
@@ -215,6 +227,7 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
           recipientProject,
           eq(recipientTransaction.projectId, recipientProject.id)
         )
+
         .orderBy(
           column && column in transferBetweenProjects
             ? order === "asc"
@@ -238,6 +251,14 @@ export async function getTransferBetweenProjects(input: GetSearchSchema) {
           eq(transferBetweenProjects.receiver, recipientTransaction.id)
         )
         .innerJoin(currencies, eq(senderTransaction.currencyId, currencies.id))
+        .innerJoin(
+          senderProject,
+          eq(senderTransaction.projectId, senderProject.id)
+        )
+        .innerJoin(
+          recipientProject,
+          eq(recipientTransaction.projectId, recipientProject.id)
+        )
         .execute()
         .then((res) => res[0]?.count ?? 0)
 

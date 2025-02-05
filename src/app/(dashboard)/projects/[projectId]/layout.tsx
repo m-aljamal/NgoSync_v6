@@ -3,7 +3,7 @@ import { type projects } from "@/db/schemas"
 import { type SidebarLinks } from "@/types"
 
 import AppSidebar from "@/components/app-sidebar"
-import { currentUser } from "@/app/_lib/auth"
+import { currentUser, filterSideLinksByRole } from "@/app/_lib/auth"
 import { getProject } from "@/app/_lib/queries/projects"
 
 export default async function ProjectLayout({
@@ -130,6 +130,7 @@ export default async function ProjectLayout({
               href: `/projects/${project.id}/donations`,
               title: "التبرعات",
               icon: "HandCoins",
+              roles: ["admin"],
             },
             {
               href: `/projects/${project.id}/proposals`,
@@ -159,8 +160,10 @@ export default async function ProjectLayout({
     { title: project.name, href: `/projects/${project.id}` },
   ]
 
+  const filteredLinks = filterSideLinksByRole(links, user?.role ?? "")
+
   return (
-    <AppSidebar links={links} breadcrumbs={breadcrumbs}>
+    <AppSidebar links={filteredLinks} breadcrumbs={breadcrumbs}>
       <main>{children}</main>
     </AppSidebar>
   )

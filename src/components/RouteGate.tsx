@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 import { redirect } from "next/navigation"
-import { users } from "@/db/schemas"
+import type { users } from "@/db/schemas"
 
 import { currentRole } from "@/app/_lib/auth"
 

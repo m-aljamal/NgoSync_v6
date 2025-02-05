@@ -53,11 +53,13 @@ export type PageLinks = {
 type SidebarLink = {
   title: string
   href?: string
+  roles?: (typeof users.$inferSelect.role)[]
   icon: keyof typeof icons
   children?: {
     title: string
     href: string
     icon?: keyof typeof icons
+    roles?: (typeof users.$inferSelect.role)[]
   }[]
 }
 
@@ -71,3 +73,4 @@ export type ViewMoreDataDetails = {
   value: string | number
   colSpan?: string
 }[]
+

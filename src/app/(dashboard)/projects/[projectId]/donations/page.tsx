@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { DataTableSkeleton } from "@/components/data-table/data-table-skeleton"
 import { DateRangePicker } from "@/components/date-range-picker"
 import Heading from "@/components/Heading"
+import { RoleGate } from "@/components/RouteGate"
 import { Shell } from "@/components/shell"
 import { getDonations } from "@/app/_lib/queries/donations"
 import { searchParamsSchema } from "@/app/_lib/validations"
@@ -21,7 +22,7 @@ export default function Donations({ searchParams, params }: IndexPageProps) {
   const promise = getDonations({ input: search, projectId: params.projectId })
 
   return (
-    <div>
+    <RoleGate allowedRoles={["admin"]}>
       <Heading
         title="التبرعات"
         description="التبرعات المالية للمشروع."
@@ -49,6 +50,6 @@ export default function Donations({ searchParams, params }: IndexPageProps) {
           <DonationTable promise={promise} />
         </React.Suspense>
       </Shell>
-    </div>
+    </RoleGate>
   )
 }

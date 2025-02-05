@@ -108,7 +108,7 @@ export const routes: Route[] = [
         title: "الرواتب",
         description: "رواتب الموظفين",
         href: "/salaries",
-        roles: ["admin", "project_manager"],
+        roles: ["admin"],
       },
       {
         icon: "ClipboardList",
@@ -141,7 +141,7 @@ export const routes: Route[] = [
         title: "حوالات الصناديق",
         description: "تحويل من مشروع الى صندوق",
         href: "/transfers-from-project-to-fund",
-        roles: ["admin", "project_manager"],
+        roles: ["admin"],
       },
       {
         icon: "ArrowLeftRight",

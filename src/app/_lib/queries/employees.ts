@@ -7,22 +7,23 @@ import { currencies, projects, projectsTransactions } from "@/db/schemas"
 import {
   employees,
   employeesJobTitles,
-  SalaryPayment,
   salaryPayments,
   type Employee,
+  type SalaryPayment,
 } from "@/db/schemas/employee"
 import { type DrizzleWhere } from "@/types"
 import { and, asc, count, desc, eq, gte, lte, or, type SQL } from "drizzle-orm"
-import { alias } from "drizzle-orm/pg-core"
 
 import { filterColumn } from "@/lib/filter-column"
 
+import { currentUser } from "../auth"
 import { type GetSearchSchema } from "../validations"
 import { calculateOffset, calculatePageCount, convertToDate } from "./utils"
 
 export async function getEmployees(input: GetSearchSchema, projectId?: string) {
   noStore()
   const { page, per_page, sort, name, operator, from, to } = input
+  const user = await currentUser()
 
   try {
     const offset = calculateOffset(page, per_page)
@@ -32,10 +33,12 @@ export async function getEmployees(input: GetSearchSchema, projectId?: string) {
       "desc",
     ]) as [keyof Employee | undefined, "asc" | "desc" | undefined]
 
-    // Convert the date strings to date objects
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
+      user && user.role === "project_manager" && user.id
+        ? eq(projects.userId, user.id)
+        : undefined,
       projectId ? eq(employees.projectId, projectId) : undefined,
       name
         ? filterColumn({
@@ -44,7 +47,6 @@ export async function getEmployees(input: GetSearchSchema, projectId?: string) {
           })
         : undefined,
 
-      // Filter by createdAt
       fromDay && toDay
         ? and(
             gte(employees.createdAt, fromDay),
@@ -56,7 +58,6 @@ export async function getEmployees(input: GetSearchSchema, projectId?: string) {
     const where: DrizzleWhere<Employee> =
       !operator || operator === "and" ? and(...expressions) : or(...expressions)
 
-    // Transaction is used to ensure both queries are executed in a single transaction
     const { data, total } = await db.transaction(async (tx) => {
       const data = await tx
         .select({
@@ -100,6 +101,8 @@ export async function getEmployees(input: GetSearchSchema, projectId?: string) {
         })
         .from(employees)
         .where(where)
+        .innerJoin(projects, eq(projects.id, employees.projectId))
+        .innerJoin(currencies, eq(currencies.id, employees.currencyId))
         .execute()
         .then((res) => res[0]?.count ?? 0)
 
@@ -222,7 +225,6 @@ export async function getSalariesPayments(
           projectId: employees.projectId,
           createdAt: salaryPayments.createdAt,
           employeeName: employees.name,
-          
         })
         .from(salaryPayments)
         .limit(per_page)
