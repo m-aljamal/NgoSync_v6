@@ -4,7 +4,7 @@ import { type DonationWithRelations } from "@/db/schemas"
 import { DownloadIcon } from "@radix-ui/react-icons"
 import { type Table } from "@tanstack/react-table"
 
-import { exportTableToCSV } from "@/lib/export"
+import { exportTableToCSV, exportTableToPDF } from "@/lib/export"
 import { Button } from "@/components/ui/button"
 
 import { CreateDonationDialog } from "./create-donation-dialog"
@@ -41,6 +41,19 @@ export function DonationTableToolbarActions({
       >
         <DownloadIcon className="ml-2 size-4" aria-hidden="true" />
         تصدير
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() =>
+          exportTableToPDF(table, {
+            filename: "الوصل",
+            excludeColumns: ["select", "actions", "donerId"],
+          })
+        }
+      >
+        <DownloadIcon className="ml-2 size-4" aria-hidden="true" />
+        تصدير PDF
       </Button>
     </div>
   )

@@ -1,4 +1,6 @@
 import { type Table } from "@tanstack/react-table"
+import jsPDF from "jspdf"
+import autoTable from "jspdf-autotable"
 
 export function exportTableToCSV<TData>(
   /**
@@ -71,4 +73,64 @@ export function exportTableToCSV<TData>(
   document.body.appendChild(link)
   link.click()
   document.body.removeChild(link)
+}
+
+
+
+
+
+
+
+
+
+
+export function exportTableToPDF<TData>(
+  table: Table<TData>,
+  opts: {
+    filename?: string
+    excludeColumns?: (keyof TData | "select" | "actions")[]
+    onlySelected?: boolean
+  } = {}
+) {
+  const { filename = "voucher", excludeColumns = [], onlySelected = false } = opts
+
+  // Initialize jsPDF
+  const doc = new jsPDF({ orientation: "portrait" })
+
+  // Add title
+  doc.setFontSize(18)
+  doc.text("Voucher for Donation", 105, 20, { align: "center" })
+
+  // Retrieve headers
+  const headers = table
+    .getAllLeafColumns()
+    .map((column) => column.id)
+    .filter((id) => !excludeColumns.includes(id))
+
+  // Retrieve data rows
+  const dataRows = (onlySelected
+    ? table.getFilteredSelectedRowModel().rows
+    : table.getRowModel().rows
+  ).map((row) =>
+    headers.map((header) => row.getValue(header) || "")
+  )
+
+  // Add table to PDF
+  autoTable(doc, {
+    head: [headers],
+    body: dataRows,
+    startY: 30,
+    styles: { fontSize: 10, cellPadding: 3 },
+    headStyles: { fillColor: [22, 160, 133] },
+    margin: { top: 30 },
+  })
+
+  // Footer
+  doc.setFontSize(10)
+  doc.text("Thank you for your contribution!", 105, doc.internal.pageSize.height - 10, {
+    align: "center",
+  })
+
+  // Save PDF
+  doc.save(`${filename}.pdf`)
 }
