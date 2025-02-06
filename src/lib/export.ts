@@ -87,9 +87,6 @@ interface VoucherData {
   recipientSignature?: string
 }
 
-// Add your base64 encoded arabic font here
-// const arabicFontBase64 = "YOUR_ARABIC_FONT_BASE64"
-
 export function exportVoucherPDF1({
   date,
   no,
@@ -110,15 +107,16 @@ export function exportVoucherPDF1({
   doc.addFont("Arabic.ttf", "Arabic", "normal")
   doc.setFont("Arabic")
 
-  // Add logos
-  doc.addImage(EDC_LOGO, "PNG", 20, 15, 40, 20)
+  // Add logos 20, 15, 40, 20
+  doc.addImage(EDC_LOGO, "PNG", 5,5,50,30)
+  doc.text("Education Development Commission",80, 10,{align:"right"})
 
   // Add title
 
-  doc.setFontSize(24)
+  doc.setFontSize(16)
   doc.text("سند قبض", 105, 25, { align: "center" })
 
-  doc.setFontSize(20)
+  doc.setFontSize(16)
   doc.text("Receipt Voucher", 105, 35, { align: "center" })
 
   // Add form fields with bilingual labels
