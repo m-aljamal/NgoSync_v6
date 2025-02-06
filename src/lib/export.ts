@@ -2,6 +2,8 @@ import { type Table } from "@tanstack/react-table"
 import jsPDF from "jspdf"
 import autoTable from "jspdf-autotable"
 
+import { arabicFont } from "./arabicFont"
+
 export function exportTableToCSV<TData>(
   /**
    * The table to export.
@@ -73,6 +75,115 @@ export function exportTableToCSV<TData>(
   document.body.removeChild(link)
 }
 
+const EDC_LOGO = "/images/edc-logo.png"
+
+interface VoucherData {
+  date: string
+  no: string
+  receivedFrom: string
+  amount: string
+  reason: string
+  directorSignature?: string
+  recipientSignature?: string
+}
+
+// Add your base64 encoded arabic font here
+// const arabicFontBase64 = "YOUR_ARABIC_FONT_BASE64"
+
+export function exportVoucherPDF1({
+  date,
+  no,
+  receivedFrom,
+  amount,
+  reason,
+  directorSignature,
+  recipientSignature,
+}: VoucherData) {
+  // Create PDF document
+  const doc = new jsPDF({
+    orientation: "landscape",
+    unit: "mm",
+    format: [148, 210],
+  })
+
+  doc.addFileToVFS("Arabic.ttf", arabicFont)
+  doc.addFont("Arabic.ttf", "Arabic", "normal")
+  doc.setFont("Arabic")
+
+  // Add logos
+  doc.addImage(EDC_LOGO, "PNG", 20, 15, 40, 20)
+
+  // Add title
+
+  doc.setFontSize(24)
+  doc.text("سند قبض", 105, 25, { align: "center" })
+
+  doc.setFontSize(20)
+  doc.text("Receipt Voucher", 105, 35, { align: "center" })
+
+  // Add form fields with bilingual labels
+  doc.setFontSize(14)
+
+  // No and Date (right-aligned Arabic)
+  doc.text(":التاريخ", 190, 60, { align: "right" })
+  doc.text(date || ".........................", 160, 60, { align: "right" })
+
+  doc.text(":No", 50, 60)
+  doc.text(no || ".........................", 60, 60)
+
+  // Received from
+  doc.text(": استلمنا من السيد / السادة", 190, 80, { align: "right" })
+  doc.text(
+    receivedFrom ||
+      ".................................................................",
+    105,
+    80,
+    {
+      align: "center",
+    }
+  )
+
+  // Amount
+  doc.text(": مبلغا وقدره", 190, 100, { align: "right" })
+  doc.text(
+    amount ||
+      ".................................................................",
+    105,
+    100,
+    { align: "center" }
+  )
+
+  // Reason
+  doc.text(": وذلك مقابل", 190, 120, { align: "right" })
+  doc.text(
+    reason ||
+      ".................................................................",
+    105,
+    120,
+    { align: "center" }
+  )
+
+  // Signature lines
+  doc.setLineWidth(0.5)
+
+  // Director signature
+  doc.text("المدير", 40, 160)
+  doc.line(20, 180, 60, 180)
+  if (directorSignature) {
+    doc.text(directorSignature, 40, 175, { align: "center" })
+  }
+
+  // Recipient signature
+  doc.text("المستلم", 160, 160)
+  doc.line(140, 180, 180, 180)
+  if (recipientSignature) {
+    doc.text(recipientSignature, 160, 175, { align: "center" })
+  }
+
+  // Save the PDF
+  doc.save(`receipt_voucher_${no}.pdf`)
+}
+
 export function exportVoucherPDF({
   date,
   no,
@@ -81,12 +192,11 @@ export function exportVoucherPDF({
   reason,
   signature,
 }: any) {
-  const doc = new jsPDF()
-
+  const doc = new jsPDF({ orientation: "portrait" })
   doc.setFontSize(18)
   doc.text("Donation Voucher", 105, 20, { align: "center" })
 
-  doc.setFontSize(12)
+  doc.setFontSize(18)
   doc.text(`Date: ${date}`, 20, 40)
   doc.text(`No: ${no}`, 20, 50)
   doc.text(`Donor Name: ${donorName}`, 20, 60)
@@ -95,7 +205,18 @@ export function exportVoucherPDF({
 
   doc.text("Signature:", 20, 100)
   doc.text(signature, 50, 100)
-
+  doc.line(
+    40,
+    doc.internal.pageSize.height - 30,
+    80,
+    doc.internal.pageSize.height - 30
+  )
+  doc.line(
+    140,
+    doc.internal.pageSize.height - 30,
+    180,
+    doc.internal.pageSize.height - 30
+  )
   doc.save(`voucher_${no}.pdf`)
 }
 

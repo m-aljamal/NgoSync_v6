@@ -5,6 +5,7 @@ import { type DonationWithRelations } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 
+import { exportVoucherPDF, exportVoucherPDF1 } from "@/lib/export"
 import { formatCurrency } from "@/lib/utils"
 import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
 import { Badge } from "@/components/ui/badge"
@@ -23,7 +24,6 @@ import { donationPaymentTranslation } from "@/app/_lib/translate"
 
 import { DeleteDonationsDialog } from "./delete-donations-dialog"
 import { UpdateDonationSheet } from "./update-donation-sheet"
-import { exportVoucherPDF } from "@/lib/export"
 
 export function getColumns(): ColumnDef<DonationWithRelations>[] {
   return [
@@ -158,14 +158,34 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
                 <DropdownMenuItem onSelect={() => setShowUpdateTaskSheet(true)}>
                   تعديل
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => exportVoucherPDF({
-                   date:"1",
-                   no:"1",
-                   donorName:"011",
-                   amount:"4545",
-                   reason:"45454",
-                   signature:"45454",
-                })}>
+                <DropdownMenuItem
+                  onSelect={() =>
+                    exportVoucherPDF1({
+                      date: "1",
+                      no: "1",
+                      receivedFrom: "form",
+                      amount: "4545",
+                      reason: "45454",
+
+                      directorSignature: "test",
+                      recipientSignature: "tettttt",
+                    })
+                  }
+                >
+                  الوصل جديد
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={() =>
+                    exportVoucherPDF({
+                      date:"11",
+                      no:"22",
+                      donorName:"عبد المجيد",
+                      amount:"amount",
+                      reason:"res",
+                      signature:"sign",
+                    })
+                  }
+                >
                   الوصل
                 </DropdownMenuItem>
 
