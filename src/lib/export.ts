@@ -116,7 +116,7 @@ export function exportVoucherPDF1({
 
       // No and Date with better alignment
   doc.text("No:", 20, 45)
-  doc.text(no || "000546", 35, 45)
+  doc.text(no || "000546", 28, 45)
   
   doc.text(":التاريخ", 190, 45, { align: "right" })
   doc.text(date || "19-04-2024", 160, 45, { align: "right" })
