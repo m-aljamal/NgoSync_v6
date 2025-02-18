@@ -111,15 +111,15 @@ export function exportVoucherPDF1({
   doc.addImage(HEADER, "PNG", 15, 5, 180, 25)
 
     // Reset text color to black
-    doc.setTextColor(0, 0, 0)
+    // doc.setTextColor(0, 0, 0)
     doc.setFontSize(12)
 
       // No and Date with better alignment
   doc.text("No:", 20, 45)
   doc.text(no || "000546", 28, 45)
   
-  doc.text(":التاريخ", 190, 45, { align: "right" })
-  doc.text(date || "19-04-2024", 160, 45, { align: "right" })
+  doc.text(":االتاريخ", 190, 45, { align: "right" })
+  doc.text(date || "19-04-2024", 178, 45, { align: "right" })
 
 
   // Center title with background

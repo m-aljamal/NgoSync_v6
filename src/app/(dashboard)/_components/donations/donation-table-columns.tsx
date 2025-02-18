@@ -161,8 +161,8 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
                 <DropdownMenuItem
                   onSelect={() =>
                     exportVoucherPDF1({
-                      date: "1",
-                      no: "1",
+                      date: "19-18-2025",
+                      no: "54545",
                       receivedFrom: "form",
                       amount: "4545",
                       reason: "45454",
@@ -178,7 +178,7 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
                   onSelect={() =>
                     exportVoucherPDF({
                       date:"11",
-                      no:"22",
+                      no:"844844545",
                       donorName:"عبد المجيد",
                       amount:"amount",
                       reason:"res",
