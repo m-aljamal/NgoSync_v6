@@ -76,6 +76,7 @@ export function exportTableToCSV<TData>(
 }
 
 const EDC_LOGO = "/images/edc-logo.png"
+const HEADER = "/images/respiantLogo.png"
 
 interface VoucherData {
   date: string
@@ -107,76 +108,98 @@ export function exportVoucherPDF1({
   doc.addFont("Arabic.ttf", "Arabic", "normal")
   doc.setFont("Arabic")
 
-  // Add logos 20, 15, 40, 20
-  doc.addImage(EDC_LOGO, "PNG", 5,5,50,30)
-  doc.text("Education Development Commission",80, 10,{align:"right"})
+  doc.addImage(HEADER, "PNG", 15, 5, 180, 25)
 
-  // Add title
+    // Reset text color to black
+    doc.setTextColor(0, 0, 0)
+    doc.setFontSize(12)
 
-  doc.setFontSize(16)
-  doc.text("سند قبض", 105, 25, { align: "center" })
+      // No and Date with better alignment
+  doc.text("No:", 20, 45)
+  doc.text(no || "000546", 35, 45)
+  
+  doc.text(":التاريخ", 190, 45, { align: "right" })
+  doc.text(date || "19-04-2024", 160, 45, { align: "right" })
 
-  doc.setFontSize(16)
-  doc.text("Receipt Voucher", 105, 35, { align: "center" })
 
-  // Add form fields with bilingual labels
-  doc.setFontSize(14)
+  // Center title with background
 
-  // No and Date (right-aligned Arabic)
-  doc.text(":التاريخ", 190, 60, { align: "right" })
-  doc.text(date || ".........................", 160, 60, { align: "right" })
+  // doc.setFillColor(52, 73, 94) // Dark blue color
+  // doc.rect(85, 10, 40, 20, "F")
+  // doc.setTextColor(255, 255, 255) // White text
+  // doc.setFontSize(16)
+  // doc.text("سند قبض", 105, 20, { align: "center" })
+  // doc.text("Receipt Voucher", 105, 25, { align: "center" })
 
-  doc.text(":No", 50, 60)
-  doc.text(no || ".........................", 60, 60)
+   
+  // Right logo
+  // doc.addImage(EDC_LOGO, "PNG", 155, 5, 40, 25)
+  
 
-  // Received from
-  doc.text(": استلمنا من السيد / السادة", 190, 80, { align: "right" })
-  doc.text(
-    receivedFrom ||
-      ".................................................................",
-    105,
-    80,
-    {
-      align: "center",
-    }
-  )
+  // doc.setFontSize(16)
+  // doc.text("سند قبض", 105, 25, { align: "center" })
 
-  // Amount
-  doc.text(": مبلغا وقدره", 190, 100, { align: "right" })
-  doc.text(
-    amount ||
-      ".................................................................",
-    105,
-    100,
-    { align: "center" }
-  )
+  // doc.setFontSize(16)
+  // doc.text("Receipt Voucher", 105, 35, { align: "center" })
 
-  // Reason
-  doc.text(": وذلك مقابل", 190, 120, { align: "right" })
-  doc.text(
-    reason ||
-      ".................................................................",
-    105,
-    120,
-    { align: "center" }
-  )
+  // // Add form fields with bilingual labels
+  // doc.setFontSize(14)
 
-  // Signature lines
-  doc.setLineWidth(0.5)
+  // // No and Date (right-aligned Arabic)
+  // doc.text(":التاريخ", 190, 60, { align: "right" })
+  // doc.text(date || ".........................", 160, 60, { align: "right" })
 
-  // Director signature
-  doc.text("المدير", 40, 160)
-  doc.line(20, 180, 60, 180)
-  if (directorSignature) {
-    doc.text(directorSignature, 40, 175, { align: "center" })
-  }
+  // doc.text(":No", 50, 60)
+  // doc.text(no || ".........................", 60, 60)
 
-  // Recipient signature
-  doc.text("المستلم", 160, 160)
-  doc.line(140, 180, 180, 180)
-  if (recipientSignature) {
-    doc.text(recipientSignature, 160, 175, { align: "center" })
-  }
+  // // Received from
+  // doc.text(": استلمنا من السيد / السادة", 190, 80, { align: "right" })
+  // doc.text(
+  //   receivedFrom ||
+  //     ".................................................................",
+  //   105,
+  //   80,
+  //   {
+  //     align: "center",
+  //   }
+  // )
+
+  // // Amount
+  // doc.text(": مبلغا وقدره", 190, 100, { align: "right" })
+  // doc.text(
+  //   amount ||
+  //     ".................................................................",
+  //   105,
+  //   100,
+  //   { align: "center" }
+  // )
+
+  // // Reason
+  // doc.text(": وذلك مقابل", 190, 120, { align: "right" })
+  // doc.text(
+  //   reason ||
+  //     ".................................................................",
+  //   105,
+  //   120,
+  //   { align: "center" }
+  // )
+
+  // // Signature lines
+  // doc.setLineWidth(0.5)
+
+  // // Director signature
+  // doc.text("المدير", 40, 160)
+  // doc.line(20, 180, 60, 180)
+  // if (directorSignature) {
+  //   doc.text(directorSignature, 40, 175, { align: "center" })
+  // }
+
+  // // Recipient signature
+  // doc.text("المستلم", 160, 160)
+  // doc.line(140, 180, 180, 180)
+  // if (recipientSignature) {
+  //   doc.text(recipientSignature, 160, 175, { align: "center" })
+  // }
 
   // Save the PDF
   doc.save(`receipt_voucher_${no}.pdf`)
