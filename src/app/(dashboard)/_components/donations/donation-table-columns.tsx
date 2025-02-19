@@ -5,7 +5,7 @@ import { type DonationWithRelations } from "@/db/schemas"
 import { DotsHorizontalIcon } from "@radix-ui/react-icons"
 import { type ColumnDef } from "@tanstack/react-table"
 
-import { exportVoucherPDF, exportVoucherPDF1 } from "@/lib/export"
+import { exportVoucherPDF1 } from "@/lib/export"
 import { formatCurrency } from "@/lib/utils"
 import { useViewMoreDialog } from "@/hooks/use-view-data-dialog"
 import { Badge } from "@/components/ui/badge"
@@ -165,22 +165,8 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
 
                       no: "54545",
                       receivedFrom: "عبد الملك علبي",
-                      amount:     `  أربعمئة دولار فقط لا غير `  ,
+                      amount: `  أربعمئة دولار فقط لا غير `,
                       reason: " دعم مالي لصالح أيتام هيئة تطوير التعليم",
-                    })
-                  }
-                >
-                  الوصل جديد
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onSelect={() =>
-                    exportVoucherPDF({
-                      date: "11",
-                      no: "844844545",
-                      donorName: "عبد المجيد",
-                      amount: "amount",
-                      reason: "res",
-                      signature: "sign",
                     })
                   }
                 >
