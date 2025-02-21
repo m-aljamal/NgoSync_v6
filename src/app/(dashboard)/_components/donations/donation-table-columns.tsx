@@ -161,12 +161,15 @@ export function getColumns(): ColumnDef<DonationWithRelations>[] {
                 <DropdownMenuItem
                   onSelect={() =>
                     exportVoucherPDF1({
-                      date: "2025-02-19",
-
+                      date: row.original.date,
                       no: "54545",
-                      receivedFrom: "عبد الملك علبي",
-                      amount: `  أربعمئة دولار فقط لا غير `,
-                      reason: " دعم مالي لصالح أيتام هيئة تطوير التعليم",
+                      receivedFrom: row.original.donerName,
+                      amount: `${formatCurrency(
+                        row.original.amount,
+                        row.original.currencyCode
+                      )} - ${row.original.amountInText} فقط لا غير`,
+
+                      reason: row.original.receiptDescription || "",
                     })
                   }
                 >
