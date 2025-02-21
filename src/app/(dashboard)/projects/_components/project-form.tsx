@@ -6,14 +6,13 @@ import { type UseFormReturn } from "react-hook-form"
 
 import {
   Form,
-  FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
 import InputGroup from "@/components/form-components/InputGroup"
+import NameInput from "@/components/form-components/name-input"
 import { AppSelect } from "@/components/form-components/select"
 import SelectUsers from "@/components/form-components/select-users"
 import {
@@ -55,33 +54,16 @@ export function ProjectForm({ form, onSubmit, children }: CreateTaskFormProps) {
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>اسم المشروع</FormLabel>
-                <FormControl>
-                  <Input type="text" placeholder="اسم المشروع" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
+          <NameInput
+            form={form}
+            placeholder="اسم المشروع"
+            labelName="اسم المشروع"
           />
-
-          <FormField
-            control={form.control}
+          <NameInput
+            form={form}
+            placeholder="Adi"
+            labelName="Adi"
             name="nameTr"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Adi</FormLabel>
-                <FormControl>
-                  <Input type="text" placeholder="Adi" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
           />
 
           <SelectUsers form={form} withAdmin label="المسؤول" />

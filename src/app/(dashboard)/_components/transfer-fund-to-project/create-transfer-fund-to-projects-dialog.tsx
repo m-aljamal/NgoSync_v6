@@ -17,7 +17,7 @@ import {
 import { TransferFundToProjectsForm } from "./transfer-fund-projects-form"
 
 export function CreateTransferFundToProjectsDialog() {
-  const { onClose, isOpen, onOpen } = useFormDialog()
+  const { onClose } = useFormDialog()
 
   const form = useForm<CreateTransferSchema>({
     resolver: zodResolver(createTransferSchema),
@@ -43,10 +43,7 @@ export function CreateTransferFundToProjectsDialog() {
   }
 
   return (
-    <FormDialog
-      isOpen={isOpen}
-      onOpenChange={(open) => (open ? onOpen() : onClose())}
-    >
+    <FormDialog>
       <TransferFundToProjectsForm form={form} onSubmit={onSubmit}>
         <FormButtons isExecuting={isExecuting} />
       </TransferFundToProjectsForm>

@@ -16,7 +16,7 @@ import { Input } from "../ui/input"
 
 export default function NameInput<T extends FieldValues>({
   form,
-  name,
+  name="name",
   labelName = "الاسم",
   placeholder,
 }: {
