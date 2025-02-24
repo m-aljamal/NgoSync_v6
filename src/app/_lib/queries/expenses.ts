@@ -37,6 +37,7 @@ type GetExpensesProps = {
   proposalId?: string
   projectId?: string
   isOfficial?: boolean
+  userId?: string
 }
 
 export async function getExpenses({
@@ -44,6 +45,7 @@ export async function getExpenses({
   proposalId,
   projectId,
   isOfficial,
+  userId,
 }: GetExpensesProps) {
   noStore()
   const { page, per_page, sort, amount, operator, from, to, currencyCode } =
@@ -60,6 +62,7 @@ export async function getExpenses({
     const { fromDay, toDay } = convertToDate(from, to)
 
     const expressions: (SQL<unknown> | undefined)[] = [
+      userId ? eq(projects.userId, userId) : undefined,
       proposalId ? eq(projectsTransactions.proposalId, proposalId) : undefined,
       projectId ? eq(projectsTransactions.projectId, projectId) : undefined,
       isOfficial ? eq(projectsTransactions.isOfficial, isOfficial) : undefined,

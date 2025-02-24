@@ -111,9 +111,7 @@ export function exportVoucherPDF1({
   doc.setTextColor(0, 0, 128)
   doc.text(date || "", 152, 43)
   doc.text(receivedFrom || "", 135, 54, { align: "right" })
-  const [numericPart, textPart] = amount.split(" - ")
-
-  // doc.text(  textPart + numericPart || "", 128, 67, { align: "center" })
+  doc.text(amount || "", 128, 67, { align: "center" })
   doc.text(reason || "", 132, 80, { align: "center" })
 
   doc.save(`receipt_voucher_${no}.pdf`)

@@ -1,4 +1,5 @@
 import React from "react"
+import { auth } from "@/auth"
 import { type SearchParams } from "@/types"
 
 import { Skeleton } from "@/components/ui/skeleton"
@@ -11,9 +12,13 @@ import { searchParamsSchema } from "@/app/_lib/validations"
 
 import { ExpenseTable } from "../_components/expenses/expense-table"
 
-export default function Proposals({ searchParams }: SearchParams) {
+export default async function Proposals({ searchParams }: SearchParams) {
+  const session = await auth()
+  const userId =
+    session?.user.role === "project_manager" ? session.user.id : undefined
+
   const search = searchParamsSchema.parse(searchParams)
-  const promise = getExpenses({ input: search })
+  const promise = getExpenses({ input: search, userId })
 
   return (
     <div>
