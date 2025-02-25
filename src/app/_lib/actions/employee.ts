@@ -2,14 +2,13 @@
 
 import { unstable_noStore as noStore, revalidatePath } from "next/cache"
 import { db } from "@/db"
-import { expensesCategories, projectsTransactions } from "@/db/schemas"
+import { projectsTransactions } from "@/db/schemas"
 import { employees, salaryPayments } from "@/db/schemas/employee"
 import { format } from "date-fns"
 import Decimal from "decimal.js"
 import { eq, inArray, sql } from "drizzle-orm"
 import { flattenValidationErrors } from "next-safe-action"
 
-import { getExpenseCategory } from "../queries/expenses"
 import { calculateAmounts } from "../queries/utils"
 import { actionClient } from "../safe-action"
 import { toDecimalFixed } from "../utils"
