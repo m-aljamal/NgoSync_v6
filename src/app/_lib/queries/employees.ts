@@ -62,6 +62,7 @@ export async function getEmployees(input: GetSearchSchema, projectId?: string) {
       const data = await tx
         .select({
           name: employees.name,
+          nameLatin: employees.nameLatin,
           projectName: projects.name,
           status: employees.status,
           createdAt: employees.createdAt,

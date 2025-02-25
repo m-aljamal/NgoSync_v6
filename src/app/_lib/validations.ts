@@ -245,7 +245,7 @@ export const createEmployeeSchema = z.object({
   gender: z.enum(employees.gender.enumValues),
   position: z.enum(employees.position.enumValues),
   jobTitleId: z.string().min(2),
-  email: z.string().email().optional(),
+  email: z.string().email().optional().nullable(),
   phone: z.string().optional(),
   address: z.string().optional(),
   salary: decimalSchema,

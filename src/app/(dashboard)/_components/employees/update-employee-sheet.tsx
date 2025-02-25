@@ -3,6 +3,7 @@
 import * as React from "react"
 import { type Employee } from "@/db/schemas"
 import { zodResolver } from "@hookform/resolvers/zod"
+import Decimal from "decimal.js"
 import { useAction } from "next-safe-action/hooks"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
@@ -27,21 +28,17 @@ export function UpdateEmployeeSheet({
   employee,
   ...props
 }: UpdateEmployeeSheetProps) {
-  const form = useForm<CreateEmployeeSchema>({
-    resolver: zodResolver(createEmployeeSchema),
-    defaultValues: {},
-  })
-
-  React.useEffect(() => {
-    form.reset({
+  const defaultValues: CreateEmployeeSchema = React.useMemo(() => {
+    return {
       id: employee.id,
       name: employee.name,
+      nameLatin: employee.nameLatin,
       gender: employee.gender,
-      email: employee.email ?? "",
+      email: employee.email,
       phone: employee.phone ?? "",
       projectId: employee.projectId,
       position: employee.position ?? "",
-      salary: employee.salary ?? 0,
+      salary: new Decimal(employee.salary),
       currencyId: employee.currencyId ?? "",
       birthDate: employee.birthDate ?? new Date(),
       jobTitleId: employee.jobTitleId,
@@ -49,8 +46,17 @@ export function UpdateEmployeeSheet({
       address: employee.address ?? "",
       status: employee.status,
       userId: employee.userId ?? "",
-    })
-  }, [employee, form])
+    }
+  }, [employee])
+
+  const form = useForm<CreateEmployeeSchema>({
+    resolver: zodResolver(createEmployeeSchema),
+    defaultValues,
+  })
+
+  React.useEffect(() => {
+    form.reset(defaultValues)
+  }, [employee, form, defaultValues])
 
   const { executeAsync, isExecuting } = useAction(updateEmployee, {
     onSuccess: () => {

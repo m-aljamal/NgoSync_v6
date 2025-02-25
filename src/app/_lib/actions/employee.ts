@@ -89,11 +89,26 @@ export const updateEmployee = actionClient
   .action(async ({ parsedInput: data }) => {
     noStore()
     if (!data.id) throw new Error("id is required")
+
     await db
       .update(employees)
       .set({
-        ...data,
+        id: data.id,
+        name: data.name,
+        nameLatin: data.nameLatin,
+        status: data.status,
+        projectId: data.projectId,
+        gender: data.gender,
+        email: data.email,
+        phone: data.phone,
+        description: data.description,
         salary: toDecimalFixed(data.salary),
+        currencyId: data.currencyId,
+        address: data.address,
+        birthDate: data.birthDate,
+        position: data.position,
+        jobTitleId: data.jobTitleId,
+        userId: data.userId ? data.userId : undefined,
       })
       .where(eq(employees.id, data.id))
     revalidatePath("/employees")
